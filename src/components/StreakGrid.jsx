@@ -13,7 +13,7 @@ function StreakCell({ dayNum, status, isCurrent, onMouseEnter, onMouseLeave, chi
     const cx = nx - 0.5;
     const cy = ny - 0.5;
 
-    const maxTilt = 20; // 20 degrees maximum tilt
+    const maxTilt = 8; // 8 degrees maximum tilt
     const rotateX = -(cy * maxTilt).toFixed(1);
     const rotateY = (cx * maxTilt).toFixed(1);
 

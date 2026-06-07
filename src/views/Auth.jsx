@@ -1,11 +1,24 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
 
 export default function Auth({ setActiveView }) {
-  const { login, register, db } = useApp();
+  const { login, register, resetPassword, db } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [isReset, setIsReset] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Sync isLogin with url pathname
+  useEffect(() => {
+    if (location.pathname === '/register') {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }, [location.pathname]);
 
   // ── Pressed-in effect ────────────────────────────────────────────────
   const cardRef = useRef(null);
@@ -26,7 +39,7 @@ export default function Auth({ setActiveView }) {
     const sy = (cy * 18).toFixed(1);   // px  up/down
     const depth = 32;
 
-    const maxTilt = 15; // maximum tilt in degrees
+    const maxTilt = 6; // maximum tilt in degrees
     const rotateX = -(cy * maxTilt).toFixed(1);
     const rotateY = (cx * maxTilt).toFixed(1);
 
@@ -73,7 +86,7 @@ export default function Auth({ setActiveView }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
@@ -83,7 +96,7 @@ export default function Auth({ setActiveView }) {
       return;
     }
 
-    const res = login(loginEmail, loginPass);
+    const res = await login(loginEmail, loginPass);
     if (res.success) {
       setSuccessMsg('Logged in successfully!');
       setTimeout(() => {
@@ -98,7 +111,7 @@ export default function Auth({ setActiveView }) {
     }
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
@@ -108,7 +121,7 @@ export default function Auth({ setActiveView }) {
       return;
     }
 
-    const res = register(regName, regEmail, regPass, regStudentId, regGithubId, regLeetcodeId);
+    const res = await register(regName, regEmail, regPass, regStudentId, regGithubId, regLeetcodeId);
     if (res.success) {
       setSuccessMsg('Registration completed! Logged in.');
       setTimeout(() => {
@@ -119,7 +132,7 @@ export default function Auth({ setActiveView }) {
     }
   };
 
-  const handleResetSubmit = (e) => {
+  const handleResetSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
@@ -129,31 +142,21 @@ export default function Auth({ setActiveView }) {
       return;
     }
 
-    setSuccessMsg('Password reset instructions sent to ' + resetEmail + ' (Simulated).');
-    setTimeout(() => {
-      setIsReset(false);
-      setIsLogin(true);
-      setResetEmail('');
-      setSuccessMsg('');
-    }, 2500);
-  };
-
-  // Quick account buttons for testing
-  const handleQuickLogin = (email, pass) => {
-    setLoginEmail(email);
-    setLoginPass(pass);
-    const res = login(email, pass);
+    const res = await resetPassword(resetEmail);
     if (res.success) {
-      setSuccessMsg('Logged in as ' + res.user.name);
+      setSuccessMsg('Password reset instructions sent to ' + resetEmail + '.');
       setTimeout(() => {
-        if (res.user.role === 'admin') {
-          setActiveView('admin');
-        } else {
-          setActiveView('dashboard');
-        }
-      }, 500);
+        setIsReset(false);
+        setIsLogin(true);
+        setResetEmail('');
+        setSuccessMsg('');
+      }, 2500);
+    } else {
+      setErrorMsg(res.message);
     }
   };
+
+
 
   return (
     <div className="auth-view-container">
@@ -186,7 +189,7 @@ export default function Auth({ setActiveView }) {
               />
             </div>
             <button type="submit" className="auth-action-btn">Send Reset Link</button>
-            <button type="button" className="auth-toggle-link" onClick={() => { setIsReset(false); setIsLogin(true); setErrorMsg(''); }}>
+            <button type="button" className="auth-toggle-link" onClick={() => { setIsReset(false); navigate('/login'); setErrorMsg(''); }}>
               Back to Login
             </button>
           </form>
@@ -221,7 +224,7 @@ export default function Auth({ setActiveView }) {
             <button type="submit" className="auth-action-btn">Sign In</button>
             <p className="form-footer">
               New participant?{' '}
-              <button type="button" className="auth-toggle-link" onClick={() => { setIsLogin(false); setErrorMsg(''); }}>
+              <button type="button" className="auth-toggle-link" onClick={() => { navigate('/register'); setErrorMsg(''); }}>
                 Create Account
               </button>
             </p>
@@ -307,25 +310,14 @@ export default function Auth({ setActiveView }) {
             <button type="submit" className="auth-action-btn">Register</button>
             <p className="form-footer">
               Already registered?{' '}
-              <button type="button" className="auth-toggle-link" onClick={() => { setIsLogin(true); setErrorMsg(''); }}>
+              <button type="button" className="auth-toggle-link" onClick={() => { navigate('/login'); setErrorMsg(''); }}>
                 Sign In
               </button>
             </p>
           </form>
         )}
 
-        {/* Quick Credentials Panel for grading and evaluation testing */}
-        <div className="demo-accounts-panel">
-          <div className="demo-panel-title">Demo Simulation</div>
-          <div className="demo-buttons-row">
-            <button className="demo-btn student" onClick={() => handleQuickLogin('alice@gmail.com', 'password')}>
-              Alice
-            </button>
-            <button className="demo-btn admin" onClick={() => handleQuickLogin('admin@acm.org', 'admin')}>
-              Tech Head
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   );

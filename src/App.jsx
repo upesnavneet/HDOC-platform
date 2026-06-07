@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Auth from './views/Auth';
 import Dashboard from './views/Dashboard';
@@ -10,49 +12,43 @@ import Profile from './views/Profile';
 import AdminPanel from './views/AdminPanel';
 import DistortionBackground from "./components/DistortionBackground";
 
+function PrivateRoute({ children, adminOnly = false }) {
+  const { currentUser, loading } = useAuth();
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+  if (adminOnly && currentUser.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+}
+
 function MainAppContent() {
   const { currentUser, logout } = useApp();
-  const [activeView, setActiveView] = useState('auth');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Enforce session routes or defaults
-  useEffect(() => {
-    if (currentUser) {
-      if (currentUser.role === 'admin') {
-        setActiveView('admin');
-      } else {
-        // If participant, default to dashboard
-        if (activeView === 'auth') {
-          setActiveView('dashboard');
-        }
-      }
-    } else {
-      // If logged out and trying to access private tabs, redirect to auth
-      const privateViews = ['dashboard', 'questions', 'debugging', 'profile', 'admin'];
-      if (privateViews.includes(activeView)) {
-        setActiveView('auth');
-      }
-    }
-  }, [currentUser]);
+  // Dynamically derive activeView from location.pathname for Navbar highlight
+  const path = location.pathname;
+  let activeView = 'auth';
+  if (path === '/dashboard') activeView = 'dashboard';
+  else if (path === '/questions') activeView = 'questions';
+  else if (path === '/debugging') activeView = 'debugging';
+  else if (path === '/leaderboards') activeView = 'leaderboards';
+  else if (path === '/profile') activeView = 'profile';
+  else if (path === '/admin') activeView = 'admin';
 
-  const renderActiveView = () => {
-    switch (activeView) {
-      case 'auth':
-        return <Auth setActiveView={setActiveView} />;
-      case 'dashboard':
-        return <Dashboard setActiveView={setActiveView} />;
-      case 'questions':
-        return <Questions />;
-      case 'debugging':
-        return <Debugging />;
-      case 'leaderboards':
-        return <Leaderboards />;
-      case 'profile':
-        return <Profile />;
-      case 'admin':
-        return currentUser?.role === 'admin' ? <AdminPanel /> : <Auth setActiveView={setActiveView} />;
-      default:
-        return <Auth setActiveView={setActiveView} />;
-    }
+  const setActiveView = (view) => {
+    if (view === 'auth') navigate('/login');
+    else if (view === 'dashboard') navigate('/dashboard');
+    else if (view === 'questions') navigate('/questions');
+    else if (view === 'debugging') navigate('/debugging');
+    else if (view === 'leaderboards') navigate('/leaderboards');
+    else if (view === 'profile') navigate('/profile');
+    else if (view === 'admin') navigate('/admin');
   };
 
   return (
@@ -68,7 +64,56 @@ function MainAppContent() {
       />
       
       <main className="main-content-area">
-        {renderActiveView()}
+        <Routes>
+          <Route path="/login" element={
+            currentUser ? (
+              <Navigate to={currentUser.role === 'admin' ? '/admin' : '/dashboard'} replace />
+            ) : (
+              <Auth setActiveView={setActiveView} />
+            )
+          } />
+          <Route path="/register" element={
+            currentUser ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Auth setActiveView={setActiveView} />
+            )
+          } />
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard setActiveView={setActiveView} />
+            </PrivateRoute>
+          } />
+          <Route path="/questions" element={
+            <PrivateRoute>
+              <Questions />
+            </PrivateRoute>
+          } />
+          <Route path="/debugging" element={
+            <PrivateRoute>
+              <Debugging />
+            </PrivateRoute>
+          } />
+          <Route path="/leaderboards" element={
+            <Leaderboards />
+          } />
+          <Route path="/profile" element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          } />
+          <Route path="/admin" element={
+            <PrivateRoute adminOnly>
+              <AdminPanel />
+            </PrivateRoute>
+          } />
+          <Route path="/" element={
+            <Navigate to={currentUser ? (currentUser.role === 'admin' ? '/admin' : '/dashboard') : '/login'} replace />
+          } />
+          <Route path="*" element={
+            <Navigate to={currentUser ? (currentUser.role === 'admin' ? '/admin' : '/dashboard') : '/login'} replace />
+          } />
+        </Routes>
       </main>
 
       <footer className="footer-container">
@@ -81,8 +126,10 @@ function MainAppContent() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <MainAppContent />
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <MainAppContent />
+      </AppProvider>
+    </AuthProvider>
   );
 }

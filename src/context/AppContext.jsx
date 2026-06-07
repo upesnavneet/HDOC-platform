@@ -1,103 +1,253 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { loadDB, saveDB, updateLeaderboardsAndStreaks } from './db';
+import { subscribeToUsers, updateUserProfile } from '../services/userService';
+import { subscribeToQuestions, addOrUpdateQuestion } from '../services/questionService';
+import {
+  subscribeToSubmissions,
+  subscribeToDebuggingChallenges,
+  subscribeToDebuggingSubmissions,
+  subscribeToSystemConfig,
+  updateSystemConfig,
+  addOrUpdateSubmission,
+  submitDebuggingSolution,
+  gradeDebuggingSolution,
+  addOrUpdateDebuggingChallenge
+} from '../services/completionService';
+import { seedFirestoreIfEmpty } from '../utils/seedFirestore';
 
 const AppContext = createContext();
 
-export const AppProvider = ({ children }) => {
-  const [db, setDb] = useState(() => loadDB());
-  const [currentUser, setCurrentUser] = useState(null);
+const isMock = !import.meta.env.VITE_FIREBASE_API_KEY || 
+               import.meta.env.VITE_FIREBASE_API_KEY.includes('mock');
 
-  // Sync state to local storage when database changes
+export const AppProvider = ({ children }) => {
+  const { currentUser, login, logout, register, resetPassword } = useAuth();
+  
+  const [db, setDb] = useState(() => {
+    if (isMock) {
+      return loadDB();
+    }
+    return {
+      users: [],
+      questions: [],
+      submissions: [],
+      debuggingChallenges: [],
+      currentDay: 12,
+      simulatedTime: new Date('2026-06-05T15:47:39+05:30').toISOString()
+    };
+  });
+
+  const [dbError, setDbError] = useState(null);
+
+  // Sync state to local storage when database changes (Mock Mode only)
   useEffect(() => {
-    saveDB(db);
+    if (isMock) {
+      saveDB(db);
+    }
   }, [db]);
 
-  // Load user session on startup if present
+  // Setup Firestore Subscribers (Firebase Mode only)
   useEffect(() => {
-    const sessionUser = sessionStorage.getItem('acm_100_days_session');
-    if (sessionUser) {
-      try {
-        const parsed = JSON.parse(sessionUser);
-        const freshUser = db.users.find(u => u.id === parsed.id);
-        if (freshUser) {
-          setCurrentUser(freshUser);
+    if (isMock) return;
+
+    setDbError(null);
+    const unsubs = [];
+
+    // Auto-seed Firestore on first launch (if collections are empty)
+    seedFirestoreIfEmpty().catch(err => console.warn('[Seed] Seeding skipped:', err));
+
+    try {
+      // 1. Subscribe to system config
+      unsubs.push(subscribeToSystemConfig((config) => {
+        if (config) {
+          setDb(prev => ({
+            ...prev,
+            currentDay: Number(config.currentDay),
+            simulatedTime: config.simulatedTime
+          }));
         }
-      } catch (e) {
-        console.error(e);
+      }));
+
+      // 2. Subscribe to questions
+      unsubs.push(subscribeToQuestions((qs) => {
+        setDb(prev => ({
+          ...prev,
+          questions: qs
+        }));
+      }));
+
+      // 3. Subscribe to submissions
+      unsubs.push(subscribeToSubmissions((subs) => {
+        setDb(prev => ({
+          ...prev,
+          submissions: subs
+        }));
+      }));
+
+      // 4. Subscribe to users
+      unsubs.push(subscribeToUsers((us) => {
+        setDb(prev => ({
+          ...prev,
+          users: us
+        }));
+      }));
+
+      // 5. Subscribe to debugging challenges & submissions
+      let currentChallenges = [];
+      let currentDebugSubs = [];
+
+      const updateDebugChallenges = () => {
+        const merged = currentChallenges.map(c => ({
+          ...c,
+          submissions: currentDebugSubs.filter(s => s.challengeId === c.id)
+        }));
+        setDb(prev => ({
+          ...prev,
+          debuggingChallenges: merged
+        }));
+      };
+
+      unsubs.push(subscribeToDebuggingChallenges((challenges) => {
+        currentChallenges = challenges;
+        updateDebugChallenges();
+      }));
+
+      unsubs.push(subscribeToDebuggingSubmissions((subs) => {
+        currentDebugSubs = subs;
+        updateDebugChallenges();
+      }));
+
+    } catch (error) {
+      console.error('Firestore subscription failed:', error);
+      setDbError('Failed to load questions. Please try again later.');
+    }
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
+  }, []);
+
+  // Recalculating rank function
+  const getOverallRank = (userId, allUsers) => {
+    const participants = allUsers
+      .filter(u => u.role === 'participant')
+      .sort((a, b) => {
+        const scoreA = (a.totalCodingScore || 0) + (a.totalDebuggingScore || 0);
+        const scoreB = (b.totalCodingScore || 0) + (b.totalDebuggingScore || 0);
+        return scoreB - scoreA;
+      });
+    const index = participants.findIndex(u => (u.uid || u.id) === userId);
+    return index !== -1 ? index + 1 : '-';
+  };
+
+  const currentUserWithRank = currentUser ? {
+    ...currentUser,
+    overallRank: getOverallRank(currentUser.uid || currentUser.id, db.users)
+  } : null;
+
+  // Streak & Score Auto-updater (Firebase Mode only)
+  useEffect(() => {
+    if (isMock) return;
+    if (!currentUser || currentUser.role !== 'participant') return;
+
+    const myUid = currentUser.uid || currentUser.id;
+    const userSubs = db.submissions.filter(s => s.userId === myUid);
+    
+    const codingScore = userSubs
+      .filter(s => s.status === 'Submitted' || s.status === 'Late')
+      .reduce((acc, curr) => acc + (curr.marks || 0), 0);
+
+    const debugScore = db.debuggingChallenges.reduce((acc, challenge) => {
+      const sub = challenge.submissions?.find(s => s.userId === myUid);
+      return acc + ((sub && sub.score) || 0);
+    }, 0);
+
+    let currentCodingStreak = 0;
+    for (let d = db.currentDay - 1; d >= 1; d--) {
+      const daySubs = db.submissions.filter(s => s.userId === myUid && s.day === d);
+      const hasLeetcode = daySubs.some(s => s.type === 'leetcode' && s.status === 'Submitted');
+      const hasCustom = daySubs.some(s => s.type === 'custom' && s.status === 'Submitted');
+      const allSubmittedOnTime = hasLeetcode && hasCustom;
+      if (allSubmittedOnTime) {
+        currentCodingStreak++;
+      } else {
+        break;
       }
     }
-  }, [db.users]);
 
-  const login = (email, password) => {
-    const foundUser = db.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-    if (!foundUser) {
-      return { success: false, message: 'Invalid email or password.' };
+    if (
+      currentUser.totalCodingScore !== codingScore ||
+      currentUser.totalDebuggingScore !== debugScore ||
+      currentUser.gitHubStreak !== currentCodingStreak
+    ) {
+      updateUserProfile(myUid, {
+        totalCodingScore: codingScore,
+        totalDebuggingScore: debugScore,
+        gitHubStreak: currentCodingStreak
+      }).catch(err => console.error('Failed to auto-update scores/streaks:', err));
     }
-    if (foundUser.role === 'participant' && !foundUser.isActive) {
-      return { success: false, message: 'Your account has been deactivated by the administrator.' };
-    }
-    setCurrentUser(foundUser);
-    sessionStorage.setItem('acm_100_days_session', JSON.stringify(foundUser));
-    return { success: true, user: foundUser };
-  };
+  }, [db.submissions, db.debuggingChallenges, currentUser, db.currentDay]);
 
-  const logout = () => {
-    setCurrentUser(null);
-    sessionStorage.removeItem('acm_100_days_session');
-  };
-
-  const register = (name, email, password, studentId, gitHubId, leetCodeId) => {
-    // Check duplicates
-    const emailExists = db.users.some(u => u.email.toLowerCase() === email.toLowerCase());
-    if (emailExists) {
-      return { success: false, message: 'Email already registered.' };
-    }
-    const studentIdExists = db.users.some(u => u.studentId.toUpperCase() === studentId.toUpperCase());
-    if (studentIdExists) {
-      return { success: false, message: 'Student ID already registered.' };
-    }
-
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name,
-      email,
-      password,
-      role: 'participant',
-      studentId,
-      gitHubId,
-      leetCodeId,
-      gitHubStreak: 0,
-      leetCodeStreak: 0,
-      totalCodingScore: 0,
-      totalDebuggingScore: 0,
-      overallRank: db.users.filter(u => u.role === 'participant').length + 1,
-      isActive: true
-    };
-
-    const updatedUsers = [...db.users, newUser];
-    let updatedDB = { ...db, users: updatedUsers };
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-    
-    // Auto login
-    setCurrentUser(newUser);
-    sessionStorage.setItem('acm_100_days_session', JSON.stringify(newUser));
-    return { success: true, user: newUser };
-  };
-
-  // Submit code solution for a daily question (LeetCode-style)
-  const submitQuestionCode = (dayNum, type, code, language) => {
+  // Actions
+  const submitQuestionCode = async (dayNum, type, code, language) => {
     if (!currentUser) return { success: false, message: 'Not logged in.' };
 
+    const myUid = currentUser.uid || currentUser.id;
+
+    if (isMock) {
+      const q = db.questions.find(question => question.day === dayNum);
+      if (!q) return { success: false, message: 'Question not found.' };
+
+      const currentSimulatedTime = new Date(db.simulatedTime);
+      const eventStartDate = new Date('2026-05-25T00:00:00');
+      const publishTime = new Date(eventStartDate.getTime() + (dayNum - 1) * 24 * 60 * 60 * 1000);
+      const deadlineTime = new Date(publishTime.getTime() + 24 * 60 * 60 * 1000);
+
+      let status = 'Submitted';
+      if (currentSimulatedTime > deadlineTime) {
+        status = 'Late';
+      }
+
+      const existingIndex = db.submissions.findIndex(
+        s => s.userId === myUid && s.day === dayNum && s.type === type
+      );
+
+      const subDetails = {
+        id: existingIndex !== -1 ? db.submissions[existingIndex].id : `sub-${myUid}-${dayNum}-${type}-${Date.now()}`,
+        userId: myUid,
+        questionId: q.id,
+        day: dayNum,
+        type,
+        code,
+        language,
+        timestamp: currentSimulatedTime.toISOString(),
+        status,
+        marks: existingIndex !== -1 ? db.submissions[existingIndex].marks : null,
+        gradedBy: existingIndex !== -1 ? db.submissions[existingIndex].gradedBy : '',
+        comments: existingIndex !== -1 ? db.submissions[existingIndex].comments : ''
+      };
+
+      let updatedSubmissions = [...db.submissions];
+      if (existingIndex !== -1) {
+        updatedSubmissions[existingIndex] = subDetails;
+      } else {
+        updatedSubmissions.push(subDetails);
+      }
+
+      let updatedDB = { ...db, submissions: updatedSubmissions };
+      updatedDB = updateLeaderboardsAndStreaks(updatedDB);
+      setDb(updatedDB);
+
+      return { success: true, status, message: `Solution for Day ${dayNum} (${type}) submitted successfully.` };
+    }
+
+    // Live Firebase mode
     const q = db.questions.find(question => question.day === dayNum);
     if (!q) return { success: false, message: 'Question not found.' };
 
-    // Check deadlines (within 24 hours of scheduled publish date)
-    // Seeding starts Day 12 at 2026-06-05T15:47:39
-    // Simulated Time determines if we are late
     const currentSimulatedTime = new Date(db.simulatedTime);
-    // Scheduled publication is 00:00 on the day of code
-    const eventStartDate = new Date('2026-05-25T00:00:00');
+    const eventStartDate = new Date('2026-05-25T00:00:00+05:30');
     const publishTime = new Date(eventStartDate.getTime() + (dayNum - 1) * 24 * 60 * 60 * 1000);
     const deadlineTime = new Date(publishTime.getTime() + 24 * 60 * 60 * 1000);
 
@@ -106,14 +256,12 @@ export const AppProvider = ({ children }) => {
       status = 'Late';
     }
 
-    // Check if submission already exists
-    const existingIndex = db.submissions.findIndex(
-      s => s.userId === currentUser.id && s.day === dayNum && s.type === type
+    const existing = db.submissions.find(
+      s => s.userId === myUid && s.day === dayNum && s.type === type
     );
 
     const subDetails = {
-      id: existingIndex !== -1 ? db.submissions[existingIndex].id : `sub-${currentUser.id}-${dayNum}-${type}-${Date.now()}`,
-      userId: currentUser.id,
+      userId: myUid,
       questionId: q.id,
       day: dayNum,
       type,
@@ -121,33 +269,70 @@ export const AppProvider = ({ children }) => {
       language,
       timestamp: currentSimulatedTime.toISOString(),
       status,
-      marks: existingIndex !== -1 ? db.submissions[existingIndex].marks : null, // keep original marks if editing
-      gradedBy: existingIndex !== -1 ? db.submissions[existingIndex].gradedBy : '',
-      comments: existingIndex !== -1 ? db.submissions[existingIndex].comments : ''
+      marks: existing ? existing.marks : null,
+      gradedBy: existing ? existing.gradedBy : '',
+      comments: existing ? existing.comments : ''
     };
 
-    let updatedSubmissions = [...db.submissions];
-    if (existingIndex !== -1) {
-      updatedSubmissions[existingIndex] = subDetails;
-    } else {
-      updatedSubmissions.push(subDetails);
+    const subId = existing ? existing.id : `sub-${myUid}-${dayNum}-${type}`;
+    try {
+      await addOrUpdateSubmission(subId, subDetails);
+      return { success: true, status, message: `Solution for Day ${dayNum} (${type}) submitted successfully.` };
+    } catch (err) {
+      return { success: false, message: 'Failed to submit solution.' };
     }
-
-    let updatedDB = { ...db, submissions: updatedSubmissions };
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-
-    return { success: true, status, message: `Solution for Day ${dayNum} (${type}) submitted successfully.` };
   };
 
-  // Submit debugging challenge
-  const submitDebuggingChallenge = (challengeId, link) => {
+  const submitDebuggingChallenge = async (challengeId, link) => {
     if (!currentUser) return { success: false, message: 'Not logged in.' };
 
-    const challengeIndex = db.debuggingChallenges.findIndex(c => c.id === challengeId);
-    if (challengeIndex === -1) return { success: false, message: 'Challenge not found.' };
+    const myUid = currentUser.uid || currentUser.id;
 
-    const challenge = db.debuggingChallenges[challengeIndex];
+    if (isMock) {
+      const challengeIndex = db.debuggingChallenges.findIndex(c => c.id === challengeId);
+      if (challengeIndex === -1) return { success: false, message: 'Challenge not found.' };
+
+      const challenge = db.debuggingChallenges[challengeIndex];
+      const currentSimulatedTime = new Date(db.simulatedTime);
+      const publishedTime = new Date(challenge.publishedDate);
+
+      if (currentSimulatedTime < publishedTime) {
+        return { success: false, message: 'Challenge has not started yet.' };
+      }
+
+      const updatedChallenges = [...db.debuggingChallenges];
+      const existingSubIndex = challenge.submissions.findIndex(s => s.userId === myUid);
+
+      const submissionObj = {
+        userId: myUid,
+        link,
+        timestamp: currentSimulatedTime.toISOString(),
+        score: existingSubIndex !== -1 ? challenge.submissions[existingSubIndex].score : null
+      };
+
+      const updatedSubmissions = [...challenge.submissions];
+      if (existingSubIndex !== -1) {
+        updatedSubmissions[existingSubIndex] = submissionObj;
+      } else {
+        updatedSubmissions.push(submissionObj);
+      }
+
+      updatedChallenges[challengeIndex] = {
+        ...challenge,
+        submissions: updatedSubmissions
+      };
+
+      let updatedDB = { ...db, debuggingChallenges: updatedChallenges };
+      updatedDB = updateLeaderboardsAndStreaks(updatedDB);
+      setDb(updatedDB);
+
+      return { success: true, message: 'Debugging solution submitted successfully.' };
+    }
+
+    // Live Firebase mode
+    const challenge = db.debuggingChallenges.find(c => c.id === challengeId);
+    if (!challenge) return { success: false, message: 'Challenge not found.' };
+
     const currentSimulatedTime = new Date(db.simulatedTime);
     const publishedTime = new Date(challenge.publishedDate);
 
@@ -155,242 +340,318 @@ export const AppProvider = ({ children }) => {
       return { success: false, message: 'Challenge has not started yet.' };
     }
 
-    // Add or update debugging submission
-    const updatedChallenges = [...db.debuggingChallenges];
-    const existingSubIndex = challenge.submissions.findIndex(s => s.userId === currentUser.id);
+    try {
+      await submitDebuggingSolution(challengeId, myUid, link, currentSimulatedTime.toISOString());
+      return { success: true, message: 'Debugging solution submitted successfully.' };
+    } catch (err) {
+      return { success: false, message: 'Failed to submit debugging solution.' };
+    }
+  };
 
-    const submissionObj = {
-      userId: currentUser.id,
-      link,
-      timestamp: currentSimulatedTime.toISOString(),
-      score: existingSubIndex !== -1 ? challenge.submissions[existingSubIndex].score : null // Keep score if edit
-    };
+  const gradeSubmission = async (subId, marks, comments, adminId) => {
+    if (isMock) {
+      const subIndex = db.submissions.findIndex(s => s.id === subId);
+      if (subIndex === -1) return { success: false, message: 'Submission not found.' };
 
-    const updatedSubmissions = [...challenge.submissions];
-    if (existingSubIndex !== -1) {
-      updatedSubmissions[existingSubIndex] = submissionObj;
-    } else {
-      updatedSubmissions.push(submissionObj);
+      const updatedSubmissions = [...db.submissions];
+      updatedSubmissions[subIndex] = {
+        ...updatedSubmissions[subIndex],
+        marks: Number(marks),
+        comments,
+        gradedBy: adminId
+      };
+
+      let updatedDB = { ...db, submissions: updatedSubmissions };
+      updatedDB = updateLeaderboardsAndStreaks(updatedDB);
+      setDb(updatedDB);
+      return { success: true, message: 'Submission graded successfully.' };
     }
 
-    updatedChallenges[challengeIndex] = {
-      ...challenge,
-      submissions: updatedSubmissions
-    };
-
-    let updatedDB = { ...db, debuggingChallenges: updatedChallenges };
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-
-    return { success: true, message: 'Debugging solution submitted successfully.' };
+    try {
+      await addOrUpdateSubmission(subId, {
+        marks: Number(marks),
+        comments,
+        gradedBy: adminId
+      });
+      return { success: true, message: 'Submission graded successfully.' };
+    } catch (err) {
+      return { success: false, message: 'Failed to grade submission.' };
+    }
   };
 
-  // Admin Actions
-  const gradeSubmission = (subId, marks, comments, adminId) => {
-    const subIndex = db.submissions.findIndex(s => s.id === subId);
-    if (subIndex === -1) return { success: false, message: 'Submission not found.' };
+  const gradeDebuggingSubmission = async (challengeId, userId, score) => {
+    if (isMock) {
+      const challengeIndex = db.debuggingChallenges.findIndex(c => c.id === challengeId);
+      if (challengeIndex === -1) return { success: false, message: 'Challenge not found.' };
 
-    const updatedSubmissions = [...db.submissions];
-    updatedSubmissions[subIndex] = {
-      ...updatedSubmissions[subIndex],
-      marks: Number(marks),
-      comments,
-      gradedBy: adminId
-    };
+      const challenge = db.debuggingChallenges[challengeIndex];
+      const updatedChallenges = [...db.debuggingChallenges];
+      
+      const subIndex = challenge.submissions.findIndex(s => s.userId === userId);
+      if (subIndex === -1) return { success: false, message: 'Submission not found.' };
 
-    let updatedDB = { ...db, submissions: updatedSubmissions };
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-    return { success: true, message: 'Submission graded successfully.' };
+      const updatedSubmissions = [...challenge.submissions];
+      updatedSubmissions[subIndex] = {
+        ...updatedSubmissions[subIndex],
+        score: Number(score)
+      };
+
+      updatedChallenges[challengeIndex] = {
+        ...challenge,
+        submissions: updatedSubmissions
+      };
+
+      let updatedDB = { ...db, debuggingChallenges: updatedChallenges };
+      updatedDB = updateLeaderboardsAndStreaks(updatedDB);
+      setDb(updatedDB);
+      return { success: true, message: 'Debugging challenge graded.' };
+    }
+
+    try {
+      await gradeDebuggingSolution(challengeId, userId, score);
+      return { success: true, message: 'Debugging challenge graded.' };
+    } catch (err) {
+      return { success: false, message: 'Failed to grade debugging challenge.' };
+    }
   };
 
-  const gradeDebuggingSubmission = (challengeId, userId, score) => {
-    const challengeIndex = db.debuggingChallenges.findIndex(c => c.id === challengeId);
-    if (challengeIndex === -1) return { success: false, message: 'Challenge not found.' };
+  const updateParticipantStreaks = async (userId, gitHubStreak, leetCodeStreak) => {
+    if (isMock) {
+      const updatedUsers = db.users.map(u => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            gitHubStreak: Number(gitHubStreak),
+            leetCodeStreak: Number(leetCodeStreak)
+          };
+         }
+         return u;
+      });
 
-    const challenge = db.debuggingChallenges[challengeIndex];
-    const updatedChallenges = [...db.debuggingChallenges];
-    
-    const subIndex = challenge.submissions.findIndex(s => s.userId === userId);
-    if (subIndex === -1) return { success: false, message: 'Submission not found.' };
+      let updatedDB = { ...db, users: updatedUsers };
+      updatedDB = updateLeaderboardsAndStreaks(updatedDB);
+      setDb(updatedDB);
+      return { success: true, message: 'Streaks updated successfully.' };
+    }
 
-    const updatedSubmissions = [...challenge.submissions];
-    updatedSubmissions[subIndex] = {
-      ...updatedSubmissions[subIndex],
-      score: Number(score)
-    };
-
-    updatedChallenges[challengeIndex] = {
-      ...challenge,
-      submissions: updatedSubmissions
-    };
-
-    let updatedDB = { ...db, debuggingChallenges: updatedChallenges };
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-    return { success: true, message: 'Debugging challenge graded.' };
+    try {
+      await updateUserProfile(userId, {
+        gitHubStreak: Number(gitHubStreak),
+        leetCodeStreak: Number(leetCodeStreak)
+      });
+      return { success: true, message: 'Streaks updated successfully.' };
+    } catch (err) {
+      return { success: false, message: 'Failed to update streaks.' };
+    }
   };
 
-  const updateParticipantStreaks = (userId, gitHubStreak, leetCodeStreak) => {
-    const updatedUsers = db.users.map(u => {
-      if (u.id === userId) {
-        return {
-          ...u,
-          gitHubStreak: Number(gitHubStreak),
-          leetCodeStreak: Number(leetCodeStreak)
-        };
-      }
-      return u;
-    });
-
-    let updatedDB = { ...db, users: updatedUsers };
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-    return { success: true, message: 'Streaks updated successfully.' };
-  };
-
-  const toggleUserStatus = (userId) => {
-    const updatedUsers = db.users.map(u => {
-      if (u.id === userId) {
-        return { ...u, isActive: !u.isActive };
-      }
-      return u;
-    });
-
-    let updatedDB = { ...db, users: updatedUsers };
-    setDb(updatedDB);
-    return { success: true, message: 'Participant active status toggled.' };
-  };
-
-  const uploadQuestion = (questionData) => {
-    const newQ = {
-      id: `q-${Date.now()}`,
-      day: Number(questionData.day),
-      titleLc: questionData.titleLc,
-      linkLc: questionData.linkLc,
-      descLc: questionData.descLc,
-      titleCustom: questionData.titleCustom,
-      descCustom: questionData.descCustom,
-      difficulty: questionData.difficulty || 'Medium',
-      isMaster: Number(questionData.day) >= 99,
-      handout: questionData.handout || '',
-      solutionCode: questionData.solutionCode || ''
-    };
-
-    // Replace if same day
-    let updatedQuestions = db.questions.filter(q => q.day !== newQ.day);
-    updatedQuestions.push(newQ);
-    updatedQuestions.sort((a, b) => a.day - b.day);
-
-    const updatedDB = { ...db, questions: updatedQuestions };
-    setDb(updatedDB);
-    return { success: true, message: `Question for Day ${newQ.day} uploaded successfully.` };
-  };
-
-  const uploadHandout = (dayNum, handoutText) => {
-    const qIndex = db.questions.findIndex(q => q.day === Number(dayNum));
-    if (qIndex === -1) return { success: false, message: 'Day question not found. Upload question first.' };
-
-    const updatedQuestions = [...db.questions];
-    updatedQuestions[qIndex] = {
-      ...updatedQuestions[qIndex],
-      handout: handoutText
-    };
-
-    const updatedDB = { ...db, questions: updatedQuestions };
-    setDb(updatedDB);
-    return { success: true, message: `Handout for Day ${dayNum} added successfully.` };
-  };
-
-  // Simulated Time & Day control (Date Traveler)
-  const setSimulatedTimeAndDay = (newTimeIso, newDayNum) => {
-    let updatedDB = {
-      ...db,
-      simulatedTime: newTimeIso,
-      currentDay: Number(newDayNum)
-    };
-
-    // Calculate broken streaks based on new simulated day
-    // A participant misses if day < currentDay and they don't have submissions.
-    // If they missed, mark submissions as missed and update streaks.
-    const participants = updatedDB.users.filter(u => u.role === 'participant');
-    const updatedSubmissions = [...updatedDB.submissions];
-
-    participants.forEach(p => {
-      for (let d = 1; d < Number(newDayNum); d++) {
-        const q = updatedDB.questions.find(question => question.day === d);
-        if (!q) continue;
-
-        // Check if submissions exist for this day
-        const lcSub = updatedSubmissions.find(s => s.userId === p.id && s.day === d && s.type === 'leetcode');
-        const customSub = updatedSubmissions.find(s => s.userId === p.id && s.day === d && s.type === 'custom');
-
-        if (!lcSub) {
-          updatedSubmissions.push({
-            id: `sub-${p.id}-${d}-lc-${Date.now()}`,
-            userId: p.id,
-            questionId: q.id,
-            day: d,
-            type: 'leetcode',
-            link: '',
-            timestamp: '',
-            status: 'Missed',
-            marks: 0,
-            gradedBy: '',
-            comments: ''
-          });
+  const toggleUserStatus = async (userId) => {
+    if (isMock) {
+      const updatedUsers = db.users.map(u => {
+        if (u.id === userId) {
+          return { ...u, isActive: !u.isActive };
         }
-        if (!customSub) {
-          updatedSubmissions.push({
-            id: `sub-${p.id}-${d}-custom-${Date.now()}`,
-            userId: p.id,
-            questionId: q.id,
-            day: d,
-            type: 'custom',
-            link: '',
-            timestamp: '',
-            status: 'Missed',
-            marks: 0,
-            gradedBy: '',
-            comments: ''
-          });
-        }
-      }
-    });
+        return u;
+      });
 
-    updatedDB.submissions = updatedSubmissions;
-    updatedDB = updateLeaderboardsAndStreaks(updatedDB);
-    setDb(updatedDB);
-    return { success: true, message: 'Simulated time-travel completed!' };
+      let updatedDB = { ...db, users: updatedUsers };
+      setDb(updatedDB);
+      return { success: true, message: 'Participant active status toggled.' };
+    }
+
+    const user = db.users.find(u => (u.uid || u.id) === userId);
+    if (!user) return { success: false, message: 'User not found.' };
+    try {
+      await updateUserProfile(userId, {
+        isActive: !user.isActive
+      });
+      return { success: true, message: 'Participant active status toggled.' };
+    } catch (err) {
+      return { success: false, message: 'Failed to toggle status.' };
+    }
   };
 
-  const uploadDebuggingChallenge = (challengeData) => {
-    const newC = {
-      id: `debug-${Date.now()}`,
-      week: Number(challengeData.week),
-      theme: challengeData.theme,
-      description: challengeData.description,
-      starterCode: challengeData.starterCode,
-      publishedDate: challengeData.publishedDate, // ISO String
-      submissions: []
-    };
+  const uploadQuestion = async (questionData) => {
+    if (isMock) {
+      const newQ = {
+        id: `q-${Date.now()}`,
+        day: Number(questionData.day),
+        titleLc: questionData.titleLc,
+        linkLc: questionData.linkLc,
+        descLc: questionData.descLc,
+        titleCustom: questionData.titleCustom,
+        descCustom: questionData.descCustom,
+        difficulty: questionData.difficulty || 'Medium',
+        isMaster: Number(questionData.day) >= 99,
+        handout: questionData.handout || '',
+        solutionCode: questionData.solutionCode || ''
+      };
 
-    let updatedChallenges = db.debuggingChallenges.filter(c => c.week !== newC.week);
-    updatedChallenges.push(newC);
-    updatedChallenges.sort((a, b) => a.week - b.week);
+      let updatedQuestions = db.questions.filter(q => q.day !== newQ.day);
+      updatedQuestions.push(newQ);
+      updatedQuestions.sort((a, b) => a.day - b.day);
 
-    const updatedDB = { ...db, debuggingChallenges: updatedChallenges };
-    setDb(updatedDB);
-    return { success: true, message: `Week ${newC.week} Debugging Challenge scheduled.` };
+      const updatedDB = { ...db, questions: updatedQuestions };
+      setDb(updatedDB);
+      return { success: true, message: `Question for Day ${newQ.day} uploaded successfully.` };
+    }
+
+    try {
+      await addOrUpdateQuestion(questionData.day, {
+        titleLc: questionData.titleLc,
+        linkLc: questionData.linkLc,
+        descLc: questionData.descLc,
+        titleCustom: questionData.titleCustom,
+        descCustom: questionData.descCustom,
+        difficulty: questionData.difficulty || 'Medium',
+        isMaster: Number(questionData.day) >= 99,
+        handout: questionData.handout || '',
+        solutionCode: questionData.solutionCode || ''
+      });
+      return { success: true, message: `Question for Day ${questionData.day} uploaded successfully.` };
+    } catch (err) {
+      return { success: false, message: 'Failed to upload question.' };
+    }
+  };
+
+  const uploadHandout = async (dayNum, handoutText) => {
+    if (isMock) {
+      const qIndex = db.questions.findIndex(q => q.day === Number(dayNum));
+      if (qIndex === -1) return { success: false, message: 'Day question not found. Upload question first.' };
+
+      const updatedQuestions = [...db.questions];
+      updatedQuestions[qIndex] = {
+        ...updatedQuestions[qIndex],
+        handout: handoutText
+      };
+
+      const updatedDB = { ...db, questions: updatedQuestions };
+      setDb(updatedDB);
+      return { success: true, message: `Handout for Day ${dayNum} added successfully.` };
+    }
+
+    try {
+      await addOrUpdateQuestion(dayNum, {
+        handout: handoutText
+      });
+      return { success: true, message: `Handout for Day ${dayNum} added successfully.` };
+    } catch (err) {
+      return { success: false, message: 'Failed to upload handout.' };
+    }
+  };
+
+  const setSimulatedTimeAndDay = async (newTimeIso, newDayNum) => {
+    if (isMock) {
+      let updatedDB = {
+        ...db,
+        simulatedTime: newTimeIso,
+        currentDay: Number(newDayNum)
+      };
+
+      const participants = updatedDB.users.filter(u => u.role === 'participant');
+      const updatedSubmissions = [...updatedDB.submissions];
+
+      participants.forEach(p => {
+        for (let d = 1; d < Number(newDayNum); d++) {
+          const q = updatedDB.questions.find(question => question.day === d);
+          if (!q) continue;
+
+          const lcSub = updatedSubmissions.find(s => s.userId === p.id && s.day === d && s.type === 'leetcode');
+          const customSub = updatedSubmissions.find(s => s.userId === p.id && s.day === d && s.type === 'custom');
+
+          if (!lcSub) {
+            updatedSubmissions.push({
+              id: `sub-${p.id}-${d}-lc-${Date.now()}`,
+              userId: p.id,
+              questionId: q.id,
+              day: d,
+              type: 'leetcode',
+               link: '',
+               timestamp: '',
+               status: 'Missed',
+               marks: 0,
+               gradedBy: '',
+               comments: ''
+             });
+           }
+           if (!customSub) {
+             updatedSubmissions.push({
+               id: `sub-${p.id}-${d}-custom-${Date.now()}`,
+               userId: p.id,
+               questionId: q.id,
+               day: d,
+               type: 'custom',
+               link: '',
+               timestamp: '',
+               status: 'Missed',
+               marks: 0,
+               gradedBy: '',
+               comments: ''
+             });
+           }
+         }
+       });
+
+       updatedDB.submissions = updatedSubmissions;
+       updatedDB = updateLeaderboardsAndStreaks(updatedDB);
+       setDb(updatedDB);
+       return { success: true, message: 'Simulated time-travel completed!' };
+    }
+
+    try {
+      await updateSystemConfig({
+        simulatedTime: newTimeIso,
+        currentDay: Number(newDayNum)
+      });
+      return { success: true, message: 'Simulated time-travel completed!' };
+    } catch (err) {
+      return { success: false, message: 'Failed to warp simulated time.' };
+    }
+  };
+
+  const uploadDebuggingChallenge = async (challengeData) => {
+    if (isMock) {
+      const newC = {
+        id: `debug-${Date.now()}`,
+        week: Number(challengeData.week),
+        theme: challengeData.theme,
+        description: challengeData.description,
+        starterCode: challengeData.starterCode,
+        publishedDate: challengeData.publishedDate,
+        submissions: []
+      };
+
+      let updatedChallenges = db.debuggingChallenges.filter(c => c.week !== newC.week);
+      updatedChallenges.push(newC);
+      updatedChallenges.sort((a, b) => a.week - b.week);
+
+      const updatedDB = { ...db, debuggingChallenges: updatedChallenges };
+      setDb(updatedDB);
+      return { success: true, message: `Week ${newC.week} Debugging Challenge scheduled.` };
+    }
+
+    try {
+      await addOrUpdateDebuggingChallenge(challengeData.week, {
+        theme: challengeData.theme,
+        description: challengeData.description,
+        starterCode: challengeData.starterCode,
+        publishedDate: challengeData.publishedDate
+      });
+      return { success: true, message: `Week ${challengeData.week} Debugging Challenge scheduled.` };
+    } catch (err) {
+      return { success: false, message: 'Failed to schedule debugging challenge.' };
+    }
   };
 
   return (
     <AppContext.Provider value={{
       db,
-      currentUser,
+      dbError,
+      currentUser: currentUserWithRank,
       login,
       logout,
       register,
+      resetPassword,
       submitQuestionCode,
       submitDebuggingChallenge,
       gradeSubmission,

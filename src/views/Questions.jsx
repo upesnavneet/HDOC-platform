@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { formatSimulatedDate } from '../context/db';
 
 export default function Questions() {
-  const { db } = useApp();
+  const { db, dbError } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -35,6 +35,8 @@ export default function Questions() {
         <span>Simulated Time: <strong>{formatSimulatedDate(db.simulatedTime)}</strong></span>
         <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
       </div>
+
+      {dbError && <div className="feedback-alert error" style={{ margin: '1rem 0' }}>{dbError}</div>}
 
       <div className="page-header">
         <h1>Challenge Archive</h1>

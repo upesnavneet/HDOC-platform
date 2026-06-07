@@ -5,7 +5,7 @@ import { formatSimulatedDate } from '../context/db';
 import { useTiltCard } from '../hooks/useTiltCard';
 
 // ── Tiltable card wrapper ──────────────────────────────────────────────────
-function TiltCard({ className, children, maxTilt = 8 }) {
+function TiltCard({ className, children, maxTilt = 3 }) {
   const { ref, style, onMouseMove, onMouseLeave } = useTiltCard(maxTilt);
   return (
     <div
@@ -140,7 +140,7 @@ export default function Dashboard({ setActiveView }) {
   const overallRank = currentUser.overallRank;
 
   // Tilt for the streak grid wrapper
-  const streakTilt = useTiltCard(5);
+  const streakTilt = useTiltCard(2);
 
   return (
     <div className="dashboard-container">
@@ -152,7 +152,7 @@ export default function Dashboard({ setActiveView }) {
 
       {/* Overview stats panel */}
       <section className="overview-stats-section">
-        <TiltCard className="stat-card primary" maxTilt={7}>
+        <TiltCard className="stat-card primary" maxTilt={3}>
           <div className="stat-label">Event Progress</div>
           <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
           <div className="stat-progress-bar-wrapper">
@@ -161,7 +161,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">June 2026 Season</span>
         </TiltCard>
 
-        <TiltCard className="stat-card" maxTilt={7}>
+        <TiltCard className="stat-card" maxTilt={3}>
           <div className="stat-label">LeetCode Streak</div>
           <div className="stat-value-row">
             <span className="stat-value">{currentUser.leetCodeStreak}</span>
@@ -176,7 +176,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">Manually updated by admin</span>
         </TiltCard>
 
-        <TiltCard className="stat-card" maxTilt={7}>
+        <TiltCard className="stat-card" maxTilt={3}>
           <div className="stat-label">GitHub Push Streak</div>
           <div className="stat-value-row">
             <span className="stat-value">{currentUser.gitHubStreak}</span>
@@ -191,7 +191,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">Calculated from solutions</span>
         </TiltCard>
 
-        <TiltCard className="stat-card ranking" maxTilt={7}>
+        <TiltCard className="stat-card ranking" maxTilt={3}>
           <div className="stat-label">Overall Standing</div>
           <div className="stat-value">#{overallRank}</div>
           <div className="ranks-sub-row">
@@ -229,7 +229,7 @@ export default function Dashboard({ setActiveView }) {
 
         <div className="challenge-cards-grid">
           {/* Challenge 1: LeetCode */}
-          <TiltCard className="challenge-card" maxTilt={6}>
+          <TiltCard className="challenge-card" maxTilt={3}>
             <div className="card-top-tag leetcode">LeetCode Challenge</div>
             {todayLcQ ? (
               <div className="challenge-details">
@@ -296,7 +296,7 @@ export default function Dashboard({ setActiveView }) {
           </TiltCard>
 
           {/* Challenge 2: Custom DSA */}
-          <TiltCard className="challenge-card" maxTilt={6}>
+          <TiltCard className="challenge-card" maxTilt={3}>
             <div className="card-top-tag custom-dsa">Custom DSA Challenge</div>
             {todayCustomQ ? (
               <div className="challenge-details">
