@@ -3,9 +3,21 @@ import { useApp } from '../context/AppContext';
 import StreakGrid from '../components/StreakGrid';
 import { formatSimulatedDate } from '../context/db';
 import { useTiltCard } from '../hooks/useTiltCard';
+import ScrambledText from '../components/ScrambledText';
+
+function completedDaysEstimate(subs, currentDay) {
+  let count = 0;
+  for (let d = 1; d < currentDay; d++) {
+    const daySubs = subs.filter(s => s.day === d);
+    if (daySubs.length >= 2 && daySubs.every(s => s.status === 'Submitted' || s.status === 'Late')) {
+      count++;
+    }
+  }
+  return count;
+}
 
 // ── Tiltable card wrapper ──────────────────────────────────────────────────
-function TiltCard({ className, children, maxTilt = 3 }) {
+function TiltCard({ className, children, maxTilt = 8 }) {
   const { ref, style, onMouseMove, onMouseLeave } = useTiltCard(maxTilt);
   return (
     <div
@@ -140,28 +152,83 @@ export default function Dashboard({ setActiveView }) {
   const overallRank = currentUser.overallRank;
 
   // Tilt for the streak grid wrapper
-  const streakTilt = useTiltCard(2);
+  const streakTilt = useTiltCard(5);
 
   return (
     <div className="dashboard-container">
-      {/* Simulation Info Bar */}
       <div className="simulation-time-bar">
         <span>Simulated System Date: <strong>{formatSimulatedDate(db.simulatedTime)}</strong></span>
         <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
       </div>
 
-      {/* Overview stats panel */}
+      {/* Hero + Journey — shown first so content stays visible */}
+      <section className="dashboard-hero-split">
+        <div className="dashboard-hero-left glow-card hero-panel-black">
+          <span className="hero-batch-badge">BATCH 2026</span>
+          <h1 className="hero-headline">
+            <span className="hero-orange"><ScrambledText text="From" /></span>{' '}
+            <span className="hero-green"><ScrambledText text="Bugs" /></span>{' '}
+            <span className="hero-accent"><ScrambledText text="to" /></span>{' '}
+            <span className="hero-orange"><ScrambledText text="Brilliance." /></span>
+          </h1>
+          <p className="hero-desc">
+            One commit. Every day. For 100 days straight. UPES ACM&apos;s flagship coding challenge —
+            build your streak, sharpen your skills, and level up with fellow coders from campus.
+          </p>
+          <div className="hero-actions">
+            <button className="hero-btn primary" onClick={() => document.getElementById('todays-challenges')?.scrollIntoView({ behavior: 'smooth' })}>
+              Start Day {currentDay} →
+            </button>
+            <button className="hero-btn outline" onClick={() => setActiveView('questions')}>
+              Browse challenges
+            </button>
+          </div>
+          <div className="hero-stats-row">
+            <div className="hero-stat">
+              <span className="hero-stat-num">{db.users.filter(u => u.role === 'participant').length}</span>
+              <span className="hero-stat-label">Active Now</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-num">{userSubs.length * 120}</span>
+              <span className="hero-stat-label">Lines Written</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-num">{Math.round((completedDaysEstimate(userSubs, currentDay) / Math.max(currentDay - 1, 1)) * 100) || 0}%</span>
+              <span className="hero-stat-label">Finish Rate</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-num">6</span>
+              <span className="hero-stat-label">Tracks</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="dashboard-hero-right">
+          <StreakGrid
+            currentDay={currentDay}
+            submissions={userSubs}
+            questions={questions}
+            tiltProps={{
+              ref: streakTilt.ref,
+              style: streakTilt.style,
+              onMouseMove: streakTilt.onMouseMove,
+              onMouseLeave: streakTilt.onMouseLeave,
+            }}
+          />
+        </div>
+      </section>
+
       <section className="overview-stats-section">
-        <TiltCard className="stat-card primary" maxTilt={3}>
+        <TiltCard className="stat-card glow-card primary" maxTilt={7}>
           <div className="stat-label">Event Progress</div>
           <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
           <div className="stat-progress-bar-wrapper">
-            <div className="stat-progress-bar" style={{ width: `${currentDay}%` }}></div>
+            <div className="stat-progress-bar progress-animate" style={{ width: `${currentDay}%` }}></div>
           </div>
           <span className="stat-footnote">June 2026 Season</span>
         </TiltCard>
 
-        <TiltCard className="stat-card" maxTilt={3}>
+        <TiltCard className="stat-card glow-card" maxTilt={7}>
           <div className="stat-label">LeetCode Streak</div>
           <div className="stat-value-row">
             <span className="stat-value">{currentUser.leetCodeStreak}</span>
@@ -176,7 +243,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">Manually updated by admin</span>
         </TiltCard>
 
-        <TiltCard className="stat-card" maxTilt={3}>
+        <TiltCard className="stat-card glow-card" maxTilt={7}>
           <div className="stat-label">GitHub Push Streak</div>
           <div className="stat-value-row">
             <span className="stat-value">{currentUser.gitHubStreak}</span>
@@ -191,7 +258,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">Calculated from solutions</span>
         </TiltCard>
 
-        <TiltCard className="stat-card ranking" maxTilt={3}>
+        <TiltCard className="stat-card glow-card ranking" maxTilt={7}>
           <div className="stat-label">Overall Standing</div>
           <div className="stat-value">#{overallRank}</div>
           <div className="ranks-sub-row">
@@ -203,23 +270,8 @@ export default function Dashboard({ setActiveView }) {
         </TiltCard>
       </section>
 
-      {/* Main 100 Days calendar board */}
-      <section className="calendar-grid-section">
-        <StreakGrid
-          currentDay={currentDay}
-          submissions={userSubs}
-          questions={questions}
-          tiltProps={{
-            ref: streakTilt.ref,
-            style: streakTilt.style,
-            onMouseMove: streakTilt.onMouseMove,
-            onMouseLeave: streakTilt.onMouseLeave,
-          }}
-        />
-      </section>
-
       {/* Today's Coding Challenges Section */}
-      <section className="todays-challenges-section">
+      <section id="todays-challenges" className="todays-challenges-section">
         <div className="section-header-row">
           <h2>Today's Challenges — Day {currentDay}</h2>
           <div className={`countdown-timer ${timeLeft === 'Deadline Passed' ? 'expired' : ''}`}>
@@ -227,36 +279,21 @@ export default function Dashboard({ setActiveView }) {
           </div>
         </div>
 
-        <div className="challenge-cards-grid">
+        <div className="challenge-cards-grid challenge-cards-scroll-stack">
           {/* Challenge 1: LeetCode */}
-          <TiltCard className="challenge-card" maxTilt={3}>
+          <TiltCard className="challenge-card glow-card" maxTilt={6}>
             <div className="card-top-tag leetcode">LeetCode Challenge</div>
             {todayLcQ ? (
               <div className="challenge-details">
                 <h3 className="challenge-title">{todayLcQ.titleLc}</h3>
                 <p className="challenge-desc">{todayLcQ.descLc}</p>
                 <div className="challenge-meta">
-                  <span className="difficulty-tag easy">{todayLcQ.difficulty}</span>
                   <a href={todayLcQ.linkLc} target="_blank" rel="noreferrer" className="external-problem-link">
                     Open LeetCode Page &nearr;
                   </a>
                 </div>
 
                 <form className="submission-sub-form" onSubmit={handleLcSubmit}>
-                  <div className="input-group">
-                    <label htmlFor="lc-lang">Select Programming Language</label>
-                    <select
-                      id="lc-lang"
-                      className="language-select"
-                      value={lcLanguage}
-                      onChange={(e) => setLcLanguage(e.target.value)}
-                    >
-                      <option value="cpp">C++</option>
-                      <option value="java">Java</option>
-                      <option value="python">Python</option>
-                      <option value="javascript">JavaScript</option>
-                    </select>
-                  </div>
                   <div className="input-group">
                     <label htmlFor="lc-code">Write your code here</label>
                     <textarea 
@@ -296,32 +333,17 @@ export default function Dashboard({ setActiveView }) {
           </TiltCard>
 
           {/* Challenge 2: Custom DSA */}
-          <TiltCard className="challenge-card" maxTilt={3}>
+          <TiltCard className="challenge-card glow-card" maxTilt={6}>
             <div className="card-top-tag custom-dsa">Custom DSA Challenge</div>
             {todayCustomQ ? (
               <div className="challenge-details">
                 <h3 className="challenge-title">{todayCustomQ.titleCustom}</h3>
                 <p className="challenge-desc">{todayCustomQ.descCustom}</p>
                 <div className="challenge-meta">
-                  <span className="difficulty-tag medium">Medium</span>
                   <span className="author-tag">By Technical Head</span>
                 </div>
 
                 <form className="submission-sub-form" onSubmit={handleCustomSubmit}>
-                  <div className="input-group">
-                    <label htmlFor="custom-lang">Select Programming Language</label>
-                    <select
-                      id="custom-lang"
-                      className="language-select"
-                      value={customLanguage}
-                      onChange={(e) => setCustomLanguage(e.target.value)}
-                    >
-                      <option value="cpp">C++</option>
-                      <option value="java">Java</option>
-                      <option value="python">Python</option>
-                      <option value="javascript">JavaScript</option>
-                    </select>
-                  </div>
                   <div className="input-group">
                     <label htmlFor="custom-code">Write your code here</label>
                     <textarea 

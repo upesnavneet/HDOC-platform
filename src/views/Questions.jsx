@@ -3,9 +3,8 @@ import { useApp } from '../context/AppContext';
 import { formatSimulatedDate } from '../context/db';
 
 export default function Questions() {
-  const { db, dbError } = useApp();
+  const { db } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [selectedQuestion, setSelectedQuestion] = useState(null);
 
   const currentDay = db.currentDay;
@@ -16,16 +15,9 @@ export default function Questions() {
     // Must be published (day <= currentDay)
     if (q.day > currentDay) return false;
 
-    // Search query matches
-    const matchesSearch = 
-      q.titleLc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      q.titleCustom.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      q.day.toString() === searchQuery;
+    const matchesSearch = !searchQuery.trim() || q.day.toString() === searchQuery.trim();
 
-    // Difficulty filter matches
-    const matchesDifficulty = selectedDifficulty === 'All' || q.difficulty === selectedDifficulty;
-
-    return matchesSearch && matchesDifficulty;
+    return matchesSearch;
   });
 
   return (
@@ -35,8 +27,6 @@ export default function Questions() {
         <span>Simulated Time: <strong>{formatSimulatedDate(db.simulatedTime)}</strong></span>
         <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
       </div>
-
-      {dbError && <div className="feedback-alert error" style={{ margin: '1rem 0' }}>{dbError}</div>}
 
       <div className="page-header">
         <h1>Challenge Archive</h1>
@@ -49,24 +39,11 @@ export default function Questions() {
           <div className="filter-controls-card">
             <input 
               type="text" 
-              placeholder="Search by day or title..." 
+              placeholder="Search by day..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
             />
-            <div className="filter-row">
-              <label>Difficulty:</label>
-              <select 
-                value={selectedDifficulty}
-                onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="difficulty-select"
-              >
-                <option value="All">All</option>
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-              </select>
-            </div>
           </div>
 
           <div className="question-list-scroll">
@@ -91,7 +68,7 @@ export default function Questions() {
                     </div>
                     <div className="item-right">
                       {isMaster && <span className="master-badge-flame">Master</span>}
-                      <span className={`difficulty-indicator ${q.difficulty.toLowerCase()}`}>{q.difficulty}</span>
+                      <span className="rating-indicator">{q.rating || q.difficulty}</span>
                     </div>
                   </div>
                 );
@@ -106,8 +83,8 @@ export default function Questions() {
               <div className="detailed-header">
                 <div className="header-meta">
                   <span className="day-large">DAY {selectedQuestion.day}</span>
-                  <span className={`difficulty-tag ${selectedQuestion.difficulty.toLowerCase()}`}>
-                    {selectedQuestion.difficulty}
+                  <span className="rating-tag">
+                    Rating {selectedQuestion.rating || selectedQuestion.difficulty}
                   </span>
                   {selectedQuestion.isMaster && (
                     <span className="master-challenge-tag">Master Challenge</span>
@@ -120,7 +97,7 @@ export default function Questions() {
                 <div className="master-banner-alert">
                   <span className="icon">Master</span>
                   <div className="banner-content">
-                    <h4>Grand Finale Master Challenge (Hard difficulty)</h4>
+                    <h4>Grand Finale Master Challenge</h4>
                     <p>Submissions for Day 99 and 100 weigh double in the overall standing and determine the final standings for the Top 10 Grand Finale.</p>
                   </div>
                 </div>
@@ -177,7 +154,7 @@ export default function Questions() {
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
               <h3>Select a challenge from the archive</h3>
-              <p>Choose any day from Day 1 to Day {currentDay} to inspect problem statements, difficulty, and reference solutions.</p>
+              <p>Choose any day from Day 1 to Day {currentDay} to inspect problem statements, rating, and reference solutions.</p>
             </div>
           )}
         </div>

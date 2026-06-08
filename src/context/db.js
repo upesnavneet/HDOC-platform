@@ -200,7 +200,7 @@ const getInitialDB = () => {
       descLc: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.',
       titleCustom: 'Find Maximum Element',
       descCustom: 'Write an efficient function to find the maximum value in an unsorted integer array. Constraint: Time Complexity O(n). Input: [3, 8, 2, 9, 1]. Output: 9.',
-      difficulty: 'Easy',
+      rating: '800',
       isMaster: false,
       handout: 'Day 1 Handout: Array Basics and Hash Maps overview. PDF attachment simulated.',
       solutionCode: '// Two Sum (Java)\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int complement = target - nums[i];\n            if (map.containsKey(complement)) {\n                return new int[] { map.get(complement), i };\n            }\n            map.put(nums[i], i);\n        }\n        throw new IllegalArgumentException("No solution");\n    }\n}'
@@ -213,7 +213,7 @@ const getInitialDB = () => {
       descLc: 'Given the head of a singly linked list, reverse the list, and return the reversed list.',
       titleCustom: 'Detect Loop in Linked List',
       descCustom: 'Implement Floyd\'s Cycle-Finding Algorithm to detect if a given singly linked list contains a cycle (loop). Space Complexity O(1).',
-      difficulty: 'Easy',
+      rating: '800',
       isMaster: false,
       handout: 'Day 2 Handout: Linked List Traversal, Pointers, and Floyd\'s Cycle Detection.',
       solutionCode: '// Reverse Linked List (Python)\ndef reverseList(head):\n    prev = None\n    curr = head\n    while curr:\n        next_node = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next_node\n    return prev'
@@ -226,7 +226,7 @@ const getInitialDB = () => {
       descLc: 'Given a string containing just the characters \'(\', \')\', \'{\', \'}\', \'[\' and \']\', determine if the input string is valid.',
       titleCustom: 'Evaluate Reverse Polish Notation',
       descCustom: 'Evaluate the value of an arithmetic expression in Reverse Polish Notation. Valid operators are +, -, *, and /.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 3 Handout: Stack operations and token parsing.',
       solutionCode: '// Valid Parentheses (C++)\nbool isValid(string s) {\n    stack<char> st;\n    for(char c : s) {\n        if(c == \'(\' || c == \'{\' || c == \'[\') st.push(c);\n        else {\n            if(st.empty()) return false;\n            if(c == \')\' && st.top() != \'(\') return false;\n            if(c == \'}\' && st.top() != \'{\') return false;\n            if(c == \']\' && st.top() != \'[\') return false;\n            st.pop();\n        }\n    }\n    return st.empty();\n}'
@@ -239,7 +239,7 @@ const getInitialDB = () => {
       descLc: 'Given an array of intervals where intervals[i] = [start_i, end_i], merge all overlapping intervals.',
       titleCustom: 'Insert Interval',
       descCustom: 'Insert a new interval into a sorted list of non-overlapping intervals, and merge overlaps if necessary.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 4 Handout: Greedy intervals and sorting intervals by start point.',
       solutionCode: ''
@@ -252,7 +252,7 @@ const getInitialDB = () => {
       descLc: 'Find all unique triplets in the array that sum up to zero. No duplicate triplets allowed.',
       titleCustom: 'Container With Most Water',
       descCustom: 'Given n non-negative integers representing heights of vertical lines, find two lines that form a container containing the most water.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 5 Handout: Two-pointer technique and shrinking search space.',
       solutionCode: ''
@@ -265,7 +265,7 @@ const getInitialDB = () => {
       descLc: 'Given an integer array nums and an integer k, return the k most frequent elements.',
       titleCustom: 'Kth Largest Element',
       descCustom: 'Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 6 Handout: Heap/PriorityQueue concepts and bucket sort solutions.',
       solutionCode: ''
@@ -278,7 +278,7 @@ const getInitialDB = () => {
       descLc: 'Given the root of a binary tree, return the level order traversal of its nodes\' values (i.e. from left to right, level by level).',
       titleCustom: 'Serialize and Deserialize Binary Tree',
       descCustom: 'Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work.',
-      difficulty: 'Hard',
+      rating: '1800',
       isMaster: false,
       handout: 'Day 7 Handout: Tree traversal (BFS vs DFS) and custom parsing serialization formats.',
       solutionCode: ''
@@ -291,7 +291,7 @@ const getInitialDB = () => {
       descLc: 'Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.',
       titleCustom: 'Longest Common Subsequence',
       descCustom: 'Given two strings text1 and text2, return the length of their longest common subsequence. If there is no common subsequence, return 0.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 8 Handout: Dynamic Programming introduction, matrix alignment.',
       solutionCode: ''
@@ -304,7 +304,7 @@ const getInitialDB = () => {
       descLc: 'There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given prerequisites. Return true if you can finish all courses.',
       titleCustom: 'Course Schedule II',
       descCustom: 'Find the actual ordering of courses you should take to finish all courses. Return empty array if not possible.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 9 Handout: Graphs, Kahn\'s Algorithm, and Topological Sorting DFS.',
       solutionCode: ''
@@ -317,7 +317,7 @@ const getInitialDB = () => {
       descLc: 'Given a string s, return the longest palindromic substring in s.',
       titleCustom: 'Count Palindromic Substrings',
       descCustom: 'Given a string s, return the number of palindromic substrings in it.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: 'Day 10 Handout: Expanding around centers and Manacher\'s algorithm brief.',
       solutionCode: ''
@@ -330,7 +330,7 @@ const getInitialDB = () => {
       descLc: 'A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently store and retrieve keys in a dataset of strings.',
       titleCustom: 'Word Search II',
       descCustom: 'Given an m x n board of characters and a list of strings words, return all words on the board using a Trie structure.',
-      difficulty: 'Hard',
+      rating: '1800',
       isMaster: false,
       handout: 'Day 11 Handout: Advanced prefix structures and backtracking on matrices.',
       solutionCode: ''
@@ -343,7 +343,7 @@ const getInitialDB = () => {
       descLc: 'Given an integer array nums of unique elements, return all possible subsets (the power set).',
       titleCustom: 'Permutations',
       descCustom: 'Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.',
-      difficulty: 'Medium',
+      rating: '1300',
       isMaster: false,
       handout: '',
       solutionCode: ''
@@ -356,7 +356,7 @@ const getInitialDB = () => {
       descLc: 'A path in a binary tree is a sequence of nodes where each pair of adjacent nodes has an edge. Return the maximum path sum.',
       titleCustom: 'Merge k Sorted Lists',
       descCustom: 'Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.',
-      difficulty: 'Hard',
+      rating: '1800',
       isMaster: true,
       handout: '',
       solutionCode: ''
@@ -369,7 +369,7 @@ const getInitialDB = () => {
       descLc: 'Design a data structure that follows the constraints of a Least Recently Used (LRU) cache.',
       titleCustom: 'Median of Two Sorted Arrays',
       descCustom: 'Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. Time complexity must be O(log(m+n)).',
-      difficulty: 'Hard',
+      rating: '1800',
       isMaster: true,
       handout: '',
       solutionCode: ''
@@ -561,7 +561,8 @@ const getInitialDB = () => {
     submissions,
     debuggingChallenges,
     currentDay: 12,
-    simulatedTime: new Date('2026-06-05T15:47:39+05:30').toISOString() // initialized to current system date
+    simulatedTime: new Date('2026-06-05T15:47:39+05:30').toISOString(),
+    completedWeeks: []
   };
 };
 
@@ -569,7 +570,8 @@ export const loadDB = () => {
   const data = localStorage.getItem(STORAGE_KEY);
   if (data) {
     try {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      return { completedWeeks: [], ...parsed, completedWeeks: parsed.completedWeeks || [] };
     } catch (e) {
       console.error('Failed to parse DB, reloading initial', e);
     }

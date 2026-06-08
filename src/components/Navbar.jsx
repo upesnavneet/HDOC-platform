@@ -55,20 +55,27 @@ export default function Navbar({
       onMouseLeave={handleNavbarMouseLeave}
       style={navbarStyle}
     >
-      {/* Logo */}
+      {/* Logo & tagline */}
       <div
-        className="navbar-logo"
-        onClick={() => handleNavClick(currentUser ? 'dashboard' : 'auth')}
+        className="navbar-brand-block"
+        onClick={() => handleNavClick(currentUser ? (currentUser.role === 'admin' ? 'coordinator' : 'dashboard') : 'auth')}
       >
-        <img
-          src="/logo.png"
-          alt="UPES ACM"
-          style={{
-            height: "50px",
-            width: "auto",
-            cursor: "pointer",
-          }}
-        />
+        <div className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img
+            src="/logo.png"
+            alt="UPES ACM"
+            style={{ height: "50px", width: "auto", cursor: "pointer" }}
+          />
+          <img
+            src="/favicon2.png"
+            alt="UPES ACM-W"
+            style={{ height: "45px", width: "auto", cursor: "pointer" }}
+          />
+        </div>
+        <div className="navbar-tagline">
+          <span className="navbar-event-name">#100DaysOfCode</span>
+          <span className="navbar-motto">Advancing Computing as a Science &amp; Profession</span>
+        </div>
       </div>
 
       {/* If NOT logged in */}
@@ -128,11 +135,11 @@ export default function Navbar({
             {currentUser.role === "admin" && (
               <button
                 className={`nav-item admin-tab ${
-                  activeView === "admin" ? "active" : ""
+                  activeView === "coordinator" || activeView === "admin" ? "active" : ""
                 }`}
-                onClick={() => handleNavClick("admin")}
+                onClick={() => handleNavClick("coordinator")}
               >
-                Admin Panel
+                Coordinator Dashboard
               </button>
             )}
 
@@ -183,7 +190,7 @@ export default function Navbar({
 
                 <span className={`user-role-tag ${currentUser.role}`}>
                   {currentUser.role === "admin"
-                    ? "Admin"
+                    ? "Coordinator"
                     : `Rank #${currentUser.overallRank}`}
                 </span>
               </div>

@@ -30,7 +30,7 @@ export default function AdminPanel() {
   const [qDescLc, setQDescLc] = useState('');
   const [qTitleCustom, setQTitleCustom] = useState('');
   const [qDescCustom, setQDescCustom] = useState('');
-  const [qDifficulty, setQDifficulty] = useState('Medium');
+  const [qRating, setQRating] = useState('800');
   const [qHandout, setQHandout] = useState('');
   const [qSolution, setQSolution] = useState('');
   const [questionMsg, setQuestionMsg] = useState('');
@@ -91,7 +91,7 @@ export default function AdminPanel() {
       descLc: qDescLc,
       titleCustom: qTitleCustom,
       descCustom: qDescCustom,
-      difficulty: qDifficulty,
+      rating: qRating,
       handout: qHandout,
       solutionCode: qSolution
     });
@@ -403,11 +403,22 @@ export default function AdminPanel() {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Difficulty Rating</label>
-                  <select value={qDifficulty} onChange={(e) => setQDifficulty(e.target.value)}>
-                    <option value="Easy">Easy</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Hard">Hard</option>
+                  <label>Rating</label>
+                  <select value={qRating} onChange={(e) => setQRating(e.target.value)}>
+                    <option value="800">800</option>
+                    <option value="850">850</option>
+                    <option value="900">900</option>
+                    <option value="1000">1000</option>
+                    <option value="1100">1100</option>
+                    <option value="1200">1200</option>
+                    <option value="1300">1300</option>
+                    <option value="1400">1400</option>
+                    <option value="1500">1500</option>
+                    <option value="1600">1600</option>
+                    <option value="1700">1700</option>
+                    <option value="1800">1800</option>
+                    <option value="1900">1900</option>
+                    <option value="2000">2000</option>
                   </select>
                 </div>
               </div>
