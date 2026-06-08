@@ -212,7 +212,6 @@ export default function Dashboard({ setActiveView }) {
           <div className="stat-progress-bar-wrapper">
             <div className="stat-progress-bar progress-animate" style={{ width: `${currentDay}%` }}></div>
           </div>
-          <span className="stat-footnote">June 2026 Season</span>
         </TiltCard>
 
         <TiltCard className="stat-card press-card" maxTilt={7}>
@@ -227,7 +226,6 @@ export default function Dashboard({ setActiveView }) {
           {currentUser.leetCodeStreak > 0 && (
             <span className="stat-status-alert success">Active LeetCode Streak</span>
           )}
-          <span className="stat-footnote">Manually updated by admin</span>
         </TiltCard>
 
         <TiltCard className="stat-card press-card" maxTilt={7}>
@@ -242,7 +240,6 @@ export default function Dashboard({ setActiveView }) {
           {currentUser.gitHubStreak > 0 && (
             <span className="stat-status-alert success">Contributions matching daily submissions</span>
           )}
-          <span className="stat-footnote">Calculated from solutions</span>
         </TiltCard>
 
         <TiltCard className="stat-card press-card ranking" maxTilt={7}>

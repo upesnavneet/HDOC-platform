@@ -443,20 +443,26 @@ button {
   color: var(--color-text);
   font-weight: 500;
   font-size: 0.95rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  border-bottom: 2px solid transparent;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.02);
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .nav-item:hover {
   color: var(--color-primary);
-  background: rgba(54, 173, 163, 0.03);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
 .nav-item.active {
   color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  background: rgba(54, 173, 163, 0.05);
+  background: rgba(54, 173, 163, 0.15);
+  border-color: rgba(54, 173, 163, 0.35);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
 }
 
 .nav-item.admin-tab {
@@ -1270,18 +1276,6 @@ button {
   transition: color 0.5s ease, opacity 0.45s ease;
 }
 
-.hero-headline:hover .hero-orange {
-  color: #ff9a4d;
-}
-
-.hero-headline:hover .hero-green {
-  color: #8fd42e;
-}
-
-.hero-headline:hover .hero-accent {
-  color: rgba(255, 255, 255, 1);
-}
-
 .hero-desc {
   font-size: 1rem;
   color: var(--color-muted);
@@ -1765,6 +1759,7 @@ button {
     background 0.12s ease;
   will-change: transform, box-shadow, background;
   transform-style: preserve-3d;
+  box-shadow: 0 4px 16px rgba(8, 6, 22, 0.35);
 }
 
 .card-top-tag {
@@ -1779,12 +1774,12 @@ button {
 }
 
 .card-top-tag.leetcode {
-  border-left: 3px solid var(--color-secondary);
+  border-left: none;
   color: var(--color-secondary);
 }
 
 .card-top-tag.custom-dsa {
-  border-left: 3px solid var(--color-primary);
+  border-left: none;
   color: var(--color-primary);
 }
 
