@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { doc, setDoc, collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection, getDocs, onSnapshot } from 'firebase/firestore';
 
 const QUESTIONS_COLLECTION = 'questions';
 
@@ -30,6 +30,16 @@ export const addOrUpdateQuestion = async (dayNum, questionData) => {
     return fullData;
   } catch (error) {
     console.error(`Error adding/updating question for Day ${dayNum}:`, error);
+    throw error;
+  }
+};
+
+export const deleteQuestion = async (dayNum) => {
+  try {
+    const docRef = doc(db, QUESTIONS_COLLECTION, `q-${dayNum}`);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error(`Error deleting question for Day ${dayNum}:`, error);
     throw error;
   }
 };

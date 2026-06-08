@@ -3,6 +3,7 @@
 
 import { db as firestoreDb } from '../firebaseConfig';
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { getDefaultSystemConfig } from './eventConfig';
 
 const seedQuestions = [
   {
@@ -214,11 +215,8 @@ export async function seedFirestoreIfEmpty() {
 
     console.log('[Seed] Empty Firestore detected — seeding initial data...');
 
-    // 1. Seed system config
-    await setDoc(doc(firestoreDb, 'systemConfig', 'main'), {
-      currentDay: 12,
-      simulatedTime: new Date().toISOString()
-    });
+    // 1. Seed system config (must match completionService path: system/config)
+    await setDoc(doc(firestoreDb, 'system', 'config'), getDefaultSystemConfig());
     console.log('[Seed] ✓ System config created');
 
     // 2. Seed questions

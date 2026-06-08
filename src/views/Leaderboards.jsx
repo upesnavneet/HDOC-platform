@@ -5,7 +5,7 @@ export default function Leaderboards() {
   const { db } = useApp();
   const [activeTab, setActiveTab] = useState('overall'); // 'coding', 'debugging', 'overall'
 
-  const currentDay = db.currentDay;
+  const currentDay = Number(db.currentDay) || 1;
   const currentWeek = Math.ceil(currentDay / 7);
   const participants = db.users.filter(u => u.role === 'participant');
 
@@ -18,7 +18,7 @@ export default function Leaderboards() {
     const data = participants.map(p => {
       // Sum marks for user submissions in the current week range
       const weeklySubs = db.submissions.filter(
-        s => s.userId === p.id && s.day >= startDayOfWeek && s.day <= endDayOfWeek && (s.status === 'Submitted' || s.status === 'Late')
+        (s) => (s.userId === p.id || s.userId === p.uid) && s.day >= startDayOfWeek && s.day <= endDayOfWeek && (s.status === 'Submitted' || s.status === 'Late')
       );
       const score = weeklySubs.reduce((acc, curr) => acc + (curr.marks || 0), 0);
       const solvedCount = weeklySubs.length;
@@ -45,8 +45,8 @@ export default function Leaderboards() {
       let score = 0;
       let submitted = false;
 
-      if (currentWeekChallenge) {
-        const sub = currentWeekChallenge.submissions.find(s => s.userId === p.id);
+      if (currentWeekChallenge?.submissions) {
+        const sub = currentWeekChallenge.submissions.find((s) => s.userId === p.id || s.userId === p.uid);
         if (sub) {
           score = sub.score || 0;
           submitted = true;

@@ -49,6 +49,7 @@ export default function ScrambledText({ text, speed = 30, delay = 0, triggerOnHo
 
   return (
     <span
+      className="scrambled-text"
       onMouseEnter={triggerOnHover ? startScramble : undefined}
       style={{ cursor: triggerOnHover ? 'pointer' : 'default', display: 'inline-block' }}
     >

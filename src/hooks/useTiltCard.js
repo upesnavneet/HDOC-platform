@@ -31,17 +31,17 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
       background: `
         radial-gradient(
           ellipse 60% 50% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
-          rgba(0,0,0,0.32) 0%,
-          rgba(0,0,0,0.10) 55%,
+          rgba(8, 6, 22, 0.45) 0%,
+          rgba(26, 25, 83, 0.2) 55%,
           transparent     100%
         ),
-        rgba(35, 47, 114, 0.52)
+        rgba(35, 47, 114, 0.58)
       `,
       boxShadow: [
-        `0 0 0 1px rgba(54, 173, 163, 0.10)`,
-        `0 12px 36px rgba(0,0,0,0.50)`,
-        `inset ${sx}px ${sy}px ${depth}px rgba(0,0,0,0.38)`,
-        `inset ${(-cx * 10).toFixed(1)}px ${(-cy * 7).toFixed(1)}px 10px rgba(255,255,255,0.03)`,
+        `0 0 0 1px rgba(54, 173, 163, 0.12)`,
+        `0 12px 36px rgba(8, 6, 22, 0.55)`,
+        `inset ${sx}px ${sy}px ${depth}px rgba(8, 6, 22, 0.42)`,
+        `inset ${(-cx * 10).toFixed(1)}px ${(-cy * 7).toFixed(1)}px 10px rgba(54, 173, 163, 0.04)`,
       ].join(', '),
       zIndex: 2,
     });

@@ -64,7 +64,7 @@ export const getDebuggingChallenges = async () => {
 
 export const addOrUpdateDebuggingChallenge = async (weekNum, challengeData) => {
   try {
-    const docId = `debug-${Date.now()}`; // Or debug-${weekNum} to overwrite week
+    const docId = `week-${weekNum}`;
     const docRef = doc(db, DEBUGGING_CHALLENGES_COLLECTION, docId);
     const fullData = {
       id: docId,

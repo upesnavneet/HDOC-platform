@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Auth from './views/Auth';
 import Dashboard from './views/Dashboard';
@@ -90,12 +91,14 @@ export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
   return (
-    <AppProvider>
-      {showIntro ? (
-        <IntroSplash onComplete={() => setShowIntro(false)} />
-      ) : (
-        <MainAppContent />
-      )}
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        {showIntro ? (
+          <IntroSplash onComplete={() => setShowIntro(false)} />
+        ) : (
+          <MainAppContent />
+        )}
+      </AppProvider>
+    </AuthProvider>
   );
 }

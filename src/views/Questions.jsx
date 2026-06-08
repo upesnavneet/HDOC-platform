@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { formatSimulatedDate } from '../context/db';
+import { formatEventDate } from '../utils/dateFormat';
 
 export default function Questions() {
   const { db } = useApp();
@@ -23,8 +23,8 @@ export default function Questions() {
   return (
     <div className="questions-container">
       {/* Simulation Info */}
-      <div className="simulation-time-bar">
-        <span>Simulated Time: <strong>{formatSimulatedDate(db.simulatedTime)}</strong></span>
+      <div className="event-time-bar">
+        <span>Event Date: <strong>{formatEventDate(db.simulatedTime)}</strong></span>
         <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
       </div>
 
@@ -110,7 +110,7 @@ export default function Questions() {
                   <h3>{selectedQuestion.titleLc}</h3>
                   <p className="problem-text">{selectedQuestion.descLc}</p>
                   <a href={selectedQuestion.linkLc} target="_blank" rel="noreferrer" className="open-problem-btn">
-                    Solve on LeetCode &nearr;
+                    Solve on LeetCode
                   </a>
                 </div>
 

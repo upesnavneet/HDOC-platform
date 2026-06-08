@@ -1,4 +1,39 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+
+function buildNavLinks(currentUser) {
+  if (!currentUser) {
+    return [{ view: 'leaderboards', label: 'Leaderboards' }];
+  }
+
+  const links = [];
+
+  if (currentUser.role === 'participant') {
+    links.push(
+      { view: 'dashboard', label: 'Dashboard' },
+      { view: 'questions', label: 'Daily Challenges' },
+      { view: 'debugging', label: 'Sunday Debug' },
+      { view: 'profile', label: 'My Profile' }
+    );
+  }
+
+  if (currentUser.role === 'admin') {
+    links.push({
+      view: 'coordinator',
+      label: 'Coordinator Dashboard',
+      admin: true,
+    });
+  }
+
+  links.push({ view: 'leaderboards', label: 'Leaderboards' });
+  return links;
+}
+
+function isNavActive(activeView, view) {
+  if (view === 'coordinator') {
+    return activeView === 'coordinator' || activeView === 'admin';
+  }
+  return activeView === view;
+}
 
 export default function Navbar({
   activeView,
@@ -8,10 +43,24 @@ export default function Navbar({
 }) {
   const navbarRef = useRef(null);
   const [navbarStyle, setNavbarStyle] = useState({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = useMemo(() => buildNavLinks(currentUser), [currentUser]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [currentUser, activeView]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const handleNavbarMouseMove = (e) => {
     const navbar = navbarRef.current;
-    if (!navbar) return;
+    if (!navbar || window.innerWidth <= 900) return;
     const rect = navbar.getBoundingClientRect();
     const nx = (e.clientX - rect.left) / rect.width;
     const ny = (e.clientY - rect.top) / rect.height;
@@ -24,17 +73,17 @@ export default function Navbar({
     setNavbarStyle({
       background: `
         radial-gradient(
-          ellipse 55% 40% at ${(nx*100).toFixed(1)}% ${(ny*100).toFixed(1)}%,
-          rgba(0,0,0,0.38) 0%,
-          rgba(0,0,0,0.10) 55%,
+          ellipse 55% 40% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
+          rgba(8, 6, 22, 0.45) 0%,
+          rgba(26, 25, 83, 0.15) 55%,
           transparent     100%
         ),
         rgba(35, 47, 114, 0.55)
       `,
       boxShadow: [
         `0 0 0 1px rgba(54, 173, 163, 0.08)`,
-        `inset ${sx}px ${sy}px ${depth}px rgba(0,0,0,0.45)`,
-        `inset ${(-cx*12).toFixed(1)}px ${(-cy*8).toFixed(1)}px 12px rgba(255,255,255,0.03)`,
+        `inset ${sx}px ${sy}px ${depth}px rgba(8, 6, 22, 0.42)`,
+        `inset ${(-cx * 12).toFixed(1)}px ${(-cy * 8).toFixed(1)}px 12px rgba(54, 173, 163, 0.03)`,
       ].join(', '),
     });
   };
@@ -45,128 +94,68 @@ export default function Navbar({
 
   const handleNavClick = (view) => {
     setActiveView(view);
+    setMobileMenuOpen(false);
   };
 
-  return (
-    <header
-      ref={navbarRef}
-      className="navbar-container"
-      onMouseMove={handleNavbarMouseMove}
-      onMouseLeave={handleNavbarMouseLeave}
-      style={navbarStyle}
+  const defaultView = currentUser
+    ? currentUser.role === 'admin'
+      ? 'coordinator'
+      : 'dashboard'
+    : 'auth';
+
+  const renderNavButton = (link, className = 'nav-item') => (
+    <button
+      key={link.view}
+      type="button"
+      className={`${className} ${link.admin ? 'admin-tab' : ''} ${
+        isNavActive(activeView, link.view) ? 'active' : ''
+      }`}
+      onClick={() => handleNavClick(link.view)}
     >
-      {/* Logo & tagline */}
-      <div
-        className="navbar-brand-block"
-        onClick={() => handleNavClick(currentUser ? (currentUser.role === 'admin' ? 'coordinator' : 'dashboard') : 'auth')}
+      {link.label}
+    </button>
+  );
+
+  return (
+    <>
+      <header
+        ref={navbarRef}
+        className="navbar-container"
+        onMouseMove={handleNavbarMouseMove}
+        onMouseLeave={handleNavbarMouseLeave}
+        style={navbarStyle}
       >
-        <div className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img
-            src="/logo.png"
-            alt="UPES ACM"
-            style={{ height: "50px", width: "auto", cursor: "pointer" }}
-          />
-          <img
-            src="/favicon2.png"
-            alt="UPES ACM-W"
-            style={{ height: "45px", width: "auto", cursor: "pointer" }}
-          />
+        <div
+          className="navbar-brand-block"
+          onClick={() => handleNavClick(defaultView)}
+        >
+          <div className="navbar-logo">
+            <img src="/logo.png" alt="UPES ACM" className="navbar-logo-img" />
+            <img src="/favicon2.png" alt="UPES ACM-W" className="navbar-logo-img secondary" />
+          </div>
+          <div className="navbar-tagline">
+            <span className="navbar-event-name">#100DaysOfCode</span>
+            <span className="navbar-motto">Advancing Computing as a Science &amp; Profession</span>
+          </div>
         </div>
-        <div className="navbar-tagline">
-          <span className="navbar-event-name">#100DaysOfCode</span>
-          <span className="navbar-motto">Advancing Computing as a Science &amp; Profession</span>
-        </div>
-      </div>
 
-      {/* If NOT logged in */}
-      {!currentUser ? (
-        <div className="navbar-actions" style={{ marginLeft: 'auto' }}>
-          <button
-            className={`nav-item ${activeView === 'leaderboards' ? 'active' : ''}`}
-            onClick={() => handleNavClick('leaderboards')}
-          >
-            Leaderboards
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* Navigation */}
-          <nav className="navbar-links">
-            {currentUser.role === "participant" && (
-              <>
-                <button
-                  className={`nav-item ${
-                    activeView === "dashboard" ? "active" : ""
-                  }`}
-                  onClick={() => handleNavClick("dashboard")}
-                >
-                  Dashboard
-                </button>
+        <nav className="navbar-links navbar-links-desktop" aria-label="Main navigation">
+          {navLinks.map((link) => renderNavButton(link))}
+        </nav>
 
-                <button
-                  className={`nav-item ${
-                    activeView === "questions" ? "active" : ""
-                  }`}
-                  onClick={() => handleNavClick("questions")}
-                >
-                  Daily Challenges
-                </button>
-
-                <button
-                  className={`nav-item ${
-                    activeView === "debugging" ? "active" : ""
-                  }`}
-                  onClick={() => handleNavClick("debugging")}
-                >
-                  Sunday Debug
-                </button>
-
-                <button
-                  className={`nav-item ${
-                    activeView === "profile" ? "active" : ""
-                  }`}
-                  onClick={() => handleNavClick("profile")}
-                >
-                  My Profile
-                </button>
-              </>
-            )}
-
-            {currentUser.role === "admin" && (
-              <button
-                className={`nav-item admin-tab ${
-                  activeView === "coordinator" || activeView === "admin" ? "active" : ""
-                }`}
-                onClick={() => handleNavClick("coordinator")}
-              >
-                Coordinator Dashboard
-              </button>
-            )}
-
-            <button
-              className={`nav-item ${
-                activeView === "leaderboards" ? "active" : ""
-              }`}
-              onClick={() => handleNavClick("leaderboards")}
-            >
-              Leaderboards
-            </button>
-          </nav>
-
-          {/* User Profile pinned top-right */}
-          <div className="navbar-actions">
-            <div className="user-profile-badge">
+        <div className="navbar-actions">
+          {currentUser && (
+            <div className="user-profile-badge navbar-profile-desktop">
               <div
                 className="user-avatar-text"
                 onClick={() =>
-                  currentUser.role === "participant" &&
-                  handleNavClick("profile")
+                  currentUser.role === 'participant' && handleNavClick('profile')
                 }
               >
                 {currentUser.name
-                  .split(" ")
+                  .split(' ')
                   .map((n) => n[0])
-                  .join("")
+                  .join('')
                   .slice(0, 2)
                   .toUpperCase()}
               </div>
@@ -175,31 +164,22 @@ export default function Navbar({
                 <span
                   className="user-name-text"
                   onClick={() =>
-                    currentUser.role === "participant" &&
-                    handleNavClick("profile")
+                    currentUser.role === 'participant' && handleNavClick('profile')
                   }
                   style={{
-                    cursor:
-                      currentUser.role === "participant"
-                        ? "pointer"
-                        : "default",
+                    cursor: currentUser.role === 'participant' ? 'pointer' : 'default',
                   }}
                 >
                   {currentUser.name}
                 </span>
-
                 <span className={`user-role-tag ${currentUser.role}`}>
-                  {currentUser.role === "admin"
-                    ? "Coordinator"
+                  {currentUser.role === 'admin'
+                    ? 'Coordinator'
                     : `Rank #${currentUser.overallRank}`}
                 </span>
               </div>
 
-              <button
-                className="logout-btn"
-                onClick={logout}
-                title="Sign Out"
-              >
+              <button className="logout-btn" onClick={logout} title="Sign Out" type="button">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -211,15 +191,70 @@ export default function Navbar({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
               </button>
             </div>
+          )}
+
+          <button
+            type="button"
+            className={`navbar-hamburger ${mobileMenuOpen ? 'is-open' : ''}`}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            <span className="hamburger-bar" />
+            <span className="hamburger-bar" />
+            <span className="hamburger-bar" />
+          </button>
+        </div>
+      </header>
+
+      <div
+        className={`navbar-mobile-backdrop ${mobileMenuOpen ? 'is-open' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      <nav
+        className={`navbar-mobile-drawer ${mobileMenuOpen ? 'is-open' : ''}`}
+        aria-label="Mobile navigation"
+        aria-hidden={!mobileMenuOpen}
+      >
+        {currentUser && (
+          <div className="navbar-mobile-user">
+            <div className="user-avatar-text">
+              {currentUser.name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase()}
+            </div>
+            <div className="navbar-mobile-user-info">
+              <span className="user-name-text">{currentUser.name}</span>
+              <span className={`user-role-tag ${currentUser.role}`}>
+                {currentUser.role === 'admin'
+                  ? 'Coordinator'
+                  : `Rank #${currentUser.overallRank}`}
+              </span>
+            </div>
           </div>
-        </>
-      )}
-    </header>
+        )}
+
+        <div className="navbar-mobile-links">
+          {navLinks.map((link) => renderNavButton(link, 'nav-item nav-item-mobile'))}
+        </div>
+
+        {currentUser && (
+          <button type="button" className="navbar-mobile-logout" onClick={logout}>
+            Sign Out
+          </button>
+        )}
+      </nav>
+    </>
   );
 }

@@ -83,7 +83,7 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
   };
 
   return (
-    <div className="streak-grid-wrapper streak-grid-compact glow-card" {...tiltProps}>
+    <div className="streak-grid-wrapper streak-grid-compact press-card" {...tiltProps}>
       <div className="journey-header">
         <span className="journey-label">Your Journey</span>
         <div className="journey-main">
@@ -121,7 +121,7 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
             <div className="previous-day-links">
               {prevQuestion.linkLc && (
                 <a href={prevQuestion.linkLc} target="_blank" rel="noreferrer" className="previous-day-link">
-                  LeetCode Problem &nearr;
+                  LeetCode Problem
                 </a>
               )}
             </div>

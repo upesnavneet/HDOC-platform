@@ -1,42 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import StreakGrid from '../components/StreakGrid';
-import { formatSimulatedDate } from '../context/db';
+import { formatEventDate } from '../utils/dateFormat';
 import { useTiltCard } from '../hooks/useTiltCard';
+import {
+  countLinesWritten,
+  calculateFinishRate,
+  countCompletedWeeks,
+} from '../services/statsService';
+import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
-
-function completedDaysEstimate(subs, currentDay) {
-  let count = 0;
-  for (let d = 1; d < currentDay; d++) {
-    const daySubs = subs.filter(s => s.day === d);
-    if (daySubs.length >= 2 && daySubs.every(s => s.status === 'Submitted' || s.status === 'Late')) {
-      count++;
-    }
-  }
-  return count;
-}
-
-// ── Tiltable card wrapper ──────────────────────────────────────────────────
-function TiltCard({ className, children, maxTilt = 8 }) {
-  const { ref, style, onMouseMove, onMouseLeave } = useTiltCard(maxTilt);
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={style}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-    >
-      {children}
-    </div>
-  );
-}
 
 export default function Dashboard({ setActiveView }) {
   const { db, currentUser, submitQuestionCode } = useApp();
-  if (!currentUser) {
-    return <div className="loading">Loading...</div>;
-  }
   const [timeLeft, setTimeLeft] = useState('');
 
   // Form states
@@ -53,8 +29,8 @@ export default function Dashboard({ setActiveView }) {
   const questions = db.questions;
   const submissions = db.submissions;
 
-  // Filter user submissions
-  const userSubs = submissions.filter(s => s.userId === currentUser.id);
+  const userId = currentUser?.id || currentUser?.uid;
+  const userSubs = userId ? submissions.filter((s) => s.userId === userId) : [];
 
   // Today's questions
   const todayQs = questions.filter(q => q.day === currentDay);
@@ -108,14 +84,14 @@ export default function Dashboard({ setActiveView }) {
     return () => clearInterval(interval);
   }, [db.simulatedTime, currentDay]);
 
-  const handleLcSubmit = (e) => {
+  const handleLcSubmit = async (e) => {
     e.preventDefault();
     setMsgLc('');
     if (!lcCode.trim()) {
       setMsgLc('Solution code is required.');
       return;
     }
-    const res = submitQuestionCode(currentDay, 'leetcode', lcCode, lcLanguage);
+    const res = await submitQuestionCode(currentDay, 'leetcode', lcCode, lcLanguage);
     if (res.success) {
       setMsgLc(`Successfully submitted (${res.status})!`);
     } else {
@@ -123,14 +99,14 @@ export default function Dashboard({ setActiveView }) {
     }
   };
 
-  const handleCustomSubmit = (e) => {
+  const handleCustomSubmit = async (e) => {
     e.preventDefault();
     setMsgCustom('');
     if (!customCode.trim()) {
       setMsgCustom('Solution code is required.');
       return;
     }
-    const res = submitQuestionCode(currentDay, 'custom', customCode, customLanguage);
+    const res = await submitQuestionCode(currentDay, 'custom', customCode, customLanguage);
     if (res.success) {
       setMsgCustom(`Successfully submitted (${res.status})!`);
     } else {
@@ -139,37 +115,48 @@ export default function Dashboard({ setActiveView }) {
   };
 
   // Find rank preview
-  const codingRank = db.users
-    .filter(u => u.role === 'participant')
-    .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
-    .findIndex(u => u.id === currentUser.id) + 1;
+  const codingRank = userId
+    ? db.users
+        .filter((u) => u.role === 'participant')
+        .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
+        .findIndex((u) => u.id === userId) + 1
+    : 0;
 
-  const debugRank = db.users
-    .filter(u => u.role === 'participant')
-    .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
-    .findIndex(u => u.id === currentUser.id) + 1;
+  const debugRank = userId
+    ? db.users
+        .filter((u) => u.role === 'participant')
+        .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
+        .findIndex((u) => u.id === userId) + 1
+    : 0;
 
-  const overallRank = currentUser.overallRank;
+  const overallRank = currentUser?.overallRank ?? '-';
 
-  // Tilt for the streak grid wrapper
+  const linesWritten = countLinesWritten(userSubs);
+  const finishRate = calculateFinishRate(userSubs, currentDay);
+  const completedWeeks = countCompletedWeeks(userSubs, currentDay);
+
   const streakTilt = useTiltCard(5);
+
+  if (!currentUser) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <div className="dashboard-container">
-      <div className="simulation-time-bar">
-        <span>Simulated System Date: <strong>{formatSimulatedDate(db.simulatedTime)}</strong></span>
+      <div className="event-time-bar">
+        <span>Event Date: <strong>{formatEventDate(db.simulatedTime)}</strong></span>
         <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
       </div>
 
       {/* Hero + Journey — shown first so content stays visible */}
       <section className="dashboard-hero-split">
-        <div className="dashboard-hero-left glow-card hero-panel-black">
+        <TiltCard className="dashboard-hero-left press-card hero-panel-deep" maxTilt={6}>
           <span className="hero-batch-badge">BATCH 2026</span>
           <h1 className="hero-headline">
-            <span className="hero-orange"><ScrambledText text="From" /></span>{' '}
-            <span className="hero-green"><ScrambledText text="Bugs" /></span>{' '}
-            <span className="hero-accent"><ScrambledText text="to" /></span>{' '}
-            <span className="hero-orange"><ScrambledText text="Brilliance." /></span>
+            <span className="hero-orange"><ScrambledText text="From" triggerOnHover={false} /></span>{' '}
+            <span className="hero-green"><ScrambledText text="Bugs" triggerOnHover={false} /></span>{' '}
+            <span className="hero-accent"><ScrambledText text="to" triggerOnHover={false} /></span>{' '}
+            <span className="hero-orange"><ScrambledText text="Brilliance." triggerOnHover={false} /></span>
           </h1>
           <p className="hero-desc">
             One commit. Every day. For 100 days straight. UPES ACM&apos;s flagship coding challenge —
@@ -189,19 +176,19 @@ export default function Dashboard({ setActiveView }) {
               <span className="hero-stat-label">Active Now</span>
             </div>
             <div className="hero-stat">
-              <span className="hero-stat-num">{userSubs.length * 120}</span>
+              <span className="hero-stat-num">{linesWritten.toLocaleString()}</span>
               <span className="hero-stat-label">Lines Written</span>
             </div>
             <div className="hero-stat">
-              <span className="hero-stat-num">{Math.round((completedDaysEstimate(userSubs, currentDay) / Math.max(currentDay - 1, 1)) * 100) || 0}%</span>
+              <span className="hero-stat-num">{finishRate}%</span>
               <span className="hero-stat-label">Finish Rate</span>
             </div>
             <div className="hero-stat">
-              <span className="hero-stat-num">6</span>
+              <span className="hero-stat-num">{completedWeeks}</span>
               <span className="hero-stat-label">Tracks</span>
             </div>
           </div>
-        </div>
+        </TiltCard>
 
         <div className="dashboard-hero-right">
           <StreakGrid
@@ -219,7 +206,7 @@ export default function Dashboard({ setActiveView }) {
       </section>
 
       <section className="overview-stats-section">
-        <TiltCard className="stat-card glow-card primary" maxTilt={7}>
+        <TiltCard className="stat-card press-card primary" maxTilt={7}>
           <div className="stat-label">Event Progress</div>
           <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
           <div className="stat-progress-bar-wrapper">
@@ -228,7 +215,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">June 2026 Season</span>
         </TiltCard>
 
-        <TiltCard className="stat-card glow-card" maxTilt={7}>
+        <TiltCard className="stat-card press-card" maxTilt={7}>
           <div className="stat-label">LeetCode Streak</div>
           <div className="stat-value-row">
             <span className="stat-value">{currentUser.leetCodeStreak}</span>
@@ -243,7 +230,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">Manually updated by admin</span>
         </TiltCard>
 
-        <TiltCard className="stat-card glow-card" maxTilt={7}>
+        <TiltCard className="stat-card press-card" maxTilt={7}>
           <div className="stat-label">GitHub Push Streak</div>
           <div className="stat-value-row">
             <span className="stat-value">{currentUser.gitHubStreak}</span>
@@ -258,7 +245,7 @@ export default function Dashboard({ setActiveView }) {
           <span className="stat-footnote">Calculated from solutions</span>
         </TiltCard>
 
-        <TiltCard className="stat-card glow-card ranking" maxTilt={7}>
+        <TiltCard className="stat-card press-card ranking" maxTilt={7}>
           <div className="stat-label">Overall Standing</div>
           <div className="stat-value">#{overallRank}</div>
           <div className="ranks-sub-row">
@@ -279,9 +266,11 @@ export default function Dashboard({ setActiveView }) {
           </div>
         </div>
 
-        <div className="challenge-cards-grid challenge-cards-scroll-stack">
+        <p className="challenge-cards-scroll-hint">Swipe horizontally to switch between challenges</p>
+
+        <div className="challenge-cards-scroll-stack">
           {/* Challenge 1: LeetCode */}
-          <TiltCard className="challenge-card glow-card" maxTilt={6}>
+          <TiltCard className="challenge-card press-card" maxTilt={6}>
             <div className="card-top-tag leetcode">LeetCode Challenge</div>
             {todayLcQ ? (
               <div className="challenge-details">
@@ -289,7 +278,7 @@ export default function Dashboard({ setActiveView }) {
                 <p className="challenge-desc">{todayLcQ.descLc}</p>
                 <div className="challenge-meta">
                   <a href={todayLcQ.linkLc} target="_blank" rel="noreferrer" className="external-problem-link">
-                    Open LeetCode Page &nearr;
+                    Open LeetCode Page
                   </a>
                 </div>
 
@@ -333,7 +322,7 @@ export default function Dashboard({ setActiveView }) {
           </TiltCard>
 
           {/* Challenge 2: Custom DSA */}
-          <TiltCard className="challenge-card glow-card" maxTilt={6}>
+          <TiltCard className="challenge-card press-card" maxTilt={6}>
             <div className="card-top-tag custom-dsa">Custom DSA Challenge</div>
             {todayCustomQ ? (
               <div className="challenge-details">
