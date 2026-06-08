@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Auth from './views/Auth';
 import Dashboard from './views/Dashboard';
@@ -9,50 +7,66 @@ import Questions from './views/Questions';
 import Debugging from './views/Debugging';
 import Leaderboards from './views/Leaderboards';
 import Profile from './views/Profile';
-import AdminPanel from './views/AdminPanel';
+import CoordinatorDashboard from './views/CoordinatorDashboard';
 import DistortionBackground from "./components/DistortionBackground";
-
-function PrivateRoute({ children, adminOnly = false }) {
-  const { currentUser, loading } = useAuth();
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-  if (!currentUser) {
-    return <Navigate to="/login" replace />;
-  }
-  if (adminOnly && currentUser.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
-  }
-  return children;
-}
+import IntroSplash from './components/IntroSplash';
+import AppFooter from './components/AppFooter';
+import { motion } from 'framer-motion';
 
 function MainAppContent() {
   const { currentUser, logout } = useApp();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [activeView, setActiveView] = useState('auth');
 
-  // Dynamically derive activeView from location.pathname for Navbar highlight
-  const path = location.pathname;
-  let activeView = 'auth';
-  if (path === '/dashboard') activeView = 'dashboard';
-  else if (path === '/questions') activeView = 'questions';
-  else if (path === '/debugging') activeView = 'debugging';
-  else if (path === '/leaderboards') activeView = 'leaderboards';
-  else if (path === '/profile') activeView = 'profile';
-  else if (path === '/admin') activeView = 'admin';
+  // Enforce session routes or defaults
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.role === 'admin') {
+        setActiveView('coordinator');
+      } else {
+        // If participant, default to dashboard
+        if (activeView === 'auth') {
+          setActiveView('dashboard');
+        }
+      }
+    } else {
+      // If logged out and trying to access private tabs, redirect to auth
+      const privateViews = ['dashboard', 'questions', 'debugging', 'profile', 'coordinator', 'admin'];
+      if (privateViews.includes(activeView)) {
+        setActiveView('auth');
+      }
+    }
+  }, [currentUser]);
 
-  const setActiveView = (view) => {
-    if (view === 'auth') navigate('/login');
-    else if (view === 'dashboard') navigate('/dashboard');
-    else if (view === 'questions') navigate('/questions');
-    else if (view === 'debugging') navigate('/debugging');
-    else if (view === 'leaderboards') navigate('/leaderboards');
-    else if (view === 'profile') navigate('/profile');
-    else if (view === 'admin') navigate('/admin');
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'auth':
+        return <Auth setActiveView={setActiveView} />;
+      case 'dashboard':
+        return <Dashboard setActiveView={setActiveView} />;
+      case 'questions':
+        return <Questions />;
+      case 'debugging':
+        return <Debugging />;
+      case 'leaderboards':
+        return <Leaderboards />;
+      case 'profile':
+        return <Profile />;
+      case 'coordinator':
+        return currentUser?.role === 'admin' ? <CoordinatorDashboard /> : <Auth setActiveView={setActiveView} />;
+      case 'admin':
+        return currentUser?.role === 'admin' ? <CoordinatorDashboard /> : <Auth setActiveView={setActiveView} />;
+      default:
+        return <Auth setActiveView={setActiveView} />;
+    }
   };
 
   return (
-    <div className="app-wrapper">
+    <motion.div 
+      className="app-wrapper"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, ease: 'easeOut' }}
+    >
       {/* Global liquid distortion background — always visible */}
       <DistortionBackground />
 
@@ -64,72 +78,24 @@ function MainAppContent() {
       />
       
       <main className="main-content-area">
-        <Routes>
-          <Route path="/login" element={
-            currentUser ? (
-              <Navigate to={currentUser.role === 'admin' ? '/admin' : '/dashboard'} replace />
-            ) : (
-              <Auth setActiveView={setActiveView} />
-            )
-          } />
-          <Route path="/register" element={
-            currentUser ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <Auth setActiveView={setActiveView} />
-            )
-          } />
-          <Route path="/dashboard" element={
-            <PrivateRoute>
-              <Dashboard setActiveView={setActiveView} />
-            </PrivateRoute>
-          } />
-          <Route path="/questions" element={
-            <PrivateRoute>
-              <Questions />
-            </PrivateRoute>
-          } />
-          <Route path="/debugging" element={
-            <PrivateRoute>
-              <Debugging />
-            </PrivateRoute>
-          } />
-          <Route path="/leaderboards" element={
-            <Leaderboards />
-          } />
-          <Route path="/profile" element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          } />
-          <Route path="/admin" element={
-            <PrivateRoute adminOnly>
-              <AdminPanel />
-            </PrivateRoute>
-          } />
-          <Route path="/" element={
-            <Navigate to={currentUser ? (currentUser.role === 'admin' ? '/admin' : '/dashboard') : '/login'} replace />
-          } />
-          <Route path="*" element={
-            <Navigate to={currentUser ? (currentUser.role === 'admin' ? '/admin' : '/dashboard') : '/login'} replace />
-          } />
-        </Routes>
+        {renderActiveView()}
       </main>
 
-      <footer className="footer-container">
-        <p>© 2026 Association for Computing Machinery (ACM) Student Chapter. All Rights Reserved.</p>
-        <p>Developed for the 100 Days of Code Chapter Challenge Season.</p>
-      </footer>
-    </div>
+      <AppFooter />
+    </motion.div>
   );
 }
 
 export default function App() {
+  const [showIntro, setShowIntro] = useState(true);
+
   return (
-    <AuthProvider>
-      <AppProvider>
+    <AppProvider>
+      {showIntro ? (
+        <IntroSplash onComplete={() => setShowIntro(false)} />
+      ) : (
         <MainAppContent />
-      </AppProvider>
-    </AuthProvider>
+      )}
+    </AppProvider>
   );
 }
