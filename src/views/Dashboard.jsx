@@ -260,7 +260,7 @@ export default function Dashboard({ setActiveView }) {
       {/* Today's Coding Challenges Section */}
       <section id="todays-challenges" className="todays-challenges-section">
         <div className="section-header-row">
-          <h2>Today's Challenges — Day {currentDay}</h2>
+          <h2>Today's Challenges - Day {currentDay}</h2>
           <div className={`countdown-timer ${timeLeft === 'Deadline Passed' ? 'expired' : ''}`}>
             Submission Window closes in: <strong>{timeLeft}</strong>
           </div>

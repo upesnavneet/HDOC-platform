@@ -30,7 +30,7 @@ export default function Questions() {
 
       <div className="page-header">
         <h1>Challenge Archive</h1>
-        <p className="subtitle">Review previous daily coding questions and reference solutions — weekends include study handouts.</p>
+        <p className="subtitle">Review previous daily coding questions and reference solutions - weekends include study handouts.</p>
       </div>
 
       {/* Main Area: Split layout (List on left, details on right) */}

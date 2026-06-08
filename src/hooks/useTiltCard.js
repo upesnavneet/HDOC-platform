@@ -38,10 +38,10 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
         rgba(35, 47, 114, 0.58)
       `,
       boxShadow: [
-        `0 0 0 1px rgba(54, 173, 163, 0.12)`,
-        `0 12px 36px rgba(8, 6, 22, 0.55)`,
-        `inset ${sx}px ${sy}px ${depth}px rgba(8, 6, 22, 0.42)`,
-        `inset ${(-cx * 10).toFixed(1)}px ${(-cy * 7).toFixed(1)}px 10px rgba(54, 173, 163, 0.04)`,
+        `0 0 0 1px rgba(54, 173, 163, 0.05)`,
+        `0 8px 24px rgba(8, 6, 22, 0.4)`,
+        `inset ${sx}px ${sy}px ${depth}px rgba(8, 6, 22, 0.38)`,
+        `inset ${(-cx * 10).toFixed(1)}px ${(-cy * 7).toFixed(1)}px 8px rgba(54, 173, 163, 0.015)`,
       ].join(', '),
       zIndex: 2,
     });

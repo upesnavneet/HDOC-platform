@@ -710,7 +710,7 @@ export default function CoordinatorDashboard() {
 
         {activeTab === 'debugging' && (
           <div className="coord-panel admin-grading-panel">
-            <h3>Sunday Debugging — Grade &amp; Edit Scores</h3>
+            <h3>Sunday Debugging - Grade &amp; Edit Scores</h3>
             <p className="panel-desc">Score debugging submissions out of 20. Changes sync to the leaderboard immediately.</p>
             {debugGradeMsg && <div className="feedback-alert info">{debugGradeMsg}</div>}
 

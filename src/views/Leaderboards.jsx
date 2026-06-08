@@ -92,7 +92,6 @@ export default function Leaderboards() {
     <div className="leaderboards-container">
       <div className="page-header">
         <h1>ACM 100 Days of Code Standings</h1>
-        <p className="subtitle">Real-time standings for ACM Chapter coding participants. Top 10 from the overall board enter the Grand Finale.</p>
       </div>
 
       {/* Leaderboard Tabs */}
@@ -115,19 +114,6 @@ export default function Leaderboards() {
         >
           Weekly Debugging Leaderboard (Week {currentWeek})
         </button>
-      </div>
-
-      {/* Info panel explaining current week scope */}
-      <div className="week-scope-info">
-        {activeTab === 'overall' && (
-          <span>Showing cumulative points across all 100 days of Coding Challenges and Sunday Debugging events.</span>
-        )}
-        {activeTab === 'coding' && (
-          <span>Currently tracking Week {currentWeek} (Days {startDayOfWeek} to {endDayOfWeek}). Resets at the start of next week.</span>
-        )}
-        {activeTab === 'debugging' && (
-          <span>Score listings for the Sunday Debugging timed event in Week {currentWeek}.</span>
-        )}
       </div>
 
       {/* Table Container */}

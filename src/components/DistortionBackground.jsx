@@ -108,8 +108,8 @@ export default function DistortionBackground() {
 
         vec3 base = mix(mix(col1, col2, mix1), mix(col3, col4, mix2), 0.5);
 
-        // ── cursor glow ───────────────────────────────────────────────
-        float glow = exp(-d * 12.0) * 0.05;
+        // ── cursor glow (very dim) ────────────────────────────────────
+        float glow = exp(-d * 14.0) * 0.012;
         base += vec3(0.211, 0.678, 0.639) * glow;
 
         // ── subtle grid / shimmer ─────────────────────────────────────
