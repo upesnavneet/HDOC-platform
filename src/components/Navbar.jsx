@@ -74,16 +74,14 @@ export default function Navbar({
       background: `
         radial-gradient(
           ellipse 55% 40% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
-          rgba(8, 6, 22, 0.45) 0%,
-          rgba(26, 25, 83, 0.15) 55%,
+          rgba(13, 11, 15, 0.45) 0%,
+          rgba(30, 24, 40, 0.15) 55%,
           transparent     100%
         ),
-        rgba(35, 47, 114, 0.55)
+        var(--bg-panel)
       `,
       boxShadow: [
-        `0 0 0 1px rgba(54, 173, 163, 0.08)`,
-        `inset ${sx}px ${sy}px ${depth}px rgba(8, 6, 22, 0.42)`,
-        `inset ${(-cx * 12).toFixed(1)}px ${(-cy * 8).toFixed(1)}px 12px rgba(54, 173, 163, 0.03)`,
+        `inset ${sx}px ${sy}px ${depth}px rgba(13, 11, 15, 0.42)`,
       ].join(', '),
     });
   };

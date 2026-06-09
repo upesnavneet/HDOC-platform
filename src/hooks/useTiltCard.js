@@ -26,22 +26,32 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
     const sy = (cy * 18 * shadowMul).toFixed(1);
     const depth = Math.round(32 * shadowMul);
 
+    const classes = card.className || '';
+    let baseBg = 'var(--bg-card)';
+    if (classes.includes('hero-panel-deep')) {
+      baseBg = 'linear-gradient(145deg, #1E1828 0%, #0D0B0F 100%)';
+    } else if (classes.includes('primary')) {
+      baseBg = 'rgba(54, 173, 163, 0.08)';
+    } else if (classes.includes('auth-card-wrapper')) {
+      baseBg = 'rgba(38, 31, 48, 0.72)';
+    } else if (classes.includes('rule-card')) {
+      baseBg = 'var(--bg-panel)';
+    }
+
     setStyle({
       transform: `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01,1.01,1.01)`,
       background: `
         radial-gradient(
           ellipse 60% 50% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
-          rgba(8, 6, 22, 0.45) 0%,
-          rgba(26, 25, 83, 0.2) 55%,
+          rgba(13, 11, 15, 0.45) 0%,
+          rgba(38, 31, 48, 0.20) 55%,
           transparent     100%
         ),
-        rgba(35, 47, 114, 0.58)
+        ${baseBg}
       `,
       boxShadow: [
-        `0 0 0 1px rgba(54, 173, 163, 0.05)`,
-        `0 8px 24px rgba(8, 6, 22, 0.4)`,
-        `inset ${sx}px ${sy}px ${depth}px rgba(8, 6, 22, 0.38)`,
-        `inset ${(-cx * 10).toFixed(1)}px ${(-cy * 7).toFixed(1)}px 8px rgba(54, 173, 163, 0.015)`,
+        `0 8px 24px rgba(13, 11, 15, 0.4)`,
+        `inset ${sx}px ${sy}px ${depth}px rgba(13, 11, 15, 0.38)`,
       ].join(', '),
       zIndex: 2,
     });

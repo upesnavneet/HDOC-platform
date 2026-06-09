@@ -2,14 +2,14 @@
 
 :root {
   /* Color system — custom palette */
-  --color-navy-deep: #121358;
-  --color-navy-mid: #232F72;
-  --color-navy-slate: #2F578A;
+  --color-navy-deep: #1A1520;
+  --color-navy-mid: #261F30;
+  --color-navy-slate: #322840;
   --color-teal: #36ADA3;
-  --color-electric: #2F2FE4;
-  --color-royal: #162E93;
-  --color-indigo: #1A1953;
-  --color-void: #080616;
+  --color-electric: #4A45B0;
+  --color-royal: #2D2870;
+  --color-indigo: #1E1828;
+  --color-void: #0D0B0F;
 
   --color-acm-blue: var(--color-teal);
   --color-dark-blue: var(--color-navy-deep);
@@ -23,11 +23,11 @@
   --color-purple: #7B68EE;
 
   --bg-deep: var(--color-void);
-  --bg-panel: rgba(26, 25, 83, 0.82);
-  --bg-card: rgba(35, 47, 114, 0.55);
+  --bg-panel: rgba(30, 24, 40, 0.82);
+  --bg-card: rgba(38, 31, 48, 0.55);
   --bg-card-hover: rgba(54, 173, 163, 0.15);
-  --bg-input: rgba(8, 6, 22, 0.65);
-  --border-subtle: rgba(54, 173, 163, 0.22);
+  --bg-input: rgba(13, 11, 15, 0.65);
+  --border-subtle: rgba(54, 173, 163, 0.20);
   --border-focus: var(--color-teal);
 
   --color-primary: var(--color-teal);
@@ -138,7 +138,7 @@ body {
 
 .press-card {
   box-shadow:
-    0 4px 16px rgba(8, 6, 22, 0.35),
+    0 4px 16px rgba(13, 11, 15, 0.35),
     0 0 0 1px rgba(54, 173, 163, 0.04);
   transition:
     box-shadow 0.12s ease,
@@ -319,7 +319,7 @@ button {
   height: 42px;
   padding: 0;
   border: 1px solid var(--border-subtle);
-  background: rgba(26, 25, 83, 0.55);
+  background: rgba(30, 24, 40, 0.55);
   border-radius: 0;
   flex-shrink: 0;
 }
@@ -348,7 +348,7 @@ button {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(8, 6, 22, 0.55);
+  background: rgba(13, 11, 15, 0.55);
   z-index: 98;
   opacity: 0;
   pointer-events: none;
@@ -368,7 +368,7 @@ button {
   width: min(88vw, 320px);
   height: 100vh;
   height: 100dvh;
-  background: rgba(26, 25, 83, 0.96);
+  background: rgba(30, 24, 40, 0.96);
   backdrop-filter: blur(22px) saturate(1.2);
   -webkit-backdrop-filter: blur(22px) saturate(1.2);
   border-left: 1px solid var(--border-subtle);
@@ -727,7 +727,7 @@ button {
 .auth-card-wrapper {
   position: relative;
   z-index: 2;
-  background: rgba(35, 47, 114, 0.72);
+  background: rgba(38, 31, 48, 0.72);
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
   border: 1px solid rgba(54, 173, 163, 0.22);
@@ -1211,7 +1211,7 @@ button {
 }
 
 .hero-panel-deep {
-  background: linear-gradient(145deg, var(--color-indigo) 0%, var(--color-void) 100%);
+  background: linear-gradient(145deg, #1E1828 0%, #0D0B0F 100%);
   border: 1px solid rgba(54, 173, 163, 0.18);
   color: #ffffff;
 }
@@ -1720,7 +1720,7 @@ button {
   z-index: 1;
   max-height: min(75vh, 720px);
   overflow-y: auto;
-  box-shadow: 0 16px 40px rgba(8, 6, 22, 0.45);
+  box-shadow: 0 16px 40px rgba(13, 11, 15, 0.45);
 }
 
 .challenge-cards-scroll-stack > *:last-child {
@@ -1759,7 +1759,7 @@ button {
     background 0.12s ease;
   will-change: transform, box-shadow, background;
   transform-style: preserve-3d;
-  box-shadow: 0 4px 16px rgba(8, 6, 22, 0.35);
+  box-shadow: 0 4px 16px rgba(13, 11, 15, 0.35);
 }
 
 .card-top-tag {
@@ -2637,8 +2637,8 @@ button {
 }
 
 .rank-badge.rank-1 { background-color: rgba(54, 173, 163, 0.15); color: var(--color-primary); border: 1px solid rgba(54, 173, 163, 0.3); }
-.rank-badge.rank-2 { background-color: rgba(47, 87, 138, 0.15); color: #fff; border: 1px solid var(--border-subtle); }
-.rank-badge.rank-3 { background-color: rgba(35, 47, 114, 0.2); color: #a5b8cf; border: 1px solid rgba(35, 47, 114, 0.4); }
+.rank-badge.rank-2 { background-color: rgba(50, 40, 64, 0.15); color: #fff; border: 1px solid var(--border-subtle); }
+.rank-badge.rank-3 { background-color: rgba(38, 31, 48, 0.2); color: #a5b8cf; border: 1px solid rgba(38, 31, 48, 0.4); }
 
 .top10-highlight {
   background-color: rgba(54, 173, 163, 0.01);
@@ -3370,7 +3370,7 @@ button {
   text-align: center;
   font-size: 0.75rem;
   color: var(--color-muted);
-  background: rgba(26, 25, 83, 0.42);
+  background: rgba(30, 24, 40, 0.42);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
   margin-top: auto;
@@ -3388,7 +3388,7 @@ button {
 
 .footer-btn {
   display: inline-block;
-  background: rgba(18, 19, 88, 0.45);
+  background: rgba(26, 21, 32, 0.45);
   border: 1px solid var(--border-subtle);
   color: var(--color-text) !important;
   font-weight: 600;
@@ -3663,7 +3663,7 @@ button {
   justify-content: center;
   gap: 0.35rem;
   padding: 0.85rem 0.75rem;
-  background: rgba(26, 25, 83, 0.55);
+  background: rgba(30, 24, 40, 0.55);
   border: 1px solid var(--border-subtle);
   border-radius: 0;
   color: var(--color-text);
