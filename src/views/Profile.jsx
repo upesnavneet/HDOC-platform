@@ -125,7 +125,7 @@ export default function Profile() {
                         {sub.code ? (
                           <details style={{ cursor: 'pointer' }}>
                             <summary style={{ color: 'var(--color-primary)', fontWeight: '600', outline: 'none' }}>
-                              Show Code ({sub.language ? sub.language.toUpperCase() : 'CPP'})
+                              Show Code
                             </summary>
                             <pre className="editor-block" style={{ maxHeight: '150px', maxWidth: '280px', overflow: 'auto', fontSize: '0.75rem', padding: '0.5rem', marginTop: '0.25rem', textAlign: 'left', margin: 0 }}>
                               <code>{sub.code}</code>

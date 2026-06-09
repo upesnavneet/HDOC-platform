@@ -117,7 +117,6 @@ export default function Debugging() {
     <div className="debugging-container">
       <div className="page-header">
         <h1>Weekly Debugging Challenges</h1>
-        <p className="subtitle">Every Sunday 21:00 hrs. Debug on-the-fly under a timed window.</p>
       </div>
 
       <TiltCard
@@ -205,12 +204,10 @@ export default function Debugging() {
                   <TiltCard className="rule-card" maxTilt={9}>
                     <span className="number">01</span>
                     <h4>Sundays Release</h4>
-                    <p>Held weekly. Starts at 21:00 every Sunday. Requires fast reasoning and syntax diagnostic skills.</p>
                   </TiltCard>
                   <TiltCard className="rule-card" maxTilt={9}>
                     <span className="number">02</span>
                     <h4>GitHub Submissions</h4>
-                    <p>Submit your bug-fixed repo link. Graded manually out of 20 points.</p>
                   </TiltCard>
                 </div>
               </>
