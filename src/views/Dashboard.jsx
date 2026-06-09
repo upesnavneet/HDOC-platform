@@ -143,11 +143,6 @@ export default function Dashboard({ setActiveView }) {
 
   return (
     <div className="dashboard-container">
-      <div className="event-time-bar">
-        <span>Event Date: <strong>{formatEventDate(db.simulatedTime)}</strong></span>
-        <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
-      </div>
-
       {/* Hero + Journey — shown first so content stays visible */}
       <section className="dashboard-hero-split">
         <TiltCard className="dashboard-hero-left press-card hero-panel-deep" maxTilt={6}>
@@ -159,15 +154,12 @@ export default function Dashboard({ setActiveView }) {
             <span className="hero-orange"><ScrambledText text="Brilliance." triggerOnHover={false} /></span>
           </h1>
           <p className="hero-desc">
-            One commit. Every day. For 100 days straight. UPES ACM&apos;s flagship coding challenge —
+            One commit. Every day. For 100 days straight. UPES ACM&apos;s flagship coding challenge -
             build your streak, sharpen your skills, and level up with fellow coders from campus.
           </p>
           <div className="hero-actions">
             <button className="hero-btn primary" onClick={() => document.getElementById('todays-challenges')?.scrollIntoView({ behavior: 'smooth' })}>
               Start Day {currentDay} →
-            </button>
-            <button className="hero-btn outline" onClick={() => setActiveView('questions')}>
-              Browse challenges
             </button>
           </div>
           <div className="hero-stats-row">
@@ -182,10 +174,6 @@ export default function Dashboard({ setActiveView }) {
             <div className="hero-stat">
               <span className="hero-stat-num">{finishRate}%</span>
               <span className="hero-stat-label">Finish Rate</span>
-            </div>
-            <div className="hero-stat">
-              <span className="hero-stat-num">{completedWeeks}</span>
-              <span className="hero-stat-label">Tracks</span>
             </div>
           </div>
         </TiltCard>
@@ -206,7 +194,7 @@ export default function Dashboard({ setActiveView }) {
       </section>
 
       <section className="overview-stats-section">
-        <TiltCard className="stat-card press-card primary" maxTilt={7}>
+        <TiltCard className="stat-card press-card" maxTilt={7}>
           <div className="stat-label">Event Progress</div>
           <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
           <div className="stat-progress-bar-wrapper">

@@ -18,6 +18,36 @@ function MainAppContent() {
   const { currentUser, logout } = useApp();
   const [activeView, setActiveView] = useState('auth');
 
+  // Hide navbar on scroll down, reveal on scroll up
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const navbar = document.querySelector('.navbar-container');
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollThreshold = 10;
+      
+      if (currentScrollY <= scrollThreshold) {
+        // Always show navbar when near the top
+        navbar.classList.remove('navbar-hidden');
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down - hide navbar
+        navbar.classList.add('navbar-hidden');
+      } else {
+        // Scrolling up - show navbar
+        navbar.classList.remove('navbar-hidden');
+      }
+      
+      lastScrollY = currentScrollY;
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   // Enforce session routes or defaults
   useEffect(() => {
     if (currentUser) {

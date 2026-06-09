@@ -22,15 +22,9 @@ export default function Questions() {
 
   return (
     <div className="questions-container">
-      {/* Simulation Info */}
-      <div className="event-time-bar">
-        <span>Event Date: <strong>{formatEventDate(db.simulatedTime)}</strong></span>
-        <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
-      </div>
-
       <div className="page-header">
         <h1>Challenge Archive</h1>
-        <p className="subtitle">Review previous daily coding questions and reference solutions - weekends include study handouts.</p>
+
       </div>
 
       {/* Main Area: Split layout (List on left, details on right) */}

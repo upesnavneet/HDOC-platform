@@ -115,11 +115,6 @@ export default function Debugging() {
 
   return (
     <div className="debugging-container">
-      <div className="event-time-bar">
-        <span>Event Date: <strong>{formatEventDate(db.simulatedTime)}</strong></span>
-        <span>Challenge Day: <strong>Day {db.currentDay} / 100</strong></span>
-      </div>
-
       <div className="page-header">
         <h1>Weekly Debugging Challenges</h1>
         <p className="subtitle">Every Sunday 21:00 hrs. Debug on-the-fly under a timed window.</p>

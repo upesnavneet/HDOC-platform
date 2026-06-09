@@ -84,23 +84,6 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
 
   return (
     <div className="streak-grid-wrapper streak-grid-compact press-card" {...tiltProps}>
-      <div className="journey-header">
-        <span className="journey-label">Your Journey</span>
-        <div className="journey-main">
-          <div className="journey-progress-row">
-            <span className="journey-count">{completedDays}</span>
-            <span className="journey-of">of 100 days completed</span>
-          </div>
-          <div className="journey-progress-bar-wrapper">
-            <div className="journey-progress-bar progress-animate" style={{ width: `${completedDays}%` }} />
-          </div>
-        </div>
-        <div className="journey-progress-meta">
-          <span>Day {currentDay} · {100 - currentDay} left</span>
-        </div>
-      </div>
-
-      <div className="compact-map-label">100-Day Map</div>
       <div className="grid-container grid-container-compact">
         {renderCells()}
       </div>

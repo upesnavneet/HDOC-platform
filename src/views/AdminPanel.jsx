@@ -235,12 +235,6 @@ export default function AdminPanel() {
 
   return (
     <div className="admin-panel-container">
-      {/* Simulation Info */}
-      <div className="simulation-time-bar">
-        <span>Active Simulated Time: <strong>{formatSimulatedDate(db.simulatedTime)}</strong></span>
-        <span>Challenge Day: <strong>Day {db.currentDay} / 100</strong></span>
-      </div>
-
       <div className="page-header">
         <h1>Technical Chapter Console</h1>
         <p className="subtitle">Manual submission reviews, score uploads, schedule timers, streak managers, and CSV exporters.</p>

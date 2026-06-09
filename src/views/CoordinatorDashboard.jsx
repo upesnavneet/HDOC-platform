@@ -249,11 +249,6 @@ export default function CoordinatorDashboard() {
 
   return (
     <div className="coordinator-dashboard-container">
-      <div className="event-time-bar">
-        <span>Event Date: <strong>{formatEventDate(db.simulatedTime)}</strong></span>
-        <span>Challenge Day: <strong>Day {currentDay} / 100</strong></span>
-      </div>
-
       <div className="page-header">
         <h1>Coordinator Dashboard</h1>
         <p className="subtitle">Manage participants, schedule challenges, and track weekly completion.</p>
@@ -279,7 +274,7 @@ export default function CoordinatorDashboard() {
         <TiltCard className="coord-stat-card press-card highlight" maxTilt={6}>
           <div className="coord-stat-label">Top Performer</div>
           <div className="coord-stat-value coord-stat-name">
-            {topPerformer ? topPerformer.name.split(' ')[0] : '—'}
+            {topPerformer ? topPerformer.name.split(' ')[0] : '-'}
           </div>
           {topPerformer && (
             <div className="coord-stat-footnote">
@@ -492,7 +487,7 @@ export default function CoordinatorDashboard() {
                     onChange={(e) => setQDay(Number(e.target.value))}
                   >
                     {db.questions.map(q => (
-                      <option key={q.id} value={q.day}>Day {q.day} — {q.titleLc}</option>
+                      <option key={q.id} value={q.day}>Day {q.day} - {q.titleLc}</option>
                     ))}
                   </select>
                   <button type="button" className="small-action-btn red" onClick={handleDeleteChallenge}>
@@ -510,7 +505,7 @@ export default function CoordinatorDashboard() {
                       onChange={(e) => loadQuestionForEdit(e.target.value)}
                     >
                       {db.questions.map(q => (
-                        <option key={q.id} value={q.day}>Day {q.day} — {q.titleLc}</option>
+                        <option key={q.id} value={q.day}>Day {q.day} - {q.titleLc}</option>
                       ))}
                     </select>
                   </div>
@@ -524,7 +519,7 @@ export default function CoordinatorDashboard() {
                   </h4>
                   <div className="form-grid">
                     <div className="form-group">
-                      <label>{challengeAction === 'schedule' ? 'Schedule Day (1–100)' : 'Day Number (1–100)'}</label>
+                      <label>{challengeAction === 'schedule' ? 'Schedule Day (1-100)' : 'Day Number (1-100)'}</label>
                       <input type="number" min="1" max="100" value={qDay} onChange={(e) => setQDay(e.target.value)} required />
                     </div>
                     <div className="form-group">
@@ -722,7 +717,7 @@ export default function CoordinatorDashboard() {
               >
                 {db.debuggingChallenges.map((c) => (
                   <option key={c.id} value={c.week}>
-                    Week {c.week} — {c.theme}
+                    Week {c.week} - {c.theme}
                   </option>
                 ))}
               </select>

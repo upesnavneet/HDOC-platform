@@ -1,6 +1,6 @@
 export const formatEventDate = (date) => {
   const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return '—';
+  if (Number.isNaN(parsed.getTime())) return '-';
   return parsed.toLocaleString('en-US', {
     weekday: 'short',
     month: 'short',
