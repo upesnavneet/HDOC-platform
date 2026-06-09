@@ -117,6 +117,7 @@ body {
   padding: 6.5rem 1.5rem 2rem 1.5rem;
   position: relative;
   z-index: 2;
+  min-height: 100vh;
 }
 
 .dashboard-container,
@@ -1694,7 +1695,7 @@ button {
   flex-direction: row;
   align-items: stretch;
   justify-content: center;
-  gap: 0;
+  gap: 1.5rem;
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -1710,7 +1711,7 @@ button {
 .challenge-card-shell {
   flex: 0 0 min(88vw, 540px);
   scroll-snap-align: center;
-  margin-right: -2.75rem;
+  margin-right: 0;
   position: relative;
   z-index: 1;
   height: clamp(520px, 72vh, 680px);
