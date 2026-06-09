@@ -3,11 +3,8 @@ import { useApp } from '../context/AppContext';
 import StreakGrid from '../components/StreakGrid';
 import { useTiltCard } from '../hooks/useTiltCard';
 import { useVerticalSectionFocus } from '../hooks/useScrollFocus';
-import {
-  countLinesWritten,
-  calculateFinishRate,
-  countCompletedWeeks,
-} from '../services/statsService';
+import { useEqualCardHeights } from '../hooks/useEqualCardHeights';
+import { calculateFinishRate } from '../services/statsService';
 import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
 
@@ -148,12 +145,11 @@ export default function Dashboard({ setActiveView }) {
 
   const overallRank = currentUser?.overallRank ?? '-';
 
-  const linesWritten = countLinesWritten(userSubs);
   const finishRate = calculateFinishRate(userSubs, currentDay);
-  const completedWeeks = countCompletedWeeks(userSubs, currentDay);
 
   const streakTilt = useTiltCard(5);
   const dashboardFocusRef = useVerticalSectionFocus();
+  const challengeStackRef = useEqualCardHeights([currentDay, todayLcQ?.id, todayCustomQ?.id]);
 
   if (!currentUser) {
     return <div className="loading">Loading...</div>;
@@ -184,10 +180,6 @@ export default function Dashboard({ setActiveView }) {
             <div className="hero-stat">
               <span className="hero-stat-num">{db.users.filter(u => u.role === 'participant').length}</span>
               <span className="hero-stat-label">Active Now</span>
-            </div>
-            <div className="hero-stat">
-              <span className="hero-stat-num">{linesWritten.toLocaleString()}</span>
-              <span className="hero-stat-label">Lines Written</span>
             </div>
             <div className="hero-stat">
               <span className="hero-stat-num">{finishRate}%</span>
@@ -271,8 +263,9 @@ export default function Dashboard({ setActiveView }) {
 
         <p className="challenge-cards-scroll-hint">Swipe horizontally to switch between challenges</p>
 
-        <div className="challenge-cards-scroll-stack">
+        <div className="challenge-cards-scroll-stack" ref={challengeStackRef}>
           {/* Challenge 1: LeetCode */}
+          <div className="challenge-card-shell">
           <TiltCard className="challenge-card press-card" maxTilt={6}>
             <div className="card-top-tag leetcode">LeetCode Challenge</div>
             {todayLcQ ? (
@@ -301,8 +294,10 @@ export default function Dashboard({ setActiveView }) {
               <div className="no-challenge-placeholder">No LeetCode challenge uploaded for today yet.</div>
             )}
           </TiltCard>
+          </div>
 
           {/* Challenge 2: Custom DSA */}
+          <div className="challenge-card-shell">
           <TiltCard className="challenge-card press-card" maxTilt={6}>
             <div className="card-top-tag custom-dsa">Custom DSA Challenge</div>
             {todayCustomQ ? (
@@ -332,6 +327,7 @@ export default function Dashboard({ setActiveView }) {
               <div className="no-challenge-placeholder">No custom challenge uploaded for today yet.</div>
             )}
           </TiltCard>
+          </div>
         </div>
       </section>
     </div>

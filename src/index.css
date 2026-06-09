@@ -1706,37 +1706,27 @@ button {
   position: relative;
 }
 
-.challenge-cards-scroll-stack::before,
-.challenge-cards-scroll-stack::after {
-  content: '';
-  position: sticky;
-  top: 0;
-  width: 1.25rem;
-  flex-shrink: 0;
-  pointer-events: none;
-}
-
-.challenge-cards-scroll-stack > * {
+.challenge-card-shell {
   flex: 0 0 min(88vw, 540px);
   scroll-snap-align: center;
   margin-right: -2.75rem;
   position: relative;
   z-index: 1;
-  min-height: min(68vh, 640px);
-  max-height: min(75vh, 720px);
-  overflow-y: auto;
+  height: clamp(520px, 72vh, 680px);
+  min-height: clamp(520px, 72vh, 680px);
+  max-height: clamp(520px, 72vh, 680px);
+  overflow: hidden;
   box-shadow: 0 16px 40px rgba(13, 11, 15, 0.45);
   display: flex;
   flex-direction: column;
-  align-self: stretch;
 }
 
-.challenge-cards-scroll-stack > *:last-child {
+.challenge-card-shell:last-child {
   margin-right: 0;
 }
 
-.challenge-cards-scroll-stack > *:hover,
-.challenge-cards-scroll-stack > *:focus-within {
+.challenge-card-shell:hover,
+.challenge-card-shell:focus-within {
   z-index: 5;
 }
 
@@ -1754,6 +1744,13 @@ button {
   }
 }
 
+.challenge-card-shell > .challenge-card {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+}
+
 .challenge-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -1761,9 +1758,7 @@ button {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 100%;
-  height: 100%;
+  box-sizing: border-box;
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
@@ -1774,6 +1769,7 @@ button {
 }
 
 .card-top-tag {
+  flex-shrink: 0;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border-subtle);
   padding: 0.5rem 1.25rem;
@@ -1799,8 +1795,9 @@ button {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
+  overflow-y: auto;
 }
 
 .challenge-section:last-of-type {
@@ -1826,12 +1823,14 @@ button {
 }
 
 .no-challenge-placeholder {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 12rem;
+  min-height: 0;
+  height: 100%;
   padding: 1.5rem;
+  overflow-y: auto;
 }
 
 .difficulty-tag {
@@ -3842,7 +3841,7 @@ button {
     gap: 0.5rem;
   }
 
-  .challenge-cards-scroll-stack > * {
+  .challenge-card-shell {
     flex: 0 0 min(92vw, 540px);
     margin-right: -2rem;
   }
@@ -4104,10 +4103,10 @@ button {
   flex-direction: column;
   gap: 16px;
   background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
+  border: none;
   border-radius: 16px;
   padding: 20px;
-  box-shadow: var(--shadow-panel);
+  box-shadow: none;
 }
 
 .filter-controls-card-compact {
@@ -4115,7 +4114,7 @@ button {
   align-items: center;
   gap: 10px;
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: 8px;
   padding: 8px 14px;
   width: 100%;
@@ -4156,9 +4155,8 @@ button {
 }
 
 .days-horizontal-gallery::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, var(--color-purple-dark, #8b5cf6), var(--color-orange, #e65c00));
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(230, 92, 0, 0.5);
 }
 
 .days-horizontal-gallery::-webkit-scrollbar-thumb:hover {
@@ -4169,7 +4167,7 @@ button {
 .gallery-day-card {
   flex: 0 0 240px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
@@ -4183,14 +4181,11 @@ button {
 .gallery-day-card:hover {
   transform: translateY(-4px) scale(1.02);
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .gallery-day-card.active {
   background: rgba(230, 92, 0, 0.06);
-  border-color: var(--color-orange);
-  box-shadow: 0 0 15px rgba(230, 92, 0, 0.2), inset 0 0 10px rgba(230, 92, 0, 0.1);
-  transform: scale(1.04);
+  transform: scale(1.02);
 }
 
 .day-card-header {
@@ -4272,23 +4267,17 @@ button {
 }
 
 /* Master Challenge Variant for gallery day card */
-.gallery-day-card.master-card {
-  border-color: rgba(255, 184, 0, 0.3);
-}
-
 .gallery-day-card.master-card.active {
-  border-color: #ffb800;
-  box-shadow: 0 0 15px rgba(255, 184, 0, 0.2);
   background: rgba(255, 184, 0, 0.05);
 }
 
 /* Bottom Details stack */
 .archive-bottom-details-panel {
   background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
+  border: none;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: var(--shadow-panel);
+  box-shadow: none;
 }
 
 .question-detailed-view-vertical {
@@ -4298,10 +4287,10 @@ button {
 }
 
 .detailed-body-vertical-scroll {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(280px, 1fr));
   gap: 20px;
-  max-height: 600px;
+  max-height: 720px;
   overflow-y: auto;
   padding-right: 8px;
 }
@@ -4328,19 +4317,27 @@ button {
 /* Stack Cards */
 .problem-section-card-stack {
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: none;
   border-radius: 12px;
   padding: 20px;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, background 0.3s ease;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 280px;
+  height: 100%;
+}
+
+.problem-section-card-stack .problem-section-body {
+  flex: 1;
+}
+
+.problem-section-card-stack .section-card-footer {
+  margin-top: auto;
 }
 
 .problem-section-card-stack:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -4377,7 +4374,7 @@ button {
   background: rgba(0,0,0,0.1);
   padding: 16px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.02);
+  border: none;
 }
 
 .example-text {
@@ -4388,7 +4385,14 @@ button {
   background: rgba(0, 0, 0, 0.2);
   padding: 10px 14px;
   border-radius: 6px;
-  border-left: 3px solid var(--color-orange);
+  border: none;
   font-family: 'Courier New', Courier, monospace;
+}
+
+.challenge-example {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
