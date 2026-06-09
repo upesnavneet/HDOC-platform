@@ -200,7 +200,7 @@ export default function Debugging() {
               <>
                 <h2 style={{ marginTop: '1rem' }}>Debugging Challenge is Offline</h2>
                 <p className="timer-text">{countdown}</p>
-                <div className="info-rules-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                <div className="info-rules-grid">
                   <TiltCard className="rule-card" maxTilt={9}>
                     <span className="number">01</span>
                     <h4>Sundays Release</h4>
