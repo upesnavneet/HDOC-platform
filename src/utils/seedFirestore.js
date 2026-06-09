@@ -209,7 +209,6 @@ export async function seedFirestoreIfEmpty() {
     // Check if questions collection already has data
     const questionsSnap = await getDocs(collection(firestoreDb, 'questions'));
     if (questionsSnap.size > 0) {
-      console.log('[Seed] Firestore already has data, skipping seed.');
       return false;
     }
 

@@ -97,7 +97,6 @@ export default function IntroSplash({ onComplete }) {
     <div 
       className="intro-splash-overlay" 
       onClick={handleStartSound}
-      onMouseEnter={handleStartSound}
     >
       {/* Background radial highlight */}
       <div className="intro-bg-glow" />
