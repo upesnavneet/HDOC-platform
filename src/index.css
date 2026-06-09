@@ -114,7 +114,7 @@ body {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 5rem 1.5rem 2rem 1.5rem;
+  padding: 6.5rem 1.5rem 2rem 1.5rem;
   position: relative;
   z-index: 2;
 }
@@ -728,7 +728,7 @@ button {
   border-radius: 0;
   padding: 2.5rem;
   width: 100%;
-  max-width: 580px;
+  max-width: 660px;
   will-change: box-shadow, background, transform;
   transform-style: preserve-3d;
 }
@@ -1693,6 +1693,7 @@ button {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  justify-content: center;
   gap: 0;
   width: 100%;
   overflow-x: auto;
@@ -2738,53 +2739,85 @@ button {
 }
 
 /* Profile view custom layouts */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-split-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .profile-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 7rem;
+}
+
+.profile-right-column {
+  min-width: 0;
+}
+
 .profile-hero-card {
   background: linear-gradient(135deg, var(--bg-card) 50%, var(--bg-deep));
   border: 1px solid var(--border-subtle);
   border-radius: 0;
-  padding: 2rem;
+  padding: 1.75rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .profile-identity {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .profile-avatar {
-  width: 70px;
-  height: 70px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background-color: var(--color-primary);
   color: var(--bg-deep);
   font-weight: 800;
-  font-size: 1.75rem;
+  font-size: 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-neon);
+  flex-shrink: 0;
 }
 
 .profile-identity h1 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  line-height: 1.2;
 }
 
 .student-sap {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-muted);
   display: block;
+  margin-top: 0.15rem;
 }
 
 .profile-handles {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
 }
 
 .handle-tag {
@@ -2799,7 +2832,8 @@ button {
 
 .profile-standings-highlights {
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .highlight-metric {
@@ -2831,33 +2865,26 @@ button {
 
 .profile-metrics-summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-@media (max-width: 768px) {
-  .profile-metrics-summary {
-    grid-template-columns: 1fr 1fr;
-  }
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
 .metric-box {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  padding: 1.25rem;
+  padding: 1rem;
   border-radius: 6px;
   text-align: center;
 }
 
 .metric-box h3 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   color: var(--color-title);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .metric-box p {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-muted);
 }
 
@@ -3744,7 +3771,7 @@ button {
 
 @media (max-width: 900px) {
   .main-content-area {
-    padding: 1.25rem 1rem 2rem;
+    padding: 5rem 1rem 2rem;
   }
 
   .navbar-container {
