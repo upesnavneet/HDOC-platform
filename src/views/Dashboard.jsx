@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import StreakGrid from '../components/StreakGrid';
-import { formatEventDate } from '../utils/dateFormat';
 import { useTiltCard } from '../hooks/useTiltCard';
+import { useVerticalSectionFocus } from '../hooks/useScrollFocus';
 import {
   countLinesWritten,
   calculateFinishRate,
@@ -10,6 +10,23 @@ import {
 } from '../services/statsService';
 import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
+
+const parseChallengeContent = (desc = '') => {
+  const inputIndex = desc.indexOf('Input:');
+  const exampleIndex = desc.indexOf('Example:');
+  const targetIndex = inputIndex !== -1 ? inputIndex : exampleIndex;
+  
+  if (targetIndex !== -1) {
+    const explanation = desc.substring(0, targetIndex).trim();
+    const example = desc.substring(targetIndex).trim();
+    return { explanation, example };
+  }
+  
+  return { 
+    explanation: desc, 
+    example: "Refer to standard problem specifications on the platform for detailed inputs/outputs." 
+  };
+};
 
 export default function Dashboard({ setActiveView }) {
   const { db, currentUser, submitQuestionCode } = useApp();
@@ -136,15 +153,16 @@ export default function Dashboard({ setActiveView }) {
   const completedWeeks = countCompletedWeeks(userSubs, currentDay);
 
   const streakTilt = useTiltCard(5);
+  const dashboardFocusRef = useVerticalSectionFocus();
 
   if (!currentUser) {
     return <div className="loading">Loading...</div>;
   }
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container" ref={dashboardFocusRef}>
       {/* Hero + Journey — shown first so content stays visible */}
-      <section className="dashboard-hero-split">
+      <section className="dashboard-hero-split dashboard-focus-section" data-dashboard-focus>
         <TiltCard className="dashboard-hero-left press-card hero-panel-deep" maxTilt={6}>
           <span className="hero-batch-badge">BATCH 2026</span>
           <h1 className="hero-headline">
@@ -193,7 +211,7 @@ export default function Dashboard({ setActiveView }) {
         </div>
       </section>
 
-      <section className="overview-stats-section">
+      <section className="overview-stats-section dashboard-focus-section" data-dashboard-focus>
         <TiltCard className="stat-card press-card" maxTilt={7}>
           <div className="stat-label">Event Progress</div>
           <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
@@ -243,7 +261,7 @@ export default function Dashboard({ setActiveView }) {
       </section>
 
       {/* Today's Coding Challenges Section */}
-      <section id="todays-challenges" className="todays-challenges-section">
+      <section id="todays-challenges" className="todays-challenges-section dashboard-focus-section" data-dashboard-focus>
         <div className="section-header-row">
           <h2>Today's Challenges - Day {currentDay}</h2>
           <div className={`countdown-timer ${timeLeft === 'Deadline Passed' ? 'expired' : ''}`}>
@@ -260,46 +278,24 @@ export default function Dashboard({ setActiveView }) {
             {todayLcQ ? (
               <div className="challenge-details">
                 <h3 className="challenge-title">{todayLcQ.titleLc}</h3>
-                <p className="challenge-desc">{todayLcQ.descLc}</p>
-                <div className="challenge-meta">
-                  <a href={todayLcQ.linkLc} target="_blank" rel="noreferrer" className="external-problem-link">
-                    Open LeetCode Page
-                  </a>
+                
+                <div className="challenge-section">
+                  <h4 className="section-subtitle">Explanation</h4>
+                  <p className="challenge-desc">{todayLcQ.descLc}</p>
+                </div>
+                
+                <div className="challenge-section">
+                  <h4 className="section-subtitle">Example</h4>
+                  <p className="challenge-example">
+                    Click <strong>Open LeetCode Page</strong> to view example test cases, constraints, and submit your code.
+                  </p>
                 </div>
 
-                <form className="submission-sub-form" onSubmit={handleLcSubmit}>
-                  <div className="input-group">
-                    <label htmlFor="lc-code">Write your code here</label>
-                    <textarea 
-                      id="lc-code"
-                      className="code-editor-textarea"
-                      placeholder="// Write or paste your LeetCode solution here..." 
-                      value={lcCode}
-                      onChange={(e) => setLcCode(e.target.value)}
-                      required 
-                      rows="8"
-                    />
-                  </div>
-                  <button type="submit" className="submit-challenge-btn">
-                    {todayLcSub ? 'Update Submission' : 'Submit Solution'}
-                  </button>
-                  {msgLc && <div className="sub-msg-alert">{msgLc}</div>}
-                </form>
-
-                {todayLcSub && (
-                  <div className="grading-feedback-box">
-                    <span className="label">Submission Status:</span>
-                    <span className={`badge-status ${todayLcSub.status.toLowerCase()}`}>{todayLcSub.status}</span>
-                    {todayLcSub.marks !== null ? (
-                      <div className="grade-result">
-                        <span><strong>Score:</strong> {todayLcSub.marks} / 10</span>
-                        {todayLcSub.comments && <p className="comment">"{todayLcSub.comments}"</p>}
-                      </div>
-                    ) : (
-                      <div className="grade-result pending">Pending admin manual grading</div>
-                    )}
-                  </div>
-                )}
+                <div className="challenge-meta">
+                  <a href={todayLcQ.linkLc} target="_blank" rel="noreferrer" className="external-problem-link">
+                    Open LeetCode Page →
+                  </a>
+                </div>
               </div>
             ) : (
               <div className="no-challenge-placeholder">No LeetCode challenge uploaded for today yet.</div>
@@ -310,47 +306,28 @@ export default function Dashboard({ setActiveView }) {
           <TiltCard className="challenge-card press-card" maxTilt={6}>
             <div className="card-top-tag custom-dsa">Custom DSA Challenge</div>
             {todayCustomQ ? (
-              <div className="challenge-details">
-                <h3 className="challenge-title">{todayCustomQ.titleCustom}</h3>
-                <p className="challenge-desc">{todayCustomQ.descCustom}</p>
-                <div className="challenge-meta">
-                  <span className="author-tag">By Technical Head</span>
-                </div>
+              (() => {
+                const { explanation, example } = parseChallengeContent(todayCustomQ.descCustom);
+                return (
+                  <div className="challenge-details">
+                    <h3 className="challenge-title">{todayCustomQ.titleCustom}</h3>
+                    
+                    <div className="challenge-section">
+                      <h4 className="section-subtitle">Explanation</h4>
+                      <p className="challenge-desc">{explanation}</p>
+                    </div>
+                    
+                    <div className="challenge-section">
+                      <h4 className="section-subtitle">Example</h4>
+                      <p className="challenge-example">{example}</p>
+                    </div>
 
-                <form className="submission-sub-form" onSubmit={handleCustomSubmit}>
-                  <div className="input-group">
-                    <label htmlFor="custom-code">Write your code here</label>
-                    <textarea 
-                      id="custom-code"
-                      className="code-editor-textarea"
-                      placeholder="// Write or paste your Custom DSA solution here..." 
-                      value={customCode}
-                      onChange={(e) => setCustomCode(e.target.value)}
-                      required 
-                      rows="8"
-                    />
+                    <div className="challenge-meta">
+                      <span className="author-tag">By Technical Head</span>
+                    </div>
                   </div>
-                  <button type="submit" className="submit-challenge-btn">
-                    {todayCustomSub ? 'Update Submission' : 'Submit Solution'}
-                  </button>
-                  {msgCustom && <div className="sub-msg-alert">{msgCustom}</div>}
-                </form>
-
-                {todayCustomSub && (
-                  <div className="grading-feedback-box">
-                    <span className="label">Submission Status:</span>
-                    <span className={`badge-status ${todayCustomSub.status.toLowerCase()}`}>{todayCustomSub.status}</span>
-                    {todayCustomSub.marks !== null ? (
-                      <div className="grade-result">
-                        <span><strong>Score:</strong> {todayCustomSub.marks} / 10</span>
-                        {todayCustomSub.comments && <p className="comment">"{todayCustomSub.comments}"</p>}
-                      </div>
-                    ) : (
-                      <div className="grade-result pending">Pending admin manual grading</div>
-                    )}
-                  </div>
-                )}
-              </div>
+                );
+              })()
             ) : (
               <div className="no-challenge-placeholder">No custom challenge uploaded for today yet.</div>
             )}

@@ -1,6 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { formatEventDate } from '../utils/dateFormat';
+import { formatRating } from '../utils/ratingHelper';
+
+const parseChallengeContent = (desc = '') => {
+  if (!desc) return { explanation: '', example: '' };
+  const inputIndex = desc.indexOf('Input:');
+  const exampleIndex = desc.indexOf('Example:');
+  const targetIndex = inputIndex !== -1 ? inputIndex : exampleIndex;
+  
+  if (targetIndex !== -1) {
+    const explanation = desc.substring(0, targetIndex).trim();
+    const example = desc.substring(targetIndex).trim();
+    return { explanation, example };
+  }
+  
+  return { 
+    explanation: desc, 
+    example: "Refer to standard problem specifications on the platform for detailed inputs/outputs." 
+  };
+};
 
 export default function Questions() {
   const { db } = useApp();
@@ -20,49 +38,72 @@ export default function Questions() {
     return matchesSearch;
   });
 
+  // Auto-select current day's question or first available on mount/filter
+  useEffect(() => {
+    if (archivedQuestions.length > 0) {
+      // If selectedQuestion is no longer in filtered list or is null
+      const stillExists = selectedQuestion && archivedQuestions.some(q => q.id === selectedQuestion.id);
+      if (!stillExists) {
+        const todayQ = archivedQuestions.find(q => q.day === currentDay);
+        setSelectedQuestion(todayQ || archivedQuestions[archivedQuestions.length - 1]);
+      }
+    } else {
+      setSelectedQuestion(null);
+    }
+  }, [archivedQuestions, currentDay, selectedQuestion]);
+
   return (
     <div className="questions-container">
       <div className="page-header">
-        <h1>Challenge Archive</h1>
-
+        <h1>Daily Challenges</h1>
       </div>
 
-      {/* Main Area: Split layout (List on left, details on right) */}
-      <div className="archive-split-layout">
-        <div className="archive-list-panel">
-          <div className="filter-controls-card">
+      {/* Main Area: Vertical Layout (Days gallery on top, details below) */}
+      <div className="archive-vertical-layout">
+        
+        {/* Top Section: Horizontal Days Gallery */}
+        <div className="archive-top-gallery-panel">
+          <div className="filter-controls-card-compact">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon-svg">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
             <input 
               type="text" 
               placeholder="Search by day..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
+              className="search-input-compact"
             />
           </div>
 
-          <div className="question-list-scroll">
+          <div className="days-horizontal-gallery">
             {archivedQuestions.length === 0 ? (
-              <div className="no-results">No questions match your filter criteria.</div>
+              <div className="no-results-compact">No days match your filter criteria.</div>
             ) : (
               archivedQuestions.map(q => {
                 const isToday = q.day === currentDay;
                 const isMaster = q.isMaster || q.day >= 99;
+                const isSelected = selectedQuestion?.id === q.id;
                 return (
                   <div 
                     key={q.id}
-                    className={`archive-item-card ${selectedQuestion?.id === q.id ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
+                    className={`gallery-day-card ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
                     onClick={() => setSelectedQuestion(q)}
                   >
-                    <div className="item-left">
-                      <span className={`day-badge ${isToday ? 'today' : ''}`}>Day {q.day}</span>
-                      <div className="custom-titles" style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span className="title" style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-title)' }}>{q.titleLc}</span>
-                        <span className="subtitle-custom" style={{ fontSize: '0.7rem', color: 'var(--color-muted)' }}>{q.titleCustom}</span>
-                      </div>
+                    <div className="day-card-header">
+                      <span className="day-card-number">Day {q.day}</span>
+                      {isToday && <span className="day-card-today-badge">TODAY</span>}
+                      {isMaster && <span className="day-card-master-badge">★</span>}
                     </div>
-                    <div className="item-right">
-                      {isMaster && <span className="master-badge-flame">Master</span>}
-                      <span className="rating-indicator">{q.rating || q.difficulty}</span>
+                    <div className="day-card-body">
+                      <div className="day-card-titles">
+                        <span className="day-card-title-lc">{q.titleLc}</span>
+                        <span className="day-card-title-custom">{q.titleCustom}</span>
+                      </div>
+                      <div className="day-card-footer">
+                        <span className="day-card-rating">Rating {formatRating(q)}</span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -71,20 +112,21 @@ export default function Questions() {
           </div>
         </div>
 
-        <div className="archive-details-panel">
+        {/* Bottom Section: Details Stack with Vertical Scroll */}
+        <div className="archive-bottom-details-panel">
           {selectedQuestion ? (
-            <div className={`question-detailed-view ${selectedQuestion.isMaster ? 'master-styled' : ''}`}>
+            <div className={`question-detailed-view-vertical ${selectedQuestion.isMaster ? 'master-styled' : ''}`}>
               <div className="detailed-header">
                 <div className="header-meta">
                   <span className="day-large">DAY {selectedQuestion.day}</span>
                   <span className="rating-tag">
-                    Rating {selectedQuestion.rating || selectedQuestion.difficulty}
+                    Rating {formatRating(selectedQuestion)}
                   </span>
                   {selectedQuestion.isMaster && (
                     <span className="master-challenge-tag">Master Challenge</span>
                   )}
                 </div>
-                <h2>{selectedQuestion.titleLc} & {selectedQuestion.titleCustom}</h2>
+                <h2>{selectedQuestion.titleLc} &amp; {selectedQuestion.titleCustom}</h2>
               </div>
 
               {selectedQuestion.isMaster && (
@@ -97,45 +139,45 @@ export default function Questions() {
                 </div>
               )}
 
-              <div className="detailed-body-scroll">
+              {/* Vertical Scroll Stack of LeetCode and Custom DSA cards */}
+              <div className="detailed-body-vertical-scroll">
                 {/* Part 1: LeetCode Question */}
-                <div className="problem-section-card">
-                  <div className="section-title">Part A: LeetCode Problem</div>
-                  <h3>{selectedQuestion.titleLc}</h3>
-                  <p className="problem-text">{selectedQuestion.descLc}</p>
-                  <a href={selectedQuestion.linkLc} target="_blank" rel="noreferrer" className="open-problem-btn">
-                    Solve on LeetCode
-                  </a>
+                <div className="problem-section-card-stack">
+                  <div className="section-header-tag leetcode-tag">Part A: LeetCode Problem</div>
+                  <h3 className="section-card-title">{selectedQuestion.titleLc}</h3>
+                  <div className="problem-section-body">
+                    <h4 className="section-subtitle">Explanation</h4>
+                    <p className="problem-text">{selectedQuestion.descLc}</p>
+                    <h4 className="section-subtitle">Example</h4>
+                    <p className="example-text">
+                      Click the button below to view examples, constraints, and submit on LeetCode.
+                    </p>
+                  </div>
+                  <div className="section-card-footer">
+                    <a href={selectedQuestion.linkLc} target="_blank" rel="noreferrer" className="open-problem-btn">
+                      Solve on LeetCode →
+                    </a>
+                  </div>
                 </div>
 
                 {/* Part 2: Custom Question */}
-                <div className="problem-section-card">
-                  <div className="section-title">Part B: Custom ACM DSA Problem</div>
-                  <h3>{selectedQuestion.titleCustom}</h3>
-                  <p className="problem-text">{selectedQuestion.descCustom}</p>
+                <div className="problem-section-card-stack">
+                  <div className="section-header-tag custom-tag">Part B: Custom ACM DSA Problem</div>
+                  <h3 className="section-card-title">{selectedQuestion.titleCustom}</h3>
+                  <div className="problem-section-body">
+                    {(() => {
+                      const { explanation, example } = parseChallengeContent(selectedQuestion.descCustom);
+                      return (
+                        <>
+                          <h4 className="section-subtitle">Explanation</h4>
+                          <p className="problem-text">{explanation}</p>
+                          <h4 className="section-subtitle">Example</h4>
+                          <p className="example-text">{example}</p>
+                        </>
+                      );
+                    })()}
+                  </div>
                 </div>
-
-                {/* Part 3: Reference Solution */}
-                {selectedQuestion.day < currentDay ? (
-                  <div className="solutions-section-card">
-                    <div className="section-title solutions">Reference Solution</div>
-                    {selectedQuestion.solutionCode ? (
-                      <div className="solution-code-box">
-                        <h5>Reference Code Solution</h5>
-                        <pre className="code-block">
-                          <code>{selectedQuestion.solutionCode}</code>
-                        </pre>
-                      </div>
-                    ) : (
-                      <p className="no-handout-text">Reference code solution not uploaded by Technical Head yet.</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="solutions-locked-card">
-                    <span className="lock-icon">[Locked]</span>
-                    <p>Reference solutions unlock after the submission period ends (next day at 00:00 hrs).</p>
-                  </div>
-                )}
               </div>
             </div>
           ) : (
@@ -148,7 +190,7 @@ export default function Questions() {
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
               <h3>Select a challenge from the archive</h3>
-              <p>Choose any day from Day 1 to Day {currentDay} to inspect problem statements, rating, and reference solutions.</p>
+              <p>Choose any day from Day 1 to Day {currentDay} to inspect problem statements and ratings.</p>
             </div>
           )}
         </div>

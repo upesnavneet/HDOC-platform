@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatRating } from '../utils/ratingHelper';
 
 function StreakCell({ status, isCurrent, onMouseEnter, onMouseLeave }) {
   return (
@@ -98,7 +99,7 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
             <p className="previous-day-subtitle">{prevQuestion.titleCustom}</p>
             <div className="previous-day-tags">
               <span className="rating-tag">
-                Rating {prevQuestion.rating || prevQuestion.difficulty}
+                Rating {formatRating(prevQuestion)}
               </span>
             </div>
             <div className="previous-day-links">

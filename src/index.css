@@ -1679,10 +1679,20 @@ button {
   width: 100%;
 }
 
+.dashboard-focus-section {
+  transition: opacity 0.45s ease, filter 0.45s ease;
+  will-change: opacity, filter;
+}
+
+.dashboard-focus-section.dashboard-focus-active {
+  z-index: 2;
+  position: relative;
+}
+
 .challenge-cards-scroll-stack {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0;
   width: 100%;
   overflow-x: auto;
@@ -1712,9 +1722,13 @@ button {
   margin-right: -2.75rem;
   position: relative;
   z-index: 1;
+  min-height: min(68vh, 640px);
   max-height: min(75vh, 720px);
   overflow-y: auto;
   box-shadow: 0 16px 40px rgba(13, 11, 15, 0.45);
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
 }
 
 .challenge-cards-scroll-stack > *:last-child {
@@ -1747,6 +1761,9 @@ button {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+  height: 100%;
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
@@ -1782,7 +1799,21 @@ button {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.challenge-section:last-of-type {
+  flex: 1;
+}
+
+.challenge-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  margin-top: auto;
+  padding-top: 1.25rem;
 }
 
 .challenge-title {
@@ -1794,11 +1825,13 @@ button {
   color: var(--color-text);
 }
 
-.challenge-meta {
+.no-challenge-placeholder {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
+  justify-content: center;
+  min-height: 12rem;
+  padding: 1.5rem;
 }
 
 .difficulty-tag {
@@ -4031,3 +4064,331 @@ button {
     transform: scale(1);
   }
 }
+
+/* Dashboard restructured challenge cards */
+.challenge-section {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.section-subtitle {
+  color: var(--color-orange);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  margin-top: 0;
+}
+
+.challenge-desc, .challenge-example {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* Daily Challenges - Redesigned Archive Page */
+.archive-vertical-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.archive-top-gallery-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-panel);
+}
+
+.filter-controls-card-compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 14px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.search-icon-svg {
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+.search-input-compact {
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+}
+
+.days-horizontal-gallery {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 4px 20px 4px; /* extra bottom padding for the scrollbar */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Bottom Scrollbar for the horizontal days gallery */
+.days-horizontal-gallery::-webkit-scrollbar {
+  height: 8px;
+}
+
+.days-horizontal-gallery::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.days-horizontal-gallery::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--color-purple-dark, #8b5cf6), var(--color-orange, #e65c00));
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(230, 92, 0, 0.5);
+}
+
+.days-horizontal-gallery::-webkit-scrollbar-thumb:hover {
+  background: var(--color-orange);
+}
+
+/* Gallery Day Card */
+.gallery-day-card {
+  flex: 0 0 240px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px;
+}
+
+.gallery-day-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.gallery-day-card.active {
+  background: rgba(230, 92, 0, 0.06);
+  border-color: var(--color-orange);
+  box-shadow: 0 0 15px rgba(230, 92, 0, 0.2), inset 0 0 10px rgba(230, 92, 0, 0.1);
+  transform: scale(1.04);
+}
+
+.day-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.day-card-number {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.day-card-today-badge {
+  background: var(--color-orange);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.day-card-master-badge {
+  color: #ffb800;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.day-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.day-card-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.day-card-title-lc, .day-card-title-custom {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.day-card-title-lc {
+  color: var(--color-title, #fff);
+}
+
+.day-card-title-custom {
+  color: var(--color-text-muted, rgba(255,255,255,0.6));
+}
+
+.day-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 8px;
+}
+
+.day-card-rating {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-orange);
+  background: rgba(230, 92, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* Master Challenge Variant for gallery day card */
+.gallery-day-card.master-card {
+  border-color: rgba(255, 184, 0, 0.3);
+}
+
+.gallery-day-card.master-card.active {
+  border-color: #ffb800;
+  box-shadow: 0 0 15px rgba(255, 184, 0, 0.2);
+  background: rgba(255, 184, 0, 0.05);
+}
+
+/* Bottom Details stack */
+.archive-bottom-details-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-panel);
+}
+
+.question-detailed-view-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detailed-body-vertical-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Normal scrollbar for bottom details */
+.detailed-body-vertical-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.detailed-body-vertical-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 10px;
+}
+
+.detailed-body-vertical-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+.detailed-body-vertical-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Stack Cards */
+.problem-section-card-stack {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.problem-section-card-stack:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.section-header-tag {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+
+.section-header-tag.leetcode-tag {
+  background: rgba(255, 184, 0, 0.1);
+  color: #ffb800;
+}
+
+.section-header-tag.custom-tag {
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+}
+
+.section-card-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.problem-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(0,0,0,0.1);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.02);
+}
+
+.example-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px 14px;
+  border-radius: 6px;
+  border-left: 3px solid var(--color-orange);
+  font-family: 'Courier New', Courier, monospace;
+}
+
