@@ -58,7 +58,6 @@ export default function Leaderboards() {
                       <td className="participant-col">
                         <div className="details">
                           <span className="name">{row.name}</span>
-                          {isTop10 && <span className="finale-tag">Grand Finale Qualifier</span>}
                         </div>
                       </td>
                       <td className="handle-col">

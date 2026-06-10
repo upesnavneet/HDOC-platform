@@ -2783,8 +2783,8 @@ button {
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
 }
-.h-tag.git { color: var(--color-secondary); }
-.h-tag.lc { color: var(--color-secondary); }
+.h-tag.git { color: #ffffff; }
+.h-tag.lc { color: #ffffff; }
 
 .streaks-col {
   display: flex;
