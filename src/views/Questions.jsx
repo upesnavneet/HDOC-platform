@@ -122,7 +122,7 @@ export default function Questions() {
 
               <div className="detailed-body-vertical-scroll">
                 <div className="problem-section-card-stack">
-                  <div className="section-header-tag leetcode-tag">Part A: LeetCode Problem</div>
+                  <div className="section-header-tag custom-tag">Part A: LeetCode Problem</div>
                   <h3 className="section-card-title">{selectedQuestion.titleLc}</h3>
                   <div className="problem-section-body">
                     <h4 className="section-subtitle">Explanation</h4>

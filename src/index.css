@@ -2903,8 +2903,7 @@ button {
   background: var(--bg-panel);
 }
 
-.handle-tag.git { border-left: 2px solid var(--color-primary); }
-.handle-tag.lc { border-left: 2px solid var(--color-secondary); }
+
 
 .profile-standings-highlights {
   display: flex;
@@ -4490,8 +4489,8 @@ button {
 }
 
 .section-header-tag.leetcode-tag {
-  background: rgba(255, 184, 0, 0.1);
-  color: #ffb800;
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
 }
 
 .section-header-tag.custom-tag {
