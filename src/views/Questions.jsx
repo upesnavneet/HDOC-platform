@@ -1,56 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatRating } from '../utils/ratingHelper';
-
-const parseChallengeContent = (desc = '') => {
-  if (!desc) return { explanation: '', example: '' };
-  const inputIndex = desc.indexOf('Input:');
-  const exampleIndex = desc.indexOf('Example:');
-  const targetIndex = inputIndex !== -1 ? inputIndex : exampleIndex;
-  
-  if (targetIndex !== -1) {
-    const explanation = desc.substring(0, targetIndex).trim();
-    const example = desc.substring(targetIndex).trim();
-    return { explanation, example };
-  }
-  
-  return { 
-    explanation: desc, 
-    example: "Refer to standard problem specifications on the platform for detailed inputs/outputs." 
-  };
-};
+import { parseChallengeContent } from '../utils/challengeContent';
 
 export default function Questions() {
   const { db } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [manualSelection, setManualSelection] = useState(null);
 
   const currentDay = db.currentDay;
   const questions = db.questions;
 
-  // Filter archived questions (days <= currentDay)
-  const archivedQuestions = questions.filter(q => {
-    // Must be published (day <= currentDay)
-    if (q.day > currentDay) return false;
+  const archivedQuestions = useMemo(
+    () =>
+      questions.filter((q) => {
+        if (q.day > currentDay) return false;
+        return !searchQuery.trim() || q.day.toString() === searchQuery.trim();
+      }),
+    [questions, currentDay, searchQuery]
+  );
 
-    const matchesSearch = !searchQuery.trim() || q.day.toString() === searchQuery.trim();
+  const defaultSelection = useMemo(() => {
+    if (archivedQuestions.length === 0) return null;
+    const stillExists =
+      manualSelection && archivedQuestions.some((q) => q.id === manualSelection.id);
+    if (stillExists) return manualSelection;
+    return (
+      archivedQuestions.find((q) => q.day === currentDay) ||
+      archivedQuestions[archivedQuestions.length - 1]
+    );
+  }, [archivedQuestions, currentDay, manualSelection]);
 
-    return matchesSearch;
-  });
-
-  // Auto-select current day's question or first available on mount/filter
-  useEffect(() => {
-    if (archivedQuestions.length > 0) {
-      // If selectedQuestion is no longer in filtered list or is null
-      const stillExists = selectedQuestion && archivedQuestions.some(q => q.id === selectedQuestion.id);
-      if (!stillExists) {
-        const todayQ = archivedQuestions.find(q => q.day === currentDay);
-        setSelectedQuestion(todayQ || archivedQuestions[archivedQuestions.length - 1]);
-      }
-    } else {
-      setSelectedQuestion(null);
-    }
-  }, [archivedQuestions, currentDay, selectedQuestion]);
+  const selectedQuestion = defaultSelection;
 
   return (
     <div className="questions-container">
@@ -58,19 +39,19 @@ export default function Questions() {
         <h1>Daily Challenges</h1>
       </div>
 
-      {/* Main Area: Vertical Layout (Days gallery on top, details below) */}
       <div className="archive-vertical-layout">
-        
-        {/* Top Section: Horizontal Days Gallery */}
         <div className="archive-top-gallery-panel">
           <div className="filter-controls-card-compact">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon-svg">
+            <label htmlFor="day-search" className="sr-only">Search by day number</label>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon-svg" aria-hidden="true" focusable="false">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input 
-              type="text" 
-              placeholder="Search by day..." 
+            <input
+              id="day-search"
+              type="search"
+              inputMode="numeric"
+              placeholder="Search by day…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input-compact"
@@ -81,15 +62,18 @@ export default function Questions() {
             {archivedQuestions.length === 0 ? (
               <div className="no-results-compact">No days match your filter criteria.</div>
             ) : (
-              archivedQuestions.map(q => {
+              archivedQuestions.map((q) => {
                 const isToday = q.day === currentDay;
                 const isMaster = q.isMaster || q.day >= 99;
                 const isSelected = selectedQuestion?.id === q.id;
                 return (
-                  <div 
+                  <button
+                    type="button"
                     key={q.id}
                     className={`gallery-day-card ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
-                    onClick={() => setSelectedQuestion(q)}
+                    onClick={() => setManualSelection(q)}
+                    aria-pressed={isSelected}
+                    aria-label={`Day ${q.day}, ${q.titleLc}, ${q.titleCustom}${isToday ? ', today' : ''}`}
                   >
                     <div className="day-card-header">
                       <span className="day-card-number">Day {q.day}</span>
@@ -105,23 +89,20 @@ export default function Questions() {
                         <span className="day-card-rating">Rating {formatRating(q)}</span>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })
             )}
           </div>
         </div>
 
-        {/* Bottom Section: Details Stack with Vertical Scroll */}
         <div className="archive-bottom-details-panel">
           {selectedQuestion ? (
             <div className={`question-detailed-view-vertical ${selectedQuestion.isMaster ? 'master-styled' : ''}`}>
               <div className="detailed-header">
                 <div className="header-meta">
                   <span className="day-large">DAY {selectedQuestion.day}</span>
-                  <span className="rating-tag">
-                    Rating {formatRating(selectedQuestion)}
-                  </span>
+                  <span className="rating-tag">Rating {formatRating(selectedQuestion)}</span>
                   {selectedQuestion.isMaster && (
                     <span className="master-challenge-tag">Master Challenge</span>
                   )}
@@ -139,9 +120,7 @@ export default function Questions() {
                 </div>
               )}
 
-              {/* Vertical Scroll Stack of LeetCode and Custom DSA cards */}
               <div className="detailed-body-vertical-scroll">
-                {/* Part 1: LeetCode Question */}
                 <div className="problem-section-card-stack">
                   <div className="section-header-tag leetcode-tag">Part A: LeetCode Problem</div>
                   <h3 className="section-card-title">{selectedQuestion.titleLc}</h3>
@@ -154,13 +133,12 @@ export default function Questions() {
                     </p>
                   </div>
                   <div className="section-card-footer">
-                    <a href={selectedQuestion.linkLc} target="_blank" rel="noreferrer" className="open-problem-btn">
+                    <a href={selectedQuestion.linkLc} target="_blank" rel="noopener noreferrer" className="open-problem-btn">
                       Solve on LeetCode →
                     </a>
                   </div>
                 </div>
 
-                {/* Part 2: Custom Question */}
                 <div className="problem-section-card-stack">
                   <div className="section-header-tag custom-tag">Part B: Custom ACM DSA Problem</div>
                   <h3 className="section-card-title">{selectedQuestion.titleCustom}</h3>

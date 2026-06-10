@@ -1,23 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { formatEventDate } from '../utils/dateFormat';
-import { useTiltCard } from '../hooks/useTiltCard';
-
-function TiltCard({ className, style: extraStyle, children, maxTilt = 7, ...rest }) {
-  const { ref, style, onMouseMove, onMouseLeave } = useTiltCard(maxTilt);
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{ ...style, ...extraStyle }}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-}
+import TiltCard from '../components/TiltCard';
+import { formatDate } from '../utils/dateFormat';
 
 const getCurrentWeek = (currentDay) => {
   const day = Number(currentDay);
@@ -25,69 +9,86 @@ const getCurrentWeek = (currentDay) => {
   return Math.ceil(day / 7);
 };
 
+function getChallengeWindow(simulatedTime, debuggingChallenges, currentWeek) {
+  const now = new Date(simulatedTime);
+  const match = debuggingChallenges.find((c) => c.week === currentWeek);
+
+  if (match) {
+    const pubTime = new Date(match.publishedDate);
+    if (now >= pubTime) {
+      return {
+        activeChallenge: match,
+        timeStatus: 'open',
+        isChallengeOpen: true,
+        countdown: 'Challenge Active',
+      };
+    }
+    const diff = pubTime - now;
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return {
+      activeChallenge: match,
+      timeStatus: 'upcoming',
+      isChallengeOpen: false,
+      countdown: `Starts in ${h}h ${m}m`,
+    };
+  }
+
+  const nextWeek = currentWeek + 1;
+  const nextChallenge = debuggingChallenges.find((c) => c.week === nextWeek);
+  if (nextChallenge) {
+    const pubTime = new Date(nextChallenge.publishedDate);
+    const diff = pubTime - now;
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return {
+      activeChallenge: null,
+      timeStatus: 'closed',
+      isChallengeOpen: false,
+      countdown: `Week ${nextWeek} challenge in ${d} days, ${h} hours (Sunday 21:00)`,
+    };
+  }
+
+  return {
+    activeChallenge: null,
+    timeStatus: 'closed',
+    isChallengeOpen: false,
+    countdown: 'No upcoming debugging challenge scheduled.',
+  };
+}
+
 export default function Debugging() {
   const { db, currentUser, submitDebuggingChallenge } = useApp();
-  const [gitLink, setGitLink] = useState('');
   const [submitMsg, setSubmitMsg] = useState('');
-  const [countdown, setCountdown] = useState('');
-  const [isChallengeOpen, setIsChallengeOpen] = useState(false);
-  const [timeStatus, setTimeStatus] = useState('closed');
-  const [activeChallenge, setActiveChallenge] = useState(null);
+  const [tick, setTick] = useState(0);
 
   const userId = currentUser?.uid || currentUser?.id;
   const currentWeek = getCurrentWeek(db.currentDay);
 
+  const windowState = useMemo(
+    () => getChallengeWindow(db.simulatedTime, db.debuggingChallenges, currentWeek),
+    // tick forces countdown refresh while challenge is upcoming
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [db.simulatedTime, db.debuggingChallenges, currentWeek, tick]
+  );
+
+  const { activeChallenge, timeStatus, isChallengeOpen, countdown } = windowState;
+
   useEffect(() => {
-    const checkChallengeWindow = () => {
-      const now = new Date(db.simulatedTime);
-      const match = db.debuggingChallenges.find((c) => c.week === currentWeek);
-
-      if (match) {
-        setActiveChallenge(match);
-        const pubTime = new Date(match.publishedDate);
-
-        if (now >= pubTime) {
-          setIsChallengeOpen(true);
-          setTimeStatus('open');
-          setCountdown('Challenge Active');
-        } else {
-          setIsChallengeOpen(false);
-          setTimeStatus('upcoming');
-          const diff = pubTime - now;
-          const h = Math.floor(diff / (1000 * 60 * 60));
-          const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          setCountdown(`Starts in ${h}h ${m}m`);
-        }
-      } else {
-        setActiveChallenge(null);
-        setIsChallengeOpen(false);
-        setTimeStatus('closed');
-
-        const nextWeek = currentWeek + 1;
-        const nextChallenge = db.debuggingChallenges.find((c) => c.week === nextWeek);
-        if (nextChallenge) {
-          const pubTime = new Date(nextChallenge.publishedDate);
-          const diff = pubTime - now;
-          const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          setCountdown(`Week ${nextWeek} challenge in ${d} days, ${h} hours (Sunday 21:00)`);
-        } else {
-          setCountdown('No upcoming debugging challenge scheduled.');
-        }
-      }
-    };
-
-    checkChallengeWindow();
-    const interval = setInterval(checkChallengeWindow, 1000);
+    if (timeStatus !== 'upcoming') return undefined;
+    const interval = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(interval);
-  }, [db.simulatedTime, db.debuggingChallenges, currentWeek]);
+  }, [timeStatus]);
 
   const pastChallenges = db.debuggingChallenges.filter((c) => c.week < currentWeek);
+  const activeChallengeSub = activeChallenge?.submissions?.find((s) => s.userId === userId);
+  const gitLinkDefault = activeChallengeSub?.link || '';
 
   const handleSub = async (e) => {
     e.preventDefault();
     setSubmitMsg('');
-    if (!gitLink) {
+    const link = new FormData(e.currentTarget).get('git-debug-link')?.toString().trim();
+    if (!link) {
       setSubmitMsg('GitHub Repository Push link is required.');
       return;
     }
@@ -95,28 +96,14 @@ export default function Debugging() {
       setSubmitMsg('No active debugging challenge for this week.');
       return;
     }
-    const res = await submitDebuggingChallenge(activeChallenge.id, gitLink);
-    if (res.success) {
-      setSubmitMsg(res.message);
-    } else {
-      setSubmitMsg(`Error: ${res.message}`);
-    }
+    const res = await submitDebuggingChallenge(activeChallenge.id, link);
+    setSubmitMsg(res.success ? res.message : `Error: ${res.message}`);
   };
-
-  const activeChallengeSub = activeChallenge?.submissions?.find((s) => s.userId === userId);
-
-  useEffect(() => {
-    if (activeChallengeSub) {
-      setGitLink(activeChallengeSub.link || '');
-    } else {
-      setGitLink('');
-    }
-  }, [activeChallengeSub, activeChallenge]);
 
   return (
     <div className="debugging-container">
       <div className="page-header">
-        <h1>Weekly Debugging Challenges</h1>
+        <h1>Sunday Debugging Challenges</h1>
       </div>
 
       <TiltCard
@@ -124,8 +111,13 @@ export default function Debugging() {
         maxTilt={6}
       >
         <div className="card-top-tag">
-          {timeStatus === 'open' && <span className="pulse-dot"></span>}
-          {timeStatus === 'open' ? 'Challenge Active Now' : timeStatus === 'upcoming' ? 'Challenge Starting Tonight' : 'Weekly Live Debugging'}
+          {timeStatus === 'open' && <span className="pulse-dot" aria-hidden="true" />}
+          {timeStatus === 'open' ? (
+            <>
+              <span className="sr-only">Challenge active now</span>
+              Challenge Active Now
+            </>
+          ) : timeStatus === 'upcoming' ? 'Challenge Starting Tonight' : 'Weekly Live Debugging'}
         </div>
 
         {timeStatus === 'open' && activeChallenge ? (
@@ -133,7 +125,7 @@ export default function Debugging() {
             <div className="workspace-header">
               <div className="theme-info">
                 <span className="week-label">Week {activeChallenge.week} Sunday Special</span>
-                <h2>Theme: {activeChallenge.theme}</h2>
+                <h2>Week {activeChallenge.week} — {activeChallenge.theme}</h2>
               </div>
               <div className="timer-badge">{countdown}</div>
             </div>
@@ -143,25 +135,31 @@ export default function Debugging() {
                 <h3>Problem Description</h3>
                 <p>{activeChallenge.description}</p>
                 <div className="alert-notice">
-                  <strong>Requirements:</strong> Copy the starter code, fix all logical/index/memory bugs, push it to your designated GitHub repository, and submit the link below.
+                  <strong>How to submit:</strong> Copy the starter code, fix all logical, index, and memory bugs, push your solution to GitHub, then paste the link below.
                 </div>
 
-                <form className="debugging-sub-form" onSubmit={handleSub}>
+                <form className="debugging-sub-form" onSubmit={handleSub} key={activeChallengeSub?.timestamp || 'new'}>
                   <div className="input-group">
-                    <label htmlFor="git-debug-link">Your Fixed Code GitHub Link</label>
+                    <label htmlFor="git-debug-link">GitHub link to your fixed code</label>
                     <input
                       id="git-debug-link"
+                      name="git-debug-link"
                       type="url"
-                      placeholder="https://github.com/username/repo/blob/..."
-                      value={gitLink}
-                      onChange={(e) => setGitLink(e.target.value)}
+                      placeholder="e.g. https://github.com/username/repo/blob/…"
+                      defaultValue={gitLinkDefault}
                       required
+                      spellCheck={false}
+                      autoComplete="off"
                     />
                   </div>
                   <button type="submit" className="submit-challenge-btn">
-                    {activeChallengeSub ? 'Update Debug Submission' : 'Submit Debug Code'}
+                    {activeChallengeSub ? 'Update Submission' : 'Submit My Fix'}
                   </button>
-                  {submitMsg && <div className="sub-msg-alert">{submitMsg}</div>}
+                  {submitMsg && (
+                    <div className="sub-msg-alert" role="alert">
+                      {submitMsg}
+                    </div>
+                  )}
                 </form>
 
                 {activeChallengeSub && (
@@ -173,7 +171,7 @@ export default function Debugging() {
                         <strong>Score Awarded:</strong> {activeChallengeSub.score} / 20
                       </div>
                     ) : (
-                      <div className="grade-result pending">Pending manual grading evaluation by Technical Head</div>
+                      <div className="grade-result pending">Awaiting evaluation by the Technical Head.</div>
                     )}
                   </div>
                 )}
@@ -193,12 +191,12 @@ export default function Debugging() {
             {timeStatus === 'upcoming' && activeChallenge ? (
               <>
                 <h2 style={{ marginTop: '1rem' }}>Week {activeChallenge.week} Challenge: {activeChallenge.theme}</h2>
-                <p className="upcoming-note">The Sunday Debugging challenge is scheduled to publish at 21:00 hrs tonight.</p>
+                <p className="upcoming-note">This week&apos;s debugging challenge goes live at 21:00 tonight. Come back then to start.</p>
                 <div className="timer-badge large">{countdown}</div>
               </>
             ) : (
               <>
-                <h2 style={{ marginTop: '1rem' }}>Debugging Challenge is Offline</h2>
+                <h2 style={{ marginTop: '1rem' }}>No active challenge right now</h2>
                 <p className="timer-text">{countdown}</p>
                 <div className="info-rules-grid">
                   <TiltCard className="rule-card" maxTilt={9}>
@@ -217,10 +215,10 @@ export default function Debugging() {
       </TiltCard>
 
       <div className="past-debugs-section">
-        <h2>Past Debugging Challenges History</h2>
+        <h2>Past Challenges</h2>
         <div className="past-challenges-list">
           {pastChallenges.length === 0 ? (
-            <div className="no-past-challenges">No past debugging challenges have concluded yet.</div>
+            <div className="no-past-challenges">No past challenges yet — completed ones will appear here.</div>
           ) : (
             pastChallenges.map((c) => {
               const mySub = c.submissions?.find((s) => s.userId === userId);
@@ -230,20 +228,20 @@ export default function Debugging() {
                     <span className="week-tag">Week {c.week}</span>
                     <div className="details">
                       <h4>Theme: {c.theme}</h4>
-                      <span className="date">Concluded on: {new Date(c.publishedDate).toLocaleDateString()}</span>
+                      <span className="date">Concluded on: {formatDate(c.publishedDate)}</span>
                     </div>
                   </div>
                   <div className="submission-outcome">
                     {mySub ? (
                       <div className="outcome-success">
                         <span className="label">Sub Link: </span>
-                        <a href={mySub.link} target="_blank" rel="noreferrer" className="repo-link">View Repo</a>
+                        <a href={mySub.link} target="_blank" rel="noopener noreferrer" className="repo-link">View Repo</a>
                         <span className="score-tag">
                           {mySub.score !== null && mySub.score !== undefined ? `Score: ${mySub.score}/20` : 'Pending Score'}
                         </span>
                       </div>
                     ) : (
-                      <span className="outcome-missed">No submission (Missed)</span>
+                      <span className="outcome-missed">Not submitted</span>
                     )}
                   </div>
                 </TiltCard>

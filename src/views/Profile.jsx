@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { formatDate } from '../utils/dateFormat';
 
 export default function Profile() {
   const { db, currentUser } = useApp();
@@ -7,8 +8,8 @@ export default function Profile() {
   if (!currentUser) {
     return (
       <div className="profile-container error-state">
-        <h2>Please Sign In</h2>
-        <p>You must be signed in to view your profile details.</p>
+        <h1>Sign in to view your profile</h1>
+        <p>Your stats, submission history, and rankings are waiting for you.</p>
       </div>
     );
   }
@@ -73,19 +74,19 @@ export default function Profile() {
           <section className="profile-metrics-summary">
             <div className="metric-box">
               <h3>{totalSubmissionsCount}</h3>
-              <p>Daily Solutions Solved</p>
+              <p>Solutions submitted</p>
             </div>
             <div className="metric-box">
               <h3>{averageCodingScore} / 10</h3>
-              <p>Average Coding Grade</p>
+              <p>Avg. coding score</p>
             </div>
             <div className="metric-box">
               <h3>{debugParticipationsCount}</h3>
-              <p>Debugging Sunday Battles</p>
+              <p>Sunday battles entered</p>
             </div>
             <div className="metric-box">
               <h3>{currentUser.totalDebuggingScore} pts</h3>
-              <p>Cumulative Debug Score</p>
+              <p>Total debug score</p>
             </div>
           </section>
         </div>
@@ -93,22 +94,23 @@ export default function Profile() {
         {/* ─── Right Column: Submission History ─── */}
         <div className="profile-right-column">
           <section className="profile-history-section">
-            <h2>My Solution Submission History</h2>
+            <h2>Submission History</h2>
             
             <div className="table-responsive-container">
               {userSubs.length === 0 ? (
-                <div className="no-history">You have not submitted any solutions yet. Active questions are available on the dashboard.</div>
+                <div className="no-history">Nothing here yet. Submit today&apos;s challenge from the dashboard to get started.</div>
               ) : (
                 <table className="history-table">
                   <thead>
                     <tr>
-                      <th>Day</th>
-                      <th>Challenge Type</th>
-                      <th>Solution URL</th>
-                      <th>Submission Date</th>
-                      <th>Status</th>
-                      <th>Score</th>
-                      <th>Admin Evaluation Notes</th>
+                      <th scope="col">Day</th>
+                      <th scope="col">Problem</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Solution</th>
+                      <th scope="col">Submitted</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Score</th>
+                      <th scope="col">Feedback</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -121,6 +123,7 @@ export default function Profile() {
                       return (
                         <tr key={sub.id}>
                           <td className="day-col">Day {sub.day}</td>
+                          <td>{titleStr}</td>
                           <td>
                             <span className={`challenge-type-tag ${sub.type}`}>
                               {sub.type === 'leetcode' ? 'LeetCode' : 'Custom DSA'}
@@ -129,7 +132,7 @@ export default function Profile() {
                           <td className="url-col" style={{ maxWidth: '300px' }}>
                             {sub.code ? (
                               <details style={{ cursor: 'pointer' }}>
-                                <summary style={{ color: 'var(--color-primary)', fontWeight: '600', outline: 'none' }}>
+                                <summary style={{ color: 'var(--color-primary)', fontWeight: '600' }}>
                                   Show Code
                                 </summary>
                                 <pre className="editor-block" style={{ maxHeight: '150px', maxWidth: '280px', overflow: 'auto', fontSize: '0.75rem', padding: '0.5rem', marginTop: '0.25rem', textAlign: 'left', margin: 0 }}>
@@ -138,9 +141,9 @@ export default function Profile() {
                               </details>
                             ) : sub.link ? (
                               <div className="solution-links">
-                                <a href={sub.link} target="_blank" rel="noreferrer" className="repo-link">GitHub File &nearr;</a>
+                                <a href={sub.link} target="_blank" rel="noopener noreferrer" className="repo-link">GitHub File &nearr;</a>
                                 {sub.type === 'leetcode' && sub.lcLink && (
-                                  <a href={sub.lcLink} target="_blank" rel="noreferrer" className="repo-link leetcode">LeetCode &nearr;</a>
+                                  <a href={sub.lcLink} target="_blank" rel="noopener noreferrer" className="repo-link leetcode">LeetCode &nearr;</a>
                                 )}
                               </div>
                             ) : (
@@ -148,7 +151,7 @@ export default function Profile() {
                             )}
                           </td>
                           <td className="date-col">
-                            {sub.timestamp ? new Date(sub.timestamp).toLocaleDateString() : '-'}
+                            {sub.timestamp ? formatDate(sub.timestamp) : '-'}
                           </td>
                           <td>
                             <span className={`badge-status ${sub.status.toLowerCase()}`}>
@@ -159,7 +162,7 @@ export default function Profile() {
                             {sub.marks !== null ? <strong>{sub.marks} / 10</strong> : <span className="pending">Pending</span>}
                           </td>
                           <td className="comments-col">
-                            {sub.comments ? <span className="comment">"{sub.comments}"</span> : <span className="no-comment">-</span>}
+                            {sub.comments ? <span className="comment">&ldquo;{sub.comments}&rdquo;</span> : <span className="no-comment">-</span>}
                           </td>
                         </tr>
                       );

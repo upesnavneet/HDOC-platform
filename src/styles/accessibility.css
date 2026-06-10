@@ -1,0 +1,137 @@
+/* Skip link — Web Interface Guidelines: main content bypass */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: 10000;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+  box-shadow: var(--focus-ring);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-4);
+  padding-right: 2rem;
+}
+
+/* Navbar hidden — remove from tab order */
+.navbar-container.navbar-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.navbar-mobile-backdrop {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(13, 11, 15, 0.55);
+}
+
+.profile-link-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.intro-skip-btn {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(30, 24, 40, 0.9);
+  border: 1px solid var(--border-subtle);
+  color: var(--color-title);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.intro-sound-btn {
+  border: 1px solid var(--border-subtle);
+  background: rgba(30, 24, 40, 0.85);
+  color: var(--color-text);
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* Mobile drawer */
+.navbar-hamburger {
+  width: var(--touch-min);
+  height: var(--touch-min);
+}
+
+.navbar-mobile-drawer {
+  overscroll-behavior: contain;
+  touch-action: manipulation;
+}
+
+.coord-profile-modal {
+  overscroll-behavior: contain;
+}
+
+/* Streak grid cells as focusable status indicators */
+.grid-cell-compact {
+  touch-action: manipulation;
+}
+
+.grid-cell-compact:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.gallery-day-card {
+  touch-action: manipulation;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  appearance: none;
+}
+
+button.grid-cell-compact {
+  appearance: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.grid-tooltip-static {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  margin-top: var(--space-3);
+}
+
+/* Tabular numbers in leaderboard */
+.leaderboard-table td.score-col,
+.leaderboard-table td.rank-col,
+.admin-table td {
+  font-variant-numeric: tabular-nums;
+}

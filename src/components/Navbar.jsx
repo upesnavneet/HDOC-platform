@@ -1,55 +1,66 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { NavLink, Link, useLocation } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+
+const ROUTE_MAP = {
+  dashboard: '/dashboard',
+  questions: '/questions',
+  debugging: '/debugging',
+  profile: '/profile',
+  coordinator: '/coordinator',
+  leaderboards: '/leaderboards',
+};
 
 function buildNavLinks(currentUser) {
   if (!currentUser) {
-    return [{ view: 'leaderboards', label: 'Leaderboards' }];
+    return [{ path: ROUTE_MAP.leaderboards, label: 'Leaderboards' }];
   }
 
   const links = [];
 
   if (currentUser.role === 'participant') {
     links.push(
-      { view: 'dashboard', label: 'Dashboard' },
-      { view: 'questions', label: 'Daily Challenges' },
-      { view: 'debugging', label: 'Sunday Debug' },
-      { view: 'profile', label: 'My Profile' }
+      { path: ROUTE_MAP.dashboard, label: 'Dashboard' },
+      { path: ROUTE_MAP.questions, label: 'Daily Challenges' },
+      { path: ROUTE_MAP.debugging, label: 'Sunday Debug' },
+      { path: ROUTE_MAP.profile, label: 'My Profile' }
     );
   }
 
   if (currentUser.role === 'admin') {
     links.push({
-      view: 'coordinator',
+      path: ROUTE_MAP.coordinator,
       label: 'Coordinator Dashboard',
       admin: true,
     });
   }
 
-  links.push({ view: 'leaderboards', label: 'Leaderboards' });
+  links.push({ path: ROUTE_MAP.leaderboards, label: 'Leaderboards' });
   return links;
 }
 
-function isNavActive(activeView, view) {
-  if (view === 'coordinator') {
-    return activeView === 'coordinator' || activeView === 'admin';
+function isNavActive(pathname, path) {
+  if (path === ROUTE_MAP.coordinator) {
+    return pathname === '/coordinator' || pathname === '/admin';
   }
-  return activeView === view;
+  return pathname === path || pathname.startsWith(`${path}/`);
 }
 
-export default function Navbar({
-  activeView,
-  setActiveView,
-  currentUser,
-  logout,
-}) {
+export default function Navbar() {
+  const { currentUser, logout } = useApp();
+  const location = useLocation();
   const navbarRef = useRef(null);
+  const hamburgerRef = useRef(null);
+  const drawerRef = useRef(null);
   const [navbarStyle, setNavbarStyle] = useState({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = useMemo(() => buildNavLinks(currentUser), [currentUser]);
 
-  useEffect(() => {
+  const closeMobileMenu = useCallback(() => {
     setMobileMenuOpen(false);
-  }, [currentUser, activeView]);
+    hamburgerRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
@@ -57,6 +68,48 @@ export default function Navbar({
       document.body.style.overflow = '';
     };
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    const drawer = drawerRef.current;
+    if (!drawer) return undefined;
+
+    const firstLink = drawer.querySelector('a, button');
+    firstLink?.focus();
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') closeMobileMenu();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [mobileMenuOpen, closeMobileMenu]);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const navbar = navbarRef.current;
+    if (!navbar) return undefined;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollThreshold = 10;
+
+      if (currentScrollY <= scrollThreshold) {
+        navbar.classList.remove('navbar-hidden');
+        navbar.removeAttribute('inert');
+      } else if (currentScrollY > lastScrollY) {
+        navbar.classList.add('navbar-hidden');
+        navbar.setAttribute('inert', '');
+      } else {
+        navbar.classList.remove('navbar-hidden');
+        navbar.removeAttribute('inert');
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleNavbarMouseMove = (e) => {
     const navbar = navbarRef.current;
@@ -80,39 +133,40 @@ export default function Navbar({
         ),
         var(--bg-panel)
       `,
-      boxShadow: [
-        `inset ${sx}px ${sy}px ${depth}px rgba(13, 11, 15, 0.85)`,
-      ].join(', '),
+      boxShadow: [`inset ${sx}px ${sy}px ${depth}px rgba(13, 11, 15, 0.85)`].join(', '),
     });
   };
 
-  const handleNavbarMouseLeave = () => {
-    setNavbarStyle({});
-  };
-
-  const handleNavClick = (view) => {
-    setActiveView(view);
-    setMobileMenuOpen(false);
-  };
-
-  const defaultView = currentUser
+  const defaultPath = currentUser
     ? currentUser.role === 'admin'
-      ? 'coordinator'
-      : 'dashboard'
-    : 'auth';
+      ? ROUTE_MAP.coordinator
+      : ROUTE_MAP.dashboard
+    : '/auth/login';
 
-  const renderNavButton = (link, className = 'nav-item') => (
-    <button
-      key={link.view}
-      type="button"
-      className={`${className} ${link.admin ? 'admin-tab' : ''} ${
-        isNavActive(activeView, link.view) ? 'active' : ''
-      }`}
-      onClick={() => handleNavClick(link.view)}
+  const renderNavLink = (link, className = 'nav-item') => (
+    <NavLink
+      key={link.path}
+      to={link.path}
+      className={({ isActive }) =>
+        `${className} ${link.admin ? 'admin-tab' : ''} ${
+          isActive || isNavActive(location.pathname, link.path) ? 'active' : ''
+        }`
+      }
+      onClick={closeMobileMenu}
+      end
     >
       {link.label}
-    </button>
+    </NavLink>
   );
+
+  const initials = currentUser
+    ? currentUser.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : '';
 
   return (
     <>
@@ -120,64 +174,62 @@ export default function Navbar({
         ref={navbarRef}
         className="navbar-container"
         onMouseMove={handleNavbarMouseMove}
-        onMouseLeave={handleNavbarMouseLeave}
+        onMouseLeave={() => setNavbarStyle({})}
         style={navbarStyle}
       >
-        <div
+        <Link
+          to={defaultPath}
           className="navbar-brand-block"
-          onClick={() => handleNavClick(defaultView)}
+          onClick={closeMobileMenu}
+          aria-label="Go to home"
         >
           <div className="navbar-logo">
-            <img src="/logo.png" alt="UPES ACM" className="navbar-logo-img" />
-            <img src="/favicon2.png" alt="UPES ACM-W" className="navbar-logo-img secondary" />
+            <img src="/logo.png" alt="" className="navbar-logo-img" width="50" height="50" aria-hidden="true" />
+            <img src="/favicon2.png" alt="" className="navbar-logo-img secondary" width="45" height="45" aria-hidden="true" />
           </div>
           <div className="navbar-tagline">
             <span className="navbar-event-name">#100DaysOfCode</span>
             <span className="navbar-motto">Advancing Computing as a Science &amp; Profession</span>
           </div>
-        </div>
+        </Link>
 
         <nav className="navbar-links navbar-links-desktop" aria-label="Main navigation">
-          {navLinks.map((link) => renderNavButton(link))}
+          {navLinks.map((link) => renderNavLink(link))}
         </nav>
 
         <div className="navbar-actions">
           {currentUser && (
             <div className="user-profile-badge navbar-profile-desktop">
-              <div
-                className="user-avatar-text"
-                onClick={() =>
-                  currentUser.role === 'participant' && handleNavClick('profile')
-                }
+              {currentUser.role === 'participant' ? (
+                <Link to={ROUTE_MAP.profile} className="profile-link-cluster" aria-label={`Profile for ${currentUser.name}`}>
+                  <span className="user-avatar-text" aria-hidden="true">
+                    {initials}
+                  </span>
+                  <span className="user-details">
+                    <span className="user-name-text">{currentUser.name}</span>
+                    <span className={`user-role-tag ${currentUser.role}`}>
+                      Rank #{currentUser.overallRank}
+                    </span>
+                  </span>
+                </Link>
+              ) : (
+                <>
+                  <span className="user-avatar-text" aria-hidden="true">
+                    {initials}
+                  </span>
+                  <span className="user-details">
+                    <span className="user-name-text">{currentUser.name}</span>
+                    <span className={`user-role-tag ${currentUser.role}`}>Coordinator</span>
+                  </span>
+                </>
+              )}
+
+              <button
+                className="logout-btn"
+                onClick={logout}
+                type="button"
+                aria-label="Sign out"
               >
-                {currentUser.name
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .slice(0, 2)
-                  .toUpperCase()}
-              </div>
-
-              <div className="user-details">
-                <span
-                  className="user-name-text"
-                  onClick={() =>
-                    currentUser.role === 'participant' && handleNavClick('profile')
-                  }
-                  style={{
-                    cursor: currentUser.role === 'participant' ? 'pointer' : 'default',
-                  }}
-                >
-                  {currentUser.name}
-                </span>
-                <span className={`user-role-tag ${currentUser.role}`}>
-                  {currentUser.role === 'admin'
-                    ? 'Coordinator'
-                    : `Rank #${currentUser.overallRank}`}
-                </span>
-              </div>
-
-              <button className="logout-btn" onClick={logout} title="Sign Out" type="button">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -188,6 +240,8 @@ export default function Navbar({
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
                 >
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
@@ -198,11 +252,13 @@ export default function Navbar({
           )}
 
           <button
+            ref={hamburgerRef}
             type="button"
             className={`navbar-hamburger ${mobileMenuOpen ? 'is-open' : ''}`}
             onClick={() => setMobileMenuOpen((open) => !open)}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-drawer"
           >
             <span className="hamburger-bar" />
             <span className="hamburger-bar" />
@@ -211,40 +267,37 @@ export default function Navbar({
         </div>
       </header>
 
-      <div
+      <button
+        type="button"
         className={`navbar-mobile-backdrop ${mobileMenuOpen ? 'is-open' : ''}`}
-        onClick={() => setMobileMenuOpen(false)}
-        aria-hidden="true"
+        onClick={closeMobileMenu}
+        aria-label="Close menu"
+        tabIndex={mobileMenuOpen ? 0 : -1}
       />
 
       <nav
+        ref={drawerRef}
+        id="mobile-nav-drawer"
         className={`navbar-mobile-drawer ${mobileMenuOpen ? 'is-open' : ''}`}
         aria-label="Mobile navigation"
-        aria-hidden={!mobileMenuOpen}
+        {...(!mobileMenuOpen ? { inert: '' } : {})}
       >
         {currentUser && (
           <div className="navbar-mobile-user">
-            <div className="user-avatar-text">
-              {currentUser.name
-                .split(' ')
-                .map((n) => n[0])
-                .join('')
-                .slice(0, 2)
-                .toUpperCase()}
+            <div className="user-avatar-text" aria-hidden="true">
+              {initials}
             </div>
             <div className="navbar-mobile-user-info">
               <span className="user-name-text">{currentUser.name}</span>
               <span className={`user-role-tag ${currentUser.role}`}>
-                {currentUser.role === 'admin'
-                  ? 'Coordinator'
-                  : `Rank #${currentUser.overallRank}`}
+                {currentUser.role === 'admin' ? 'Coordinator' : `Rank #${currentUser.overallRank}`}
               </span>
             </div>
           </div>
         )}
 
         <div className="navbar-mobile-links">
-          {navLinks.map((link) => renderNavButton(link, 'nav-item nav-item-mobile'))}
+          {navLinks.map((link) => renderNavLink(link, 'nav-item nav-item-mobile'))}
         </div>
 
         {currentUser && (

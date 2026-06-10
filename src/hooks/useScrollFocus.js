@@ -2,8 +2,12 @@ import { useEffect, useRef } from 'react';
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 /**
- * Fades dashboard sections vertically — the section nearest the viewport focus line stays clear.
+ * Highlights the dashboard section nearest the viewport — opacity only, no blur (a11y).
  */
 export function useVerticalSectionFocus() {
   const ref = useRef(null);
@@ -12,16 +16,18 @@ export function useVerticalSectionFocus() {
     const root = ref.current;
     if (!root) return undefined;
 
+    if (prefersReducedMotion()) {
+      return undefined;
+    }
+
     const sections = () => Array.from(root.querySelectorAll('[data-dashboard-focus]'));
 
     const applyFocus = (nodes, bestIdx) => {
       nodes.forEach((el, i) => {
         const offset = Math.abs(i - bestIdx);
-        const opacity = offset === 0 ? 1 : offset === 1 ? 0.32 : 0.18;
-        const blur = offset === 0 ? 0 : offset === 1 ? 1.5 : 2.5;
-
+        const opacity = offset === 0 ? 1 : offset === 1 ? 0.88 : 0.78;
         el.style.opacity = String(opacity);
-        el.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+        el.style.filter = 'none';
         el.classList.toggle('dashboard-focus-active', offset === 0);
       });
     };
@@ -39,7 +45,7 @@ export function useVerticalSectionFocus() {
       const lastRect = nodes[nodes.length - 1].getBoundingClientRect();
       const lastVisibleHeight = Math.max(
         0,
-        Math.min(vh, lastRect.bottom) - Math.max(0, lastRect.top),
+        Math.min(vh, lastRect.bottom) - Math.max(0, lastRect.top)
       );
       const lastSectionDominant =
         lastVisibleHeight / vh >= 0.35 && lastRect.top < vh * 0.6;

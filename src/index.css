@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@400;700&family=Orbitron:wght@400;700&family=Syncopate&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;800&family=Saira+Semi+Condensed:wght@400;500;600;700&display=swap');
 
 :root {
   /* Color system — custom palette */
@@ -34,7 +34,9 @@
   --color-secondary: var(--color-light-blue);
   --color-text: #dce8f5;
   --color-title: var(--color-white);
-  --color-muted: #8fa8c4;
+  /* Tinted secondary text — not flat gray on purple surfaces (Impeccable) */
+  --color-muted: rgba(196, 210, 232, 0.72);
+  --color-text-muted: rgba(196, 210, 232, 0.68);
 
   --color-solved: var(--color-green);
   --color-solved-bg: rgba(120, 190, 32, 0.08);
@@ -52,15 +54,35 @@
   --color-pending-bg: rgba(91, 192, 235, 0.05);
   --color-pending-border: rgba(91, 192, 235, 0.25);
 
-  /* Fonts */
-  --font-sans: 'Saira Semi Condensed', system-ui, -apple-system, sans-serif;
-  --font-mono: 'Fira Code', monospace;
-  
-  /* Shadow & Transitions (Removed high glowiness) */
+  /* Typography — display + UI pairing (UI/UX Pro Max: education tech dashboard) */
+  --font-sans: 'Saira Semi Condensed', system-ui, sans-serif;
+  --font-display: 'Orbitron', var(--font-sans);
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+
+  /* 8px spatial rhythm */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --touch-min: 44px;
+  --focus-ring: 0 0 0 2px var(--bg-deep), 0 0 0 4px rgba(45, 95, 212, 0.55);
+  --content-max-prose: 65ch;
+
+  /* Shadow & transitions — no bounce/elastic easing (Impeccable) */
   --shadow-neon: 0 4px 12px rgba(0, 0, 0, 0.25);
   --shadow-neon-strong: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
   /* Glassmorphism backdrop */
   --glass-blur: blur(14px) saturate(1.05);
 }
@@ -4234,7 +4256,7 @@ button {
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;

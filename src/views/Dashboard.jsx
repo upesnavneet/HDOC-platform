@@ -1,43 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import StreakGrid from '../components/StreakGrid';
 import { useTiltCard } from '../hooks/useTiltCard';
 import { useVerticalSectionFocus } from '../hooks/useScrollFocus';
 import { useEqualCardHeights } from '../hooks/useEqualCardHeights';
 import { calculateFinishRate } from '../services/statsService';
+import { parseChallengeContent } from '../utils/challengeContent';
 import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
 
-const parseChallengeContent = (desc = '') => {
-  const inputIndex = desc.indexOf('Input:');
-  const exampleIndex = desc.indexOf('Example:');
-  const targetIndex = inputIndex !== -1 ? inputIndex : exampleIndex;
-  
-  if (targetIndex !== -1) {
-    const explanation = desc.substring(0, targetIndex).trim();
-    const example = desc.substring(targetIndex).trim();
-    return { explanation, example };
-  }
-  
-  return { 
-    explanation: desc, 
-    example: "Refer to standard problem specifications on the platform for detailed inputs/outputs." 
-  };
-};
-
-export default function Dashboard({ setActiveView }) {
-  const { db, currentUser, submitQuestionCode } = useApp();
+export default function Dashboard() {
+  const navigate = useNavigate();
+  const { db, currentUser } = useApp();
   const [timeLeft, setTimeLeft] = useState('');
-
-  // Form states
-  const [lcLanguage, setLcLanguage] = useState('cpp');
-  const [lcCode, setLcCode] = useState('');
-  const [customLanguage, setCustomLanguage] = useState('cpp');
-  const [customCode, setCustomCode] = useState('');
-
-  // Submit feedback
-  const [msgLc, setMsgLc] = useState('');
-  const [msgCustom, setMsgCustom] = useState('');
 
   const currentDay = db.currentDay;
   const questions = db.questions;
@@ -50,28 +26,6 @@ export default function Dashboard({ setActiveView }) {
   const todayQs = questions.filter(q => q.day === currentDay);
   const todayLcQ = todayQs.find(q => q.linkLc && q.titleLc);
   const todayCustomQ = todayQs.find(q => q.titleCustom && q.descCustom);
-
-  // Check if today's questions are submitted
-  const todayLcSub = userSubs.find(s => s.day === currentDay && s.type === 'leetcode');
-  const todayCustomSub = userSubs.find(s => s.day === currentDay && s.type === 'custom');
-
-  // Pre-populate forms if edit/already submitted
-  useEffect(() => {
-    if (todayLcSub) {
-      setLcLanguage(todayLcSub.language || 'cpp');
-      setLcCode(todayLcSub.code || '');
-    } else {
-      setLcLanguage('cpp');
-      setLcCode('');
-    }
-    if (todayCustomSub) {
-      setCustomLanguage(todayCustomSub.language || 'cpp');
-      setCustomCode(todayCustomSub.code || '');
-    } else {
-      setCustomLanguage('cpp');
-      setCustomCode('');
-    }
-  }, [todayLcSub, todayCustomSub, currentDay]);
 
   // Compute deadline countdown based on simulated system date
   useEffect(() => {
@@ -98,36 +52,6 @@ export default function Dashboard({ setActiveView }) {
     return () => clearInterval(interval);
   }, [db.simulatedTime, currentDay]);
 
-  const handleLcSubmit = async (e) => {
-    e.preventDefault();
-    setMsgLc('');
-    if (!lcCode.trim()) {
-      setMsgLc('Solution code is required.');
-      return;
-    }
-    const res = await submitQuestionCode(currentDay, 'leetcode', lcCode, lcLanguage);
-    if (res.success) {
-      setMsgLc(`Successfully submitted (${res.status})!`);
-    } else {
-      setMsgLc(`Error: ${res.message}`);
-    }
-  };
-
-  const handleCustomSubmit = async (e) => {
-    e.preventDefault();
-    setMsgCustom('');
-    if (!customCode.trim()) {
-      setMsgCustom('Solution code is required.');
-      return;
-    }
-    const res = await submitQuestionCode(currentDay, 'custom', customCode, customLanguage);
-    if (res.success) {
-      setMsgCustom(`Successfully submitted (${res.status})!`);
-    } else {
-      setMsgCustom(`Error: ${res.message}`);
-    }
-  };
-
   // Find rank preview
   const codingRank = userId
     ? db.users
@@ -152,7 +76,11 @@ export default function Dashboard({ setActiveView }) {
   const challengeStackRef = useEqualCardHeights([currentDay, todayLcQ?.id, todayCustomQ?.id]);
 
   if (!currentUser) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="loading" role="status" aria-live="polite">
+        Loading…
+      </div>
+    );
   }
 
   return (
@@ -168,12 +96,12 @@ export default function Dashboard({ setActiveView }) {
             <span className="hero-orange"><ScrambledText text="Brilliance." triggerOnHover={false} /></span>
           </h1>
           <p className="hero-desc">
-            One commit. Every day. For 100 days straight. UPES ACM&apos;s flagship coding challenge -
-            build your streak, sharpen your skills, and level up with fellow coders from campus.
+            One commit. Every day. 100 days straight — UPES ACM&apos;s flagship coding challenge.
+            Build your streak, sharpen your skills, and rise through the ranks with fellow coders.
           </p>
           <div className="hero-actions">
-            <button className="hero-btn primary" onClick={() => document.getElementById('todays-challenges')?.scrollIntoView({ behavior: 'smooth' })}>
-              Start Day {currentDay} →
+            <button type="button" className="hero-btn primary" onClick={() => document.getElementById('todays-challenges')?.scrollIntoView({ behavior: 'smooth' })}>
+              Go to Day {currentDay}'s Challenges →
             </button>
           </div>
           <div className="hero-stats-row">
@@ -219,10 +147,10 @@ export default function Dashboard({ setActiveView }) {
             <span className="stat-icon-flame">Days</span>
           </div>
           {currentUser.leetCodeStreak === 0 && (
-            <span className="stat-status-alert error">Streak Broken! Solve today's question.</span>
+            <span className="stat-status-alert error">Streak broken — solve today&apos;s LeetCode to restart it.</span>
           )}
           {currentUser.leetCodeStreak > 0 && (
-            <span className="stat-status-alert success">Active LeetCode Streak</span>
+            <span className="stat-status-alert success">Streak is live — keep it going!</span>
           )}
         </TiltCard>
 
@@ -233,10 +161,10 @@ export default function Dashboard({ setActiveView }) {
             <span className="stat-icon-github">Days</span>
           </div>
           {currentUser.gitHubStreak === 0 && (
-            <span className="stat-status-alert error">No active pushes tracked!</span>
+            <span className="stat-status-alert error">No pushes yet — commit today&apos;s solution to GitHub.</span>
           )}
           {currentUser.gitHubStreak > 0 && (
-            <span className="stat-status-alert success">Contributions matching daily submissions</span>
+            <span className="stat-status-alert success">Daily pushes on track!</span>
           )}
         </TiltCard>
 
@@ -248,20 +176,22 @@ export default function Dashboard({ setActiveView }) {
             <span>•</span>
             <span>Debug: #{debugRank}</span>
           </div>
-          <span className="stat-link" onClick={() => setActiveView('leaderboards')}>View Leaderboards &rarr;</span>
+          <button type="button" className="stat-link" onClick={() => navigate('/leaderboards')}>
+            View Leaderboards &rarr;
+          </button>
         </TiltCard>
       </section>
 
       {/* Today's Coding Challenges Section */}
       <section id="todays-challenges" className="todays-challenges-section dashboard-focus-section" data-dashboard-focus>
         <div className="section-header-row">
-          <h2>Today's Challenges - Day {currentDay}</h2>
+          <h2>Today's Challenges — Day {currentDay}</h2>
           <div className={`countdown-timer ${timeLeft === 'Deadline Passed' ? 'expired' : ''}`}>
-            Submission Window closes in: <strong>{timeLeft}</strong>
+            {timeLeft === 'Deadline Passed' ? 'Submission window has closed.' : <>Window closes in <strong>{timeLeft}</strong></>}
           </div>
         </div>
 
-        <p className="challenge-cards-scroll-hint">Swipe horizontally to switch between challenges</p>
+        <p className="challenge-cards-scroll-hint">Scroll sideways to see both challenges</p>
 
         <div className="challenge-cards-scroll-stack" ref={challengeStackRef}>
           {/* Challenge 1: LeetCode */}
@@ -285,13 +215,13 @@ export default function Dashboard({ setActiveView }) {
                 </div>
 
                 <div className="challenge-meta">
-                  <a href={todayLcQ.linkLc} target="_blank" rel="noreferrer" className="external-problem-link">
+                  <a href={todayLcQ.linkLc} target="_blank" rel="noopener noreferrer" className="external-problem-link">
                     Open LeetCode Page →
                   </a>
                 </div>
               </div>
             ) : (
-              <div className="no-challenge-placeholder">No LeetCode challenge uploaded for today yet.</div>
+              <div className="no-challenge-placeholder">Today&apos;s LeetCode challenge hasn&apos;t been posted yet. Check back soon.</div>
             )}
           </TiltCard>
           </div>
@@ -324,7 +254,7 @@ export default function Dashboard({ setActiveView }) {
                 );
               })()
             ) : (
-              <div className="no-challenge-placeholder">No custom challenge uploaded for today yet.</div>
+              <div className="no-challenge-placeholder">Today&apos;s custom DSA challenge hasn&apos;t been posted yet. Check back soon.</div>
             )}
           </TiltCard>
           </div>

@@ -1,0 +1,363 @@
+/**
+ * Visual polish — Impeccable anti-patterns + UI/UX Pro Max (gamified edu-tech dashboard)
+ * Product: competitive coding challenge platform · dark tech · ACM orange/blue identity
+ */
+
+/* ── Typography hierarchy ── */
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.page-header {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-header h1 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: var(--space-2);
+}
+
+.page-header .subtitle,
+.subtitle {
+  max-width: var(--content-max-prose);
+  line-height: 1.6;
+}
+
+.hero-desc,
+.form-description,
+.panel-desc {
+  max-width: var(--content-max-prose);
+  color: rgba(220, 232, 245, 0.82);
+}
+
+.problem-text,
+.challenge-desc {
+  max-width: var(--content-max-prose);
+  line-height: 1.65;
+}
+
+/* ── Global interaction quality (UI/UX Pro Max checklist) ── */
+:where(
+  a,
+  button,
+  [role='button'],
+  .nav-item,
+  .tab-btn,
+  .coord-tab,
+  .stat-link,
+  .gallery-day-card,
+  .user-avatar-text,
+  .user-name-text,
+  .navbar-brand-block
+) {
+  cursor: pointer;
+}
+
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  .nav-item,
+  .tab-btn,
+  .coord-tab
+):focus {
+  outline: none;
+}
+
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  .nav-item,
+  .tab-btn,
+  .coord-tab,
+  .hero-btn,
+  .auth-action-btn,
+  .small-action-btn,
+  .navbar-hamburger
+):focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+/* ── Touch targets (Impeccable: min 44px) ── */
+.nav-item,
+.nav-item-mobile,
+.tab-btn,
+.coord-tab,
+.auth-action-btn,
+.hero-btn,
+.navbar-hamburger,
+.navbar-mobile-logout,
+.login-nav-btn,
+.grade-submit-btn,
+.submit-challenge-btn {
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-item-mobile {
+  min-height: var(--touch-min);
+}
+
+.small-action-btn {
+  min-height: 36px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.logout-btn {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Navigation — remove side-tab border slop (Impeccable) ── */
+.nav-item {
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-item.active {
+  background: rgba(45, 95, 212, 0.1);
+  border-color: rgba(45, 95, 212, 0.25);
+}
+
+.nav-item-mobile {
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: var(--radius-md);
+}
+
+.nav-item-mobile:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-item-mobile.active {
+  background: rgba(45, 95, 212, 0.12);
+  border-color: rgba(45, 95, 212, 0.3);
+}
+
+/* ── Cards — soften harsh zero-radius without card nesting slop ── */
+.press-card,
+.stat-card,
+.streak-grid-wrapper,
+.challenge-card,
+.auth-card-wrapper,
+.coord-stat-card {
+  border-radius: var(--radius-md);
+}
+
+.coordinator-workspace,
+.table-responsive-container,
+.coord-profile-card {
+  border-radius: var(--radius-md);
+}
+
+/* ── Primary CTA — ACM orange accent, not generic purple gradient ── */
+.auth-action-btn {
+  background: rgba(245, 130, 32, 0.12);
+  border-color: rgba(245, 130, 32, 0.45);
+  color: var(--color-title);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.auth-action-btn::before {
+  display: none;
+}
+
+.auth-action-btn:hover {
+  background: var(--color-orange);
+  border-color: var(--color-orange);
+  color: var(--color-void);
+}
+
+.auth-action-btn.admin-submit {
+  background: rgba(45, 95, 212, 0.12);
+  border-color: rgba(45, 95, 212, 0.45);
+}
+
+.auth-action-btn.admin-submit:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+/* ── Tabs — clearer active state, adequate spacing ── */
+.leaderboard-tabs-bar {
+  gap: var(--space-2);
+  padding: var(--space-2);
+}
+
+.tab-btn {
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.tab-btn.active {
+  background: var(--color-orange);
+  color: var(--color-void);
+  box-shadow: none;
+}
+
+.coord-tab.active {
+  background: rgba(245, 130, 32, 0.1);
+  border-color: rgba(245, 130, 32, 0.45);
+  color: var(--color-orange);
+}
+
+/* ── Replace AI-purple custom tag with ACM palette ── */
+.section-header-tag.custom-tag {
+  background: rgba(91, 192, 235, 0.12);
+  color: var(--color-light-blue);
+}
+
+/* ── Forms — readable inputs, visible focus ── */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  min-height: var(--touch-min);
+  border-radius: var(--radius-sm);
+}
+
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible {
+  border-color: rgba(45, 95, 212, 0.55);
+  box-shadow: var(--focus-ring);
+}
+
+.forgot-btn,
+.auth-toggle-link {
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Tables — row hover + readable density ── */
+.leaderboard-table tbody tr,
+.admin-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+/* ── Reduce decorative shine loops (Impeccable: dated AI slop) ── */
+.navbar-container::before,
+.leaderboard-pill::before {
+  opacity: 0.35;
+}
+
+/* ── Accessibility: respect motion preferences ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .navbar-container::before,
+  .leaderboard-pill::before,
+  .auth-action-btn::before {
+    display: none;
+  }
+
+  .press-card,
+  .stat-card {
+    transition: none;
+  }
+}
+
+/* ── Responsive rhythm (UI/UX Pro Max: 375 / 768 / 1024 / 1440) ── */
+@media (max-width: 768px) {
+  .main-content-area {
+    padding: 5.75rem var(--space-4) var(--space-5);
+  }
+
+  .overview-stats-section {
+    gap: var(--space-4);
+  }
+
+  .coordinator-tabs {
+    gap: var(--space-2);
+  }
+
+  .coord-tab {
+    flex: 1 1 calc(50% - var(--space-2));
+    text-align: center;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content-area {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+  }
+
+  .dashboard-hero-split {
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 1440px) {
+  .main-content-area {
+    max-width: 1320px;
+  }
+}
+
+/* ── Empty / loading states ── */
+.loading,
+.no-items-alert,
+.no-selection-placeholder {
+  color: rgba(220, 232, 245, 0.78);
+  line-height: 1.6;
+}
+
+.no-selection-placeholder h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin-top: var(--space-4);
+}
+
+/* Stat link as accessible button */
+.stat-link {
+  background: none;
+  border: none;
+  padding: var(--space-1) 0;
+  text-align: left;
+  font: inherit;
+  min-height: var(--touch-min);
+}
+
+/* Tinted overlay — not pure black (Impeccable) */
+.coord-profile-modal {
+  background: rgba(13, 11, 15, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+/* Flatter problem sections — avoid nested card-in-card */
+.problem-section-body {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-4);
+}
