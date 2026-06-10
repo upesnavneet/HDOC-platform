@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function LoginForm({
@@ -8,6 +9,8 @@ export default function LoginForm({
   isSubmitting,
   onSubmit,
 }) {
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+
   return (
     <form className="auth-form" onSubmit={onSubmit}>
       <h2 className="form-title">Sign In</h2>
@@ -43,6 +46,18 @@ export default function LoginForm({
           required
         />
       </div>
+
+      <label className="keep-logged-in" htmlFor="keep-logged-in">
+        <input
+          id="keep-logged-in"
+          type="checkbox"
+          checked={keepLoggedIn}
+          onChange={(e) => setKeepLoggedIn(e.target.checked)}
+        />
+        <span className="custom-checkbox" aria-hidden="true" />
+        <span>Keep me logged in</span>
+      </label>
+
       <button type="submit" className="auth-action-btn" disabled={isSubmitting}>
         {isSubmitting ? 'Signing in…' : 'Sign In'}
       </button>

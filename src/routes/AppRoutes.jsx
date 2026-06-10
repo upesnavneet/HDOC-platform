@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute, GuestRoute, HomeRedirect } from './guards';
 import Auth from '../views/Auth';
 import Dashboard from '../views/Dashboard';
@@ -9,7 +9,7 @@ import Leaderboards from '../views/Leaderboards';
 import Profile from '../views/Profile';
 
 const CoordinatorDashboard = lazy(() => import('../features/coordinator/CoordinatorDashboard'));
-const DistortionBackground = lazy(() => import('../components/DistortionBackground'));
+const AuroraBackground = lazy(() => import('../components/Aurora'));
 
 function PageLoader() {
   return (
@@ -20,10 +20,20 @@ function PageLoader() {
 }
 
 export default function AppRoutes() {
+  const location = useLocation();
+  const isAuthPage = location.pathname.startsWith('/auth');
+
   return (
     <>
       <Suspense fallback={null}>
-        <DistortionBackground />
+        {!isAuthPage && (
+          <AuroraBackground
+            colorStops={['#0a0b10', '#03346E', '#6EACDA']}
+            blend={0.5}
+            amplitude={1.0}
+            speed={0.6}
+          />
+        )}
       </Suspense>
 
       <Suspense fallback={<PageLoader />}>

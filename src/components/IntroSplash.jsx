@@ -7,7 +7,6 @@ function prefersReducedMotion() {
 
 export default function IntroSplash({ onComplete }) {
   const [stage, setStage] = useState(0);
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   const finish = useCallback(() => {
     onComplete();
@@ -80,6 +79,8 @@ export default function IntroSplash({ onComplete }) {
       return undefined;
     }
 
+    playTaDum();
+
     const t1 = setTimeout(() => setStage(2), 200);
     const t2 = setTimeout(() => setStage(3), 4200);
     const t3 = setTimeout(finish, 5000);
@@ -90,13 +91,6 @@ export default function IntroSplash({ onComplete }) {
       clearTimeout(t3);
     };
   }, [finish]);
-
-  const handleEnableSound = () => {
-    if (!hasInteracted) {
-      setHasInteracted(true);
-      playTaDum();
-    }
-  };
 
   return (
     <div className="intro-splash-overlay" role="region" aria-label="Introduction">
@@ -142,12 +136,6 @@ export default function IntroSplash({ onComplete }) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {!hasInteracted && stage < 3 && (
-        <button type="button" className="intro-tap-hint intro-sound-btn" onClick={handleEnableSound}>
-          Enable Sound
-        </button>
-      )}
     </div>
   );
 }

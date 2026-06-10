@@ -1,61 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;800&family=Saira+Semi+Condensed:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;800&display=swap');
+@import url('https://fonts.cdnfonts.com/css/myriad-pro');
 
 :root {
-  /* Color system — custom palette */
-  --color-navy-deep: #1A1520;
-  --color-navy-mid: #261F30;
-  --color-navy-slate: #322840;
-  --color-teal: #2D5FD4;
-  --color-electric: #4A45B0;
-  --color-royal: #2D2870;
-  --color-indigo: #1E1828;
-  --color-void: #0D0B0F;
+  /* Color system — 60/30/10 palette */
+  --color-navy-deep: #0a0b10;
+  --color-navy-mid: #0a0b10;
+  --color-navy-slate: #03346E;
+  --color-teal: #6EACDA;
+  --color-electric: #03346E;
+  --color-royal: #03346E;
+  --color-indigo: #0a0b10;
+  --color-void: #0a0b10;
 
   --color-acm-blue: var(--color-teal);
   --color-dark-blue: var(--color-navy-deep);
   --color-black: var(--color-void);
   --color-white: #ffffff;
-  --color-yellow: #F5C518;
-  --color-orange: #F58220;
+  --color-yellow: #E2E2B6;
+  --color-orange: #E2E2B6;
   --color-red: #E03C31;
-  --color-light-blue: #5BC0EB;
+  --color-light-blue: #6EACDA;
   --color-green: #78BE20;
-  --color-purple: #7B68EE;
+  --color-purple: #03346E;
 
   --bg-deep: var(--color-void);
-  --bg-panel: rgba(30, 24, 40, 0.95);
-  --bg-card: rgba(38, 31, 48, 0.55);
-  --bg-card-hover: rgba(255, 255, 255, 0.04);
-  --bg-input: rgba(13, 11, 15, 0.65);
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --bg-panel: rgba(3, 52, 110, 0.95);
+  --bg-card: rgba(3, 52, 110, 0.85);
+  --bg-card-hover: rgba(3, 52, 110, 0.95);
+  --bg-input: rgba(2, 21, 38, 0.85);
+  --border-subtle: rgba(110, 172, 218, 0.25);
   --border-focus: var(--color-teal);
 
   --color-primary: var(--color-teal);
-  --color-secondary: var(--color-light-blue);
-  --color-text: #dce8f5;
+  --color-secondary: #03346E;
+  --color-text: #ffffff;
   --color-title: var(--color-white);
-  /* Tinted secondary text — not flat gray on purple surfaces (Impeccable) */
-  --color-muted: rgba(196, 210, 232, 0.72);
-  --color-text-muted: rgba(196, 210, 232, 0.68);
+  /* Tinted secondary text — warm cream tone on navy surfaces */
+  --color-muted: rgba(226, 226, 182, 0.85);
+  --color-text-muted: rgba(226, 226, 182, 0.75);
 
   --color-solved: var(--color-green);
   --color-solved-bg: rgba(120, 190, 32, 0.08);
   --color-solved-border: rgba(120, 190, 32, 0.3);
   
-  --color-late: var(--color-orange);
-  --color-late-bg: rgba(245, 130, 32, 0.08);
-  --color-late-border: rgba(245, 130, 32, 0.3);
+  --color-late: #E2E2B6;
+  --color-late-bg: rgba(226, 226, 182, 0.08);
+  --color-late-border: rgba(226, 226, 182, 0.3);
 
   --color-missed: var(--color-red);
   --color-missed-bg: rgba(224, 60, 49, 0.08);
   --color-missed-border: rgba(224, 60, 49, 0.3);
 
   --color-pending: var(--color-light-blue);
-  --color-pending-bg: rgba(91, 192, 235, 0.05);
-  --color-pending-border: rgba(91, 192, 235, 0.25);
+  --color-pending-bg: rgba(110, 172, 218, 0.05);
+  --color-pending-border: rgba(110, 172, 218, 0.25);
 
-  /* Typography — display + UI pairing (UI/UX Pro Max: education tech dashboard) */
-  --font-sans: 'Saira Semi Condensed', system-ui, sans-serif;
+  /* Typography — Myriad Pro + display pairing */
+  --font-sans: 'Myriad Pro', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-display: 'Orbitron', var(--font-sans);
   --font-mono: 'JetBrains Mono', 'Consolas', monospace;
 
@@ -74,12 +75,12 @@
   --radius-full: 9999px;
 
   --touch-min: 44px;
-  --focus-ring: 0 0 0 2px var(--bg-deep), 0 0 0 4px rgba(45, 95, 212, 0.55);
+  --focus-ring: 0 0 0 2px var(--bg-deep), 0 0 0 4px rgba(110, 172, 218, 0.55);
   --content-max-prose: 65ch;
 
-  /* Shadow & transitions — no bounce/elastic easing (Impeccable) */
-  --shadow-neon: 0 4px 12px rgba(0, 0, 0, 0.25);
-  --shadow-neon-strong: 0 8px 24px rgba(0, 0, 0, 0.4);
+  /* Shadow & transitions — no bounce/elastic easing */
+  --shadow-neon: 0 4px 12px rgba(2, 21, 38, 0.35);
+  --shadow-neon-strong: 0 8px 24px rgba(2, 21, 38, 0.5);
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -94,7 +95,7 @@
 }
 
 body {
-  background-color: transparent;  /* Let the WebGL canvas show through */
+  background-color: #0a0b10;  /* Let the WebGL canvas show through, but set base to primary background */
   color: var(--color-text);
   font-family: var(--font-sans);
   line-height: 1.6;
@@ -161,7 +162,7 @@ body {
 
 .press-card {
   box-shadow:
-    0 4px 16px rgba(13, 11, 15, 0.35),
+    0 4px 16px rgba(9, 12, 40, 0.35),
     0 0 0 1px rgba(255, 255, 255, 0.03);
   transition:
     box-shadow 0.12s ease,
@@ -230,10 +231,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(13, 11, 15, 0.92);
-  backdrop-filter: blur(24px) saturate(1.8);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(2, 21, 38, 0.05); /* very less opacity near to transparent */
+  backdrop-filter: blur(8px) saturate(1.0);
+  -webkit-backdrop-filter: blur(8px) saturate(1.0);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
   padding: 1rem 2rem;
   overflow: hidden;
   position: fixed;
@@ -246,6 +247,60 @@ button {
 
 .navbar-container.navbar-hidden {
   transform: translateY(-100%);
+}
+
+.auth-card-wrapper.border-glow-card {
+  border: none;
+  box-shadow: none;
+}
+
+/* Keep me logged in checkbox styles */
+.keep-logged-in {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9rem;
+  color: #a0aec0;
+  width: max-content;
+}
+
+.keep-logged-in input[type="checkbox"] {
+  display: none;
+}
+
+.keep-logged-in .custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #4a5568;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.keep-logged-in input[type="checkbox"]:checked + .custom-checkbox {
+  background: #6EACDA;
+  border-color: #6EACDA;
+}
+
+.keep-logged-in input[type="checkbox"]:checked + .custom-checkbox::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.keep-logged-in:hover .custom-checkbox {
+  border-color: #6EACDA;
 }
 
 /* The travelling shine streak */
@@ -347,7 +402,7 @@ button {
   height: 42px;
   padding: 0;
   border: 1px solid var(--border-subtle);
-  background: rgba(30, 24, 40, 0.55);
+  background: rgba(3, 52, 110, 0.55);
   border-radius: 0;
   flex-shrink: 0;
 }
@@ -376,7 +431,7 @@ button {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(13, 11, 15, 0.55);
+  background: rgba(2, 21, 38, 0.55);
   z-index: 98;
   opacity: 0;
   pointer-events: none;
@@ -396,7 +451,7 @@ button {
   width: min(88vw, 320px);
   height: 100vh;
   height: 100dvh;
-  background: rgba(30, 24, 40, 0.96);
+  background: rgba(3, 52, 110, 0.96);
   backdrop-filter: blur(22px) saturate(1.2);
   -webkit-backdrop-filter: blur(22px) saturate(1.2);
   border-left: 1px solid var(--border-subtle);
@@ -448,12 +503,12 @@ button {
   padding: 0.85rem 1rem;
   border-radius: 0;
   border: 1px solid transparent;
-  border-bottom: 1px solid rgba(45, 95, 212, 0.1);
+  border-bottom: 1px solid rgba(114, 136, 174, 0.1);
 }
 
 .nav-item-mobile.active {
   border-bottom-color: var(--color-primary);
-  background: rgba(45, 95, 212, 0.08);
+  background: rgba(114, 136, 174, 0.08);
 }
 
 .navbar-mobile-logout {
@@ -476,7 +531,7 @@ button {
 }
 
 .nav-item:hover {
-  color: var(--color-white);
+  color: var(--color-muted);
 }
 
 .nav-item.active {
@@ -489,7 +544,7 @@ button {
 }
 
 .nav-item.admin-tab:hover {
-  color: var(--color-white);
+  color: var(--color-primary);
 }
 
 .navbar-actions {
@@ -736,18 +791,18 @@ button {
 }
 
 .auth-role-badge.coordinator {
-  background: rgba(245, 130, 32, 0.15);
+  background: rgba(234, 224, 207, 0.15);
   color: var(--color-orange);
-  border: 1px solid rgba(245, 130, 32, 0.3);
+  border: 1px solid rgba(234, 224, 207, 0.3);
 }
 
 .auth-card-wrapper {
   position: relative;
   z-index: 2;
-  background: rgba(38, 31, 48, 0.72);
+  background: transparent;
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid var(--border-subtle);
+  border: none;
   border-radius: 0;
   padding: 2.5rem;
   width: 100%;
@@ -815,7 +870,7 @@ button {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: rgba(45, 95, 212, 0.45);
+  border-color: rgba(114, 136, 174, 0.45);
   box-shadow: none;
 }
 
@@ -950,12 +1005,12 @@ button {
   background: rgba(47, 87, 138, 0.15);
 }
 .demo-btn.student {
-  background: rgba(45, 95, 212, 0.05);
+  background: rgba(114, 136, 174, 0.05);
   color: var(--color-primary);
-  border-color: rgba(45, 95, 212, 0.2);
+  border-color: rgba(114, 136, 174, 0.2);
 }
 .demo-btn.student:hover {
-  background: rgba(45, 95, 212, 0.15);
+  background: rgba(114, 136, 174, 0.15);
 }
 
 .demo-panel-note {
@@ -1187,7 +1242,7 @@ button {
 }
 
 .grid-cell.current-day-cell {
-  outline: 2px solid rgba(45, 95, 212, 0.35);
+  outline: 2px solid rgba(114, 136, 174, 0.35);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -1228,7 +1283,7 @@ button {
 }
 
 .hero-panel-deep {
-  background: linear-gradient(145deg, #1E1828 0%, #0D0B0F 100%);
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: #ffffff;
 }
@@ -1246,12 +1301,12 @@ button {
 }
 
 .hero-panel-deep .hero-stats-row {
-  border-top-color: rgba(45, 95, 212, 0.15);
+  border-top-color: rgba(114, 136, 174, 0.15);
 }
 
 .hero-panel-deep .hero-btn.outline {
   color: #ffffff;
-  border-color: rgba(45, 95, 212, 0.35);
+  border-color: rgba(114, 136, 174, 0.35);
 }
 
 .hero-panel-deep .hero-btn.outline:hover {
@@ -1266,7 +1321,7 @@ button {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-orange);
-  border: 1px solid rgba(245, 130, 32, 0.35);
+  border: 1px solid rgba(234, 224, 207, 0.35);
   border-radius: 20px;
   padding: 0.35rem 0.85rem;
   margin-bottom: 1.25rem;
@@ -1740,7 +1795,7 @@ button {
   min-height: clamp(520px, 72vh, 680px);
   max-height: clamp(520px, 72vh, 680px);
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(13, 11, 15, 0.45);
+  box-shadow: 0 16px 40px rgba(9, 12, 40, 0.45);
   display: flex;
   flex-direction: column;
 }
@@ -1789,7 +1844,7 @@ button {
     background 0.12s ease;
   will-change: transform, box-shadow, background;
   transform-style: preserve-3d;
-  box-shadow: 0 4px 16px rgba(13, 11, 15, 0.35);
+  box-shadow: 0 4px 16px rgba(9, 12, 40, 0.35);
 }
 
 .card-top-tag {
@@ -1886,7 +1941,7 @@ button {
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  background-color: rgba(45, 95, 212, 0.12);
+  background-color: rgba(114, 136, 174, 0.12);
   color: var(--color-light-blue);
   letter-spacing: 0.02em;
 }
@@ -2169,8 +2224,8 @@ button {
 }
 
 .master-banner-alert {
-  background: linear-gradient(135deg, rgba(45, 95, 212, 0.08), rgba(0,0,0,0));
-  border: 1px solid rgba(45, 95, 212, 0.2);
+  background: linear-gradient(135deg, rgba(114, 136, 174, 0.08), rgba(0,0,0,0));
+  border: 1px solid rgba(114, 136, 174, 0.2);
   padding: 1rem;
   border-radius: 6px;
   display: flex;
@@ -2245,7 +2300,7 @@ button {
 }
 
 .handout-text-box {
-  background-color: rgba(45, 95, 212, 0.02);
+  background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   padding: 1rem;
   border-radius: 6px;
@@ -2323,7 +2378,7 @@ button {
 }
 
 .active-debug-card.open-challenge {
-  border-color: rgba(45, 95, 212, 0.35);
+  border-color: rgba(114, 136, 174, 0.35);
   box-shadow: none;
 }
 
@@ -2480,7 +2535,7 @@ button {
 }
 
 .rule-card {
-  background: var(--bg-panel);
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
   padding: 1.25rem;
@@ -2681,16 +2736,16 @@ button {
   background: var(--bg-panel);
 }
 
-.rank-badge.rank-1 { background-color: rgba(45, 95, 212, 0.15); color: var(--color-primary); border: 1px solid rgba(45, 95, 212, 0.3); }
+.rank-badge.rank-1 { background-color: rgba(114, 136, 174, 0.15); color: var(--color-primary); border: 1px solid rgba(114, 136, 174, 0.3); }
 .rank-badge.rank-2 { background-color: rgba(50, 40, 64, 0.15); color: #fff; border: 1px solid var(--border-subtle); }
-.rank-badge.rank-3 { background-color: rgba(38, 31, 48, 0.2); color: #a5b8cf; border: 1px solid rgba(38, 31, 48, 0.4); }
+.rank-badge.rank-3 { background-color: rgba(75, 86, 148, 0.2); color: #a5b8cf; border: 1px solid rgba(75, 86, 148, 0.4); }
 
 .top10-highlight {
-  background-color: rgba(45, 95, 212, 0.01);
+  background-color: rgba(114, 136, 174, 0.01);
 }
 
 .gold-medalist {
-  background-color: rgba(45, 95, 212, 0.02) !important;
+  background-color: rgba(114, 136, 174, 0.02) !important;
 }
 
 .participant-col .details {
@@ -2705,9 +2760,9 @@ button {
 }
 
 .finale-tag {
-  background-color: rgba(45, 95, 212, 0.08);
+  background-color: rgba(114, 136, 174, 0.08);
   color: var(--color-primary);
-  border: 1px solid rgba(45, 95, 212, 0.2);
+  border: 1px solid rgba(114, 136, 174, 0.2);
   width: fit-content;
   font-size: 0.65rem;
   font-weight: 700;
@@ -2747,7 +2802,7 @@ button {
   color: var(--color-secondary);
 }
 .streak-badge.git {
-  background-color: rgba(45, 95, 212, 0.1);
+  background-color: rgba(114, 136, 174, 0.1);
   color: var(--color-primary);
 }
 
@@ -2792,7 +2847,7 @@ button {
 }
 
 .profile-hero-card {
-  background: linear-gradient(135deg, var(--bg-card) 50%, var(--bg-deep));
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 0;
   padding: 1.75rem;
@@ -2858,7 +2913,7 @@ button {
 }
 
 .highlight-metric {
-  background-color: rgba(11, 12, 16, 0.4);
+  background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   padding: 0.75rem 1.25rem;
   border-radius: 6px;
@@ -2927,7 +2982,7 @@ button {
   border-radius: 4px;
 }
 .challenge-type-tag.leetcode { background-color: rgba(47, 87, 138, 0.15); color: var(--color-secondary); }
-.challenge-type-tag.custom { background-color: rgba(45, 95, 212, 0.08); color: var(--color-primary); }
+.challenge-type-tag.custom { background-color: rgba(114, 136, 174, 0.08); color: var(--color-primary); }
 
 .repo-link {
   font-size: 0.75rem;
@@ -3444,7 +3499,7 @@ button {
   text-align: center;
   font-size: 0.75rem;
   color: var(--color-muted);
-  background: rgba(13, 11, 15, 0.35);
+  background: rgba(2, 21, 38, 0.35);
   backdrop-filter: blur(24px) saturate(1.8);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   margin-top: auto;
@@ -3533,7 +3588,7 @@ button {
 }
 
 .coord-stat-card.highlight {
-  border-color: rgba(245, 130, 32, 0.35);
+  border-color: rgba(234, 224, 207, 0.35);
 }
 
 .coord-stat-icon {
@@ -3596,9 +3651,9 @@ button {
 }
 
 .coord-tab.active {
-  border-color: rgba(45, 95, 212, 0.45);
+  border-color: rgba(114, 136, 174, 0.45);
   color: var(--color-acm-blue);
-  background: rgba(45, 95, 212, 0.06);
+  background: rgba(114, 136, 174, 0.06);
   box-shadow: none;
 }
 
@@ -3737,7 +3792,7 @@ button {
   justify-content: center;
   gap: 0.35rem;
   padding: 0.85rem 0.75rem;
-  background: rgba(30, 24, 40, 0.55);
+  background: rgba(17, 24, 68, 0.55);
   border: 1px solid var(--border-subtle);
   border-radius: 0;
   color: var(--color-text);
@@ -3749,7 +3804,7 @@ button {
 
 .coord-action-btn.active {
   border-color: var(--color-teal);
-  background: rgba(45, 95, 212, 0.12);
+  background: rgba(114, 136, 174, 0.12);
   color: var(--color-light-blue);
   box-shadow: none;
 }
@@ -4036,7 +4091,7 @@ button {
 .intro-bg-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(45, 95, 212, 0.04) 0%, transparent 60%);
+  background: radial-gradient(circle at center, rgba(114, 136, 174, 0.04) 0%, transparent 60%);
   z-index: 1;
   pointer-events: none;
 }
@@ -4085,7 +4140,7 @@ button {
 .intro-logos-divider {
   width: 2px;
   height: 75px;
-  background: linear-gradient(to bottom, transparent, rgba(45, 95, 212, 0.4), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(114, 136, 174, 0.4), transparent);
 }
 
 .intro-logo-glow-layer-1 {
@@ -4130,7 +4185,7 @@ button {
   letter-spacing: 0.08em;
   z-index: 6;
   animation: intro-flash 2.5s infinite ease-in-out;
-  border: 1px solid rgba(45, 95, 212, 0.15);
+  border: 1px solid rgba(114, 136, 174, 0.15);
   padding: 0.45rem 1.1rem;
   border-radius: 30px;
   background: rgba(3, 3, 13, 0.7);
@@ -4198,8 +4253,8 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(0, 0, 0, 0.2);
-  border: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 8px 14px;
   width: 100%;
@@ -4251,8 +4306,8 @@ button {
 /* Gallery Day Card */
 .gallery-day-card {
   flex: 0 0 240px;
-  background: rgba(255, 255, 255, 0.03);
-  border: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
@@ -4399,8 +4454,8 @@ button {
 
 /* Stack Cards */
 .problem-section-card-stack {
-  background: rgba(255, 255, 255, 0.02);
-  border: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 20px;
   transition: border-color 0.3s ease, background 0.3s ease;

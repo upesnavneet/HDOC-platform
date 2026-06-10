@@ -52,7 +52,6 @@ export default function Navbar() {
   const navbarRef = useRef(null);
   const hamburgerRef = useRef(null);
   const drawerRef = useRef(null);
-  const [navbarStyle, setNavbarStyle] = useState({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = useMemo(() => buildNavLinks(currentUser), [currentUser]);
@@ -111,31 +110,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavbarMouseMove = (e) => {
-    const navbar = navbarRef.current;
-    if (!navbar || window.innerWidth <= 900) return;
-    const rect = navbar.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width;
-    const ny = (e.clientY - rect.top) / rect.height;
-    const cx = nx - 0.5;
-    const cy = ny - 0.5;
-    const sx = (cx * 28).toFixed(1);
-    const sy = (cy * 18).toFixed(1);
-    const depth = 32;
-
-    setNavbarStyle({
-      background: `
-        radial-gradient(
-          ellipse 55% 40% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
-          rgba(13, 11, 15, 0.92) 0%,
-          rgba(30, 24, 40, 0.75) 55%,
-          transparent     100%
-        ),
-        var(--bg-panel)
-      `,
-      boxShadow: [`inset ${sx}px ${sy}px ${depth}px rgba(13, 11, 15, 0.85)`].join(', '),
-    });
-  };
 
   const defaultPath = currentUser
     ? currentUser.role === 'admin'
@@ -173,9 +147,6 @@ export default function Navbar() {
       <header
         ref={navbarRef}
         className="navbar-container"
-        onMouseMove={handleNavbarMouseMove}
-        onMouseLeave={() => setNavbarStyle({})}
-        style={navbarStyle}
       >
         <Link
           to={defaultPath}

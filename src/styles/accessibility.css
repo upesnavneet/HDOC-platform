@@ -45,7 +45,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  background: rgba(13, 11, 15, 0.55);
+  background: rgba(9, 12, 40, 0.55);
 }
 
 .profile-link-cluster {
@@ -63,7 +63,7 @@
   z-index: 2;
   min-height: var(--touch-min);
   padding: var(--space-2) var(--space-4);
-  background: rgba(30, 24, 40, 0.9);
+  background: rgba(17, 24, 68, 0.9);
   border: 1px solid var(--border-subtle);
   color: var(--color-title);
   font-weight: 600;
@@ -73,7 +73,7 @@
 
 .intro-sound-btn {
   border: 1px solid var(--border-subtle);
-  background: rgba(30, 24, 40, 0.85);
+  background: rgba(17, 24, 68, 0.85);
   color: var(--color-text);
   min-height: var(--touch-min);
   padding: var(--space-2) var(--space-4);

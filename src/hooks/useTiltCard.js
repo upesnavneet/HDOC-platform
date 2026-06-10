@@ -33,7 +33,7 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
     } else if (classes.includes('primary')) {
       baseBg = 'rgba(54, 173, 163, 0.08)';
     } else if (classes.includes('auth-card-wrapper')) {
-      baseBg = 'rgba(38, 31, 48, 0.72)';
+      baseBg = 'rgba(75, 86, 148, 0.72)';
     } else if (classes.includes('rule-card')) {
       baseBg = 'var(--bg-panel)';
     }
@@ -43,15 +43,15 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
       background: `
         radial-gradient(
           ellipse 60% 50% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
-          rgba(13, 11, 15, 0.45) 0%,
-          rgba(38, 31, 48, 0.20) 55%,
+          rgba(9, 12, 40, 0.45) 0%,
+          rgba(75, 86, 148, 0.20) 55%,
           transparent     100%
         ),
         ${baseBg}
       `,
       boxShadow: [
-        `0 8px 24px rgba(13, 11, 15, 0.4)`,
-        `inset ${sx}px ${sy}px ${depth}px rgba(13, 11, 15, 0.38)`,
+        `0 8px 24px rgba(9, 12, 40, 0.4)`,
+        `inset ${sx}px ${sy}px ${depth}px rgba(9, 12, 40, 0.38)`,
       ].join(', '),
       zIndex: 2,
     });

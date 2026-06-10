@@ -98,10 +98,10 @@ export default function DistortionBackground() {
         float s2 = fbm(uv * 1.8 + vec2(r, q1) + t * 0.5);
 
         // ── palette ───────────────────────────────────────────────────
-        vec3 col1 = vec3(0.071, 0.075, 0.345);   // #121358
-        vec3 col2 = vec3(0.137, 0.184, 0.447);   // #232F72
-        vec3 col3 = vec3(0.184, 0.341, 0.541);   // #2F578A
-        vec3 col4 = vec3(0.211, 0.678, 0.639);   // #36ADA3
+        vec3 col1 = vec3(0.051, 0.051, 0.051);   // #0D0D0D — primary 95% black
+        vec3 col2 = vec3(0.070, 0.078, 0.141);   // #121424 — very dark slate-navy
+        vec3 col3 = vec3(0.078, 0.090, 0.141);   // #141724 — very dark action steel-blue
+        vec3 col4 = vec3(0.090, 0.090, 0.090);   // #171717 — dark charcoal grey
 
         float mix1 = smoothstep(-0.4, 0.4, r);
         float mix2 = smoothstep(-0.3, 0.5, s2);
@@ -110,12 +110,12 @@ export default function DistortionBackground() {
 
         // ── cursor glow (very dim) ────────────────────────────────────
         float glow = exp(-d * 14.0) * 0.012;
-        base += vec3(0.211, 0.678, 0.639) * glow;
+        base += vec3(0.447, 0.533, 0.682) * glow;
 
         // ── subtle grid / shimmer ─────────────────────────────────────
         float grid = smoothstep(0.97, 1.0,
           max(abs(sin(uv.x * 60.0)), abs(sin(uv.y * 60.0))));
-        base += vec3(0.184, 0.341, 0.541) * grid * 0.02;
+        base += vec3(0.294, 0.337, 0.580) * grid * 0.02;
 
         // ── vignette ─────────────────────────────────────────────────
         vec2 cen = uv - 0.5;

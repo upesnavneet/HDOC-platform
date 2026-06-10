@@ -96,7 +96,6 @@ h1 {
 .coord-tab,
 .auth-action-btn,
 .hero-btn,
-.navbar-hamburger,
 .navbar-mobile-logout,
 .login-nav-btn,
 .grade-submit-btn,
@@ -132,12 +131,12 @@ h1 {
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: transparent;
 }
 
 .nav-item.active {
-  background: rgba(45, 95, 212, 0.1);
-  border-color: rgba(45, 95, 212, 0.25);
+  background: rgba(110, 172, 218, 0.1);
+  border-color: rgba(110, 172, 218, 0.25);
 }
 
 .nav-item-mobile {
@@ -147,12 +146,12 @@ h1 {
 }
 
 .nav-item-mobile:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: transparent;
 }
 
 .nav-item-mobile.active {
-  background: rgba(45, 95, 212, 0.12);
-  border-color: rgba(45, 95, 212, 0.3);
+  background: rgba(110, 172, 218, 0.12);
+  border-color: rgba(110, 172, 218, 0.3);
 }
 
 /* ── Cards — soften harsh zero-radius without card nesting slop ── */
@@ -173,8 +172,8 @@ h1 {
 
 /* ── Primary CTA — ACM orange accent, not generic purple gradient ── */
 .auth-action-btn {
-  background: rgba(245, 130, 32, 0.12);
-  border-color: rgba(245, 130, 32, 0.45);
+  background: rgba(226, 226, 182, 0.12);
+  border-color: rgba(226, 226, 182, 0.45);
   color: var(--color-title);
   transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
@@ -190,8 +189,8 @@ h1 {
 }
 
 .auth-action-btn.admin-submit {
-  background: rgba(45, 95, 212, 0.12);
-  border-color: rgba(45, 95, 212, 0.45);
+  background: rgba(110, 172, 218, 0.12);
+  border-color: rgba(110, 172, 218, 0.45);
 }
 
 .auth-action-btn.admin-submit:hover {
@@ -217,8 +216,8 @@ h1 {
 }
 
 .coord-tab.active {
-  background: rgba(245, 130, 32, 0.1);
-  border-color: rgba(245, 130, 32, 0.45);
+  background: rgba(226, 226, 182, 0.1);
+  border-color: rgba(226, 226, 182, 0.45);
   color: var(--color-orange);
 }
 
@@ -239,7 +238,7 @@ h1 {
 .form-group input:focus-visible,
 .form-group select:focus-visible,
 .form-group textarea:focus-visible {
-  border-color: rgba(45, 95, 212, 0.55);
+  border-color: rgba(110, 172, 218, 0.55);
   box-shadow: var(--focus-ring);
 }
 
@@ -351,7 +350,7 @@ h1 {
 
 /* Tinted overlay — not pure black (Impeccable) */
 .coord-profile-modal {
-  background: rgba(13, 11, 15, 0.82);
+  background: rgba(9, 12, 40, 0.82);
   backdrop-filter: blur(4px);
 }
 
