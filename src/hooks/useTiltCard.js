@@ -29,7 +29,7 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
     const classes = card.className || '';
     let baseBg = 'var(--bg-card)';
     if (classes.includes('hero-panel-deep')) {
-      baseBg = 'linear-gradient(145deg, #1E1828 0%, #0D0B0F 100%)';
+      baseBg = 'var(--bg-card)';
     } else if (classes.includes('primary')) {
       baseBg = 'rgba(54, 173, 163, 0.08)';
     } else if (classes.includes('auth-card-wrapper')) {
