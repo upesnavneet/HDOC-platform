@@ -155,8 +155,7 @@ export default function Navbar() {
           aria-label="Go to home"
         >
           <div className="navbar-logo">
-            <img src="/logo.png" alt="" className="navbar-logo-img" width="50" height="50" aria-hidden="true" />
-            <img src="/favicon2.png" alt="" className="navbar-logo-img secondary" width="45" height="45" aria-hidden="true" />
+            <img src="/logo.png" alt="Logo" className="navbar-logo-img responsive-logo" aria-hidden="true" />
           </div>
           <div className="navbar-tagline">
             <span className="navbar-event-name">#100DaysOfCode</span>

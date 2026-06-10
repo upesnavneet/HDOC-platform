@@ -385,6 +385,28 @@ button {
   height: 45px;
 }
 
+/* Intro splash logo styling */
+.intro-logo-image {
+  max-width: 300px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Responsive logo class for both navbar and intro */
+.responsive-logo {
+  max-width: 120px;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 600px) {
+  .responsive-logo {
+    max-width: 100px;
+  }
+}
+
+
 .navbar-links {
   display: flex;
   align-items: center;

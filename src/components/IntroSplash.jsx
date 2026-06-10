@@ -96,9 +96,8 @@ export default function IntroSplash({ onComplete }) {
     <div className="intro-splash-overlay" role="region" aria-label="Introduction">
       <div className="intro-bg-glow" aria-hidden="true" />
 
-      <button type="button" className="intro-skip-btn" onClick={finish}>
-        Skip Intro
-      </button>
+      
+
 
       <AnimatePresence>
         {stage >= 2 && (
@@ -106,10 +105,10 @@ export default function IntroSplash({ onComplete }) {
             className="intro-logo-wrapper"
             initial={{ scale: 0.3, opacity: 0, filter: 'blur(20px)' }}
             animate={
-              stage === 3
-                ? { scale: 1.28, opacity: [1, 0.8, 0], filter: 'blur(0px)' }
-                : { scale: [0.3, 1.03, 1], opacity: 1, filter: 'blur(0px)' }
-            }
+  stage === 3
+    ? { scale: [0.3, 2.5, 1], opacity: [0, 1, 0.8], filter: 'blur(0px)' }
+    : { scale: 1, opacity: 1, filter: 'blur(0px)' }
+}
             transition={
               stage === 3
                 ? { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
@@ -120,9 +119,7 @@ export default function IntroSplash({ onComplete }) {
             <div className="intro-logo-glow-layer-2" aria-hidden="true" />
 
             <div className="intro-logos-row">
-              <img src="/logo.png" alt="ACM Logo" className="intro-logo-image" width="120" height="120" />
-              <div className="intro-logos-divider" aria-hidden="true" />
-              <img src="/favicon2.png" alt="ACM-W Logo" className="intro-logo-image" width="100" height="100" />
+              <img src="/logo.png" alt="Logo" className="intro-logo-image responsive-logo" />
             </div>
 
             <motion.div
