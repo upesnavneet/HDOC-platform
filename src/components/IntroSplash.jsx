@@ -1,13 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useCallback } from 'react';
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 export default function IntroSplash({ onComplete }) {
-  const [stage, setStage] = useState(0);
-
   const finish = useCallback(() => {
     onComplete();
   }, [onComplete]);
@@ -81,14 +78,10 @@ export default function IntroSplash({ onComplete }) {
 
     playTaDum();
 
-    const t1 = setTimeout(() => setStage(2), 200);
-    const t2 = setTimeout(() => setStage(3), 4200);
-    const t3 = setTimeout(finish, 5000);
+    const t = setTimeout(finish, 5000);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
+      clearTimeout(t);
     };
   }, [finish]);
 
@@ -96,43 +89,20 @@ export default function IntroSplash({ onComplete }) {
     <div className="intro-splash-overlay" role="region" aria-label="Introduction">
       <div className="intro-bg-glow" aria-hidden="true" />
 
-      
+      <div className="intro-logo-wrapper">
+        <div className="intro-logo-zoom-container">
+          <div className="intro-logo-glow-layer-1" aria-hidden="true" />
+          <div className="intro-logo-glow-layer-2" aria-hidden="true" />
 
+          <div className="intro-logos-row">
+            <img src="/logo.png" alt="Logo" className="intro-logo-image responsive-logo" />
+          </div>
+        </div>
 
-      <AnimatePresence>
-        {stage >= 2 && (
-          <motion.div
-            className="intro-logo-wrapper"
-            initial={{ scale: 0.3, opacity: 0, filter: 'blur(20px)' }}
-            animate={
-  stage === 3
-    ? { scale: [0.3, 2.5, 1], opacity: [0, 1, 0.8], filter: 'blur(0px)' }
-    : { scale: 1, opacity: 1, filter: 'blur(0px)' }
-}
-            transition={
-              stage === 3
-                ? { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
-                : { duration: 1.5, ease: 'easeOut' }
-            }
-          >
-            <div className="intro-logo-glow-layer-1" aria-hidden="true" />
-            <div className="intro-logo-glow-layer-2" aria-hidden="true" />
-
-            <div className="intro-logos-row">
-              <img src="/logo.png" alt="Logo" className="intro-logo-image responsive-logo" />
-            </div>
-
-            <motion.div
-              className="intro-subtitle"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            >
-              UPES ACM &amp; ACM-W STUDENT CHAPTERS
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <div className="intro-subtitle">
+          UPES ACM &amp; ACM-W STUDENT CHAPTERS
+        </div>
+      </div>
     </div>
   );
 }

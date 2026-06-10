@@ -4107,6 +4107,8 @@ button {
   overflow: hidden;
   cursor: pointer;
   user-select: none;
+  animation: netflix-overlay-fade 5s forwards;
+  will-change: opacity;
 }
 
 .intro-bg-glow {
@@ -4139,6 +4141,16 @@ button {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+}
+
+.intro-logo-zoom-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  animation: netflix-logo-zoom 5s forwards;
+  will-change: transform, opacity;
 }
 
 .intro-logo-image {
@@ -4196,6 +4208,63 @@ button {
   font-family: var(--font-sans);
   text-align: center;
   white-space: nowrap;
+  animation: netflix-subtitle-fade 5s forwards;
+  will-change: transform, opacity;
+}
+
+/* GPU-accelerated Netflix Keyframes */
+@keyframes netflix-overlay-fade {
+  0%, 80% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes netflix-logo-zoom {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.1, 0.8, 0.3, 1);
+  }
+  15% {
+    transform: scale(1);
+    opacity: 1;
+    animation-timing-function: linear;
+  }
+  80% {
+    transform: scale(1.08);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.7, 0, 1, 1);
+  }
+  100% {
+    transform: scale(16);
+    opacity: 0;
+  }
+}
+
+@keyframes netflix-subtitle-fade {
+  0%, 12% {
+    opacity: 0;
+    transform: translateY(15px);
+    animation-timing-function: ease-out;
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0);
+    animation-timing-function: linear;
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  95%, 100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 
 .intro-tap-hint {
