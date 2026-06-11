@@ -28,7 +28,7 @@ export default function CoordinatorDashboard() {
   }, []);
 
   const participants = useMemo(
-    () => db.users.filter((u) => u.role === 'participant'),
+    () => db.users.filter((u) => u.role !== 'admin'),
     [db.users]
   );
 

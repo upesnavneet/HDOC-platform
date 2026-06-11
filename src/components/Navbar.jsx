@@ -41,7 +41,7 @@ export default function Navbar() {
 
   const defaultPath = useMemo(() => {
     return currentUser
-      ? currentUser.role === 'admin'
+      ? currentUser.isAdmin === true
         ? ROUTE_MAP.coordinator
         : ROUTE_MAP.dashboard
       : '/';
@@ -52,7 +52,7 @@ export default function Navbar() {
 
     // Logged IN users see the main app features
     if (currentUser) {
-      if (currentUser.role === 'admin') {
+      if (currentUser.isAdmin === true) {
         items.push({ href: ROUTE_MAP.coordinator, label: 'Admin Dashboard' });
       } else {
         // Participants or default logged-in users

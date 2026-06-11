@@ -26,7 +26,7 @@ export default function Auth() {
 
   const redirectAfterLogin = (user) => {
     setTimeout(() => {
-      navigate(user.role === 'admin' ? '/coordinator' : '/dashboard', { replace: true });
+      navigate(user.isAdmin ? '/coordinator' : '/dashboard', { replace: true });
     }, 800);
   };
 

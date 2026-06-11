@@ -7,7 +7,7 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getUserProfile, createUserProfile, getAllUsers } from '../services/userService';
+import { getUserProfile, createUserProfile, checkStudentIdExists } from '../services/userService';
 
 const AuthContext = createContext();
 
@@ -70,13 +70,15 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
+          const tokenResult = await firebaseUser.getIdTokenResult();
+          const isAdminUser = tokenResult.claims.admin === true;
           const profile = await getUserProfile(firebaseUser.uid);
           if (profile) {
-            if (profile.role === 'participant' && !profile.isActive) {
+            if (profile.isActive === false) {
               await signOut(auth);
               dispatch({ type: 'AUTH_FAIL', payload: 'Your account has been deactivated by the administrator.' });
             } else {
-              dispatch({ type: 'AUTH_SUCCESS', payload: profile });
+              dispatch({ type: 'AUTH_SUCCESS', payload: { ...profile, isAdmin: isAdminUser } });
               updateActivity();
             }
           }
@@ -91,54 +93,48 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
+  const mapFirebaseAuthError = (code) => {
+    switch (code) {
+      case 'auth/invalid-credential':
+      case 'auth/wrong-password':
+      case 'auth/user-not-found':
+        return 'Invalid email or password.';
+      case 'auth/too-many-requests':
+        return 'Too many failed attempts. Please try again later.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      case 'auth/network-request-failed':
+        return 'Network error. Check your connection.';
+      default:
+        return 'Login failed. Please try again.';
+    }
+  };
+
   const login = async (email, password) => {
     dispatch({ type: 'AUTH_START' });
 
-    const failedAttemptsKey = `acm_100doc_failed_${email.toLowerCase()}`;
-    const lockoutKey = `acm_100doc_lockout_${email.toLowerCase()}`;
-
-    const failedAttempts = Number(localStorage.getItem(failedAttemptsKey) || 0);
-    const lockoutTime = Number(localStorage.getItem(lockoutKey) || 0);
-
-    if (lockoutTime && Date.now() < lockoutTime) {
-      const remainingMin = Math.ceil((lockoutTime - Date.now()) / (60 * 1000));
-      const errMsg = `Account locked. Please try again after ${remainingMin} minutes.`;
-      dispatch({ type: 'AUTH_FAIL', payload: errMsg });
-      return { success: false, message: errMsg };
-    }
-
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const tokenResult = await userCredential.user.getIdTokenResult();
+      const isAdminUser = tokenResult.claims.admin === true;
       const profile = await getUserProfile(userCredential.user.uid);
 
       if (!profile) {
         throw new Error('User profile does not exist in the database.');
       }
 
-      if (profile.role === 'participant' && !profile.isActive) {
+      if (profile.isActive === false) {
         await signOut(auth);
         const errMsg = 'Your account has been deactivated by the administrator.';
         dispatch({ type: 'AUTH_FAIL', payload: errMsg });
         return { success: false, message: errMsg };
       }
 
-      localStorage.removeItem(failedAttemptsKey);
-      localStorage.removeItem(lockoutKey);
-
-      dispatch({ type: 'AUTH_SUCCESS', payload: profile });
+      dispatch({ type: 'AUTH_SUCCESS', payload: { ...profile, isAdmin: isAdminUser } });
       updateActivity();
-      return { success: true, user: profile };
-    } catch {
-      const newAttempts = failedAttempts + 1;
-      localStorage.setItem(failedAttemptsKey, newAttempts.toString());
-
-      let errMsg = 'Invalid email or password.';
-      if (newAttempts >= 5) {
-        const lockExpiration = Date.now() + 15 * 60 * 1000;
-        localStorage.setItem(lockoutKey, lockExpiration.toString());
-        errMsg = 'Invalid email or password. Account locked for 15 minutes.';
-      }
-
+      return { success: true, user: { ...profile, isAdmin: isAdminUser } };
+    } catch (error) {
+      const errMsg = mapFirebaseAuthError(error.code);
       dispatch({ type: 'AUTH_FAIL', payload: errMsg });
       return { success: false, message: errMsg };
     }
@@ -154,49 +150,42 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const allUsers = await getAllUsers();
-      const studentIdExists = allUsers.some(
-        (u) => u.studentId && u.studentId.toUpperCase() === studentId.toUpperCase()
-      );
-      if (studentIdExists) {
+      // C7: Check studentId uniqueness with a targeted query (reads at most 1 doc)
+      const normalizedStudentId = studentId.trim().toUpperCase();
+      const studentIdTaken = await checkStudentIdExists(normalizedStudentId);
+      if (studentIdTaken) {
         const errMsg = 'Student ID already registered.';
         dispatch({ type: 'AUTH_FAIL', payload: errMsg });
         return { success: false, message: errMsg };
       }
 
-      const emailExists = allUsers.some((u) => u.email.toLowerCase() === email.toLowerCase());
-      if (emailExists) {
-        const errMsg = 'Email already registered.';
-        dispatch({ type: 'AUTH_FAIL', payload: errMsg });
-        return { success: false, message: errMsg };
-      }
-
+      // Email uniqueness is enforced by Firebase Auth — no manual check needed
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
 
+      // C5: No role or overallRank — these are system-controlled fields.
+      // Absence of role means participant. Admin is via Custom Claims only.
       const newProfile = {
         uid,
         id: uid,
         name,
         email,
-        studentId,
+        studentId: normalizedStudentId,
         gitHubId,
         leetCodeId,
-        role: 'participant',
         gitHubStreak: 0,
         leetCodeStreak: 0,
         totalCodingScore: 0,
         totalDebuggingScore: 0,
-        overallRank: allUsers.filter((u) => u.role === 'participant').length + 1,
         isActive: true,
         completedDays: [],
         createdAt: new Date().toISOString(),
       };
 
       await createUserProfile(uid, newProfile);
-      dispatch({ type: 'AUTH_SUCCESS', payload: newProfile });
+      dispatch({ type: 'AUTH_SUCCESS', payload: { ...newProfile, isAdmin: false } });
       updateActivity();
-      return { success: true, user: newProfile };
+      return { success: true, user: { ...newProfile, isAdmin: false } };
     } catch (error) {
       console.error('Registration failed:', error);
       const errMsg = error.message || 'Registration failed. Please try again.';

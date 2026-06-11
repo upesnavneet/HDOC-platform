@@ -69,14 +69,14 @@ export default function Dashboard() {
   // Find rank preview
   const codingRank = userId
     ? db.users
-      .filter((u) => u.role === 'participant')
+      .filter((u) => u.role !== 'admin')
       .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
       .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const debugRank = userId
     ? db.users
-      .filter((u) => u.role === 'participant')
+      .filter((u) => u.role !== 'admin')
       .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
       .findIndex((u) => u.id === userId) + 1
     : 0;
@@ -186,7 +186,7 @@ export default function Dashboard() {
           </div>
           <div className="hero-stats-row">
             <div className="hero-stat">
-              <span className="hero-stat-num">{db.users.filter(u => u.role === 'participant').length}</span>
+              <span className="hero-stat-num">{db.users.filter(u => u.role !== 'admin').length}</span>
               <span className="hero-stat-label">Active Now</span>
             </div>
             <div className="hero-stat">
@@ -380,7 +380,7 @@ export default function Dashboard() {
               <div className="leaderboard-list">
                 {(() => {
                   const participants = db.users
-                    .filter(u => u.role === 'participant')
+                    .filter(u => u.role !== 'admin')
                     .sort((a, b) => b.totalCodingScore - a.totalCodingScore);
                   
                   const top10 = participants.slice(0, 10);

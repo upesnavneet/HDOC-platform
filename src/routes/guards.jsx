@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
-const isAdmin = (user) => user?.role === 'admin';
+const isAdmin = (user) => user?.isAdmin === true;
 
 export function ProtectedRoute({ children }) {
   const { currentUser } = useApp();
