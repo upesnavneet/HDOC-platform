@@ -9,7 +9,7 @@ import Leaderboards from '../views/Leaderboards';
 import Profile from '../views/Profile';
 
 const CoordinatorDashboard = lazy(() => import('../features/coordinator/CoordinatorDashboard'));
-const AuroraBackground = lazy(() => import('../components/Aurora'));
+const LiquidChrome = lazy(() => import('../components/LiquidChrome'));
 
 function PageLoader() {
   return (
@@ -27,12 +27,14 @@ export default function AppRoutes() {
     <>
       <Suspense fallback={null}>
         {!isAuthPage && (
-          <AuroraBackground
-            colorStops={['#0a0b10', '#03346E', '#6EACDA']}
-            blend={0.5}
-            amplitude={1.0}
-            speed={0.6}
-          />
+          <div className="liquid-chrome-background">
+            <LiquidChrome
+              baseColor={[0, 0, 0.05]}
+              speed={0.15}
+              amplitude={0.3}
+              interactive={false}
+            />
+          </div>
         )}
       </Suspense>
 
