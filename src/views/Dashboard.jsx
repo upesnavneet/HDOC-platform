@@ -278,7 +278,6 @@ export default function Dashboard() {
                   )}
                 </div>
 
-                <div className="challenge-divider-horizontal"></div>
 
                 {/* Challenge 2: Custom DSA */}
                 <div className="challenge-question-block">
@@ -308,6 +307,29 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
+
+              {/* GitHub Submission Form */}
+              <div className="github-submission-section" style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(243, 243, 243, 0.08)' }}>
+                <h4 className="challenge-title-new" style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Submit Your Code</h4>
+                <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <input
+                    type="url"
+                    placeholder="https://github.com/user/repo/commit/..."
+                    value={commitUrl}
+                    onChange={(e) => setCommitUrl(e.target.value)}
+                    required
+                    style={{ flex: 1, minWidth: '200px', padding: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(0, 0, 0, 0.2)', color: '#F3F3F3', fontFamily: 'inherit' }}
+                  />
+                  <button type="submit" disabled={isSubmitting} className="solve-button-new" style={{ width: 'auto', minWidth: '150px' }}>
+                    {isSubmitting ? 'Submitting...' : 'Submit Commit'}
+                  </button>
+                </form>
+                {submitMsg && (
+                  <p style={{ marginTop: '0.75rem', color: submitMsg.includes('successfully') ? '#4caf50' : '#f44336', fontSize: '0.875rem', fontWeight: '500' }}>
+                    {submitMsg}
+                  </p>
+                )}
+              </div>
             </section>
 
             {/* Heatmap Section */}
@@ -316,6 +338,25 @@ export default function Dashboard() {
               submissions={userSubs}
               questions={questions}
             />
+
+            {/* GitHub Activity Graph */}
+            {currentUser?.gitHubId && (
+              <div className="github-activity-graph-panel" style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(48, 56, 65, 0.6)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)', backdropFilter: 'blur(16px)' }}>
+                <h3 className="redesigned-section-header" style={{ marginBottom: '1.5rem' }}>
+                  <span className="section-heading-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0 -.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" /></svg>
+                  </span>
+                  GitHub Activity
+                </h3>
+                <div className="github-graph-container" style={{ width: '100%', overflow: 'hidden', borderRadius: '4px' }}>
+                  <img 
+                    src={`https://github-readme-activity-graph.vercel.app/graph?username=${currentUser.gitHubId}&bg_color=303841&color=F3F3F3&line=2185D5&point=F3F3F3&area=true&hide_border=true&title_color=F3F3F3`} 
+                    alt={`${currentUser.gitHubId}'s GitHub Activity Graph`} 
+                    style={{ width: '100%', height: 'auto', display: 'block' }} 
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column (Side Area) */}
