@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Tabs } from '../../components/ui/Tabs';
 import CoordinatorStats from './CoordinatorStats';
@@ -12,6 +12,16 @@ import MagicBento from '../../components/MagicBento';
 export default function CoordinatorDashboard() {
   const { db } = useApp();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const participants = useMemo(
     () => db.users.filter((u) => u.role === 'participant'),
@@ -122,11 +132,15 @@ const BentoStatsGrid = ({ cards }) => {
 };
 
 return (
-    <div className="coordinator-dashboard-container">
-      <div className="page-header">
-        <h1>Coordinator Dashboard</h1>
-        <p className="subtitle">Manage participants, schedule challenges, and track weekly completion.</p>
-      </div>
+    <>
+      {/* Glass overlay that appears when scrolling */}
+      <div className={`glass-scroll-overlay ${isScrolled ? 'visible' : ''}`} />
+
+      <div className="coordinator-dashboard-container">
+        <div className="page-header">
+          <h1>Coordinator Dashboard</h1>
+          <p className="subtitle">Manage participants, schedule challenges, and track weekly completion.</p>
+        </div>
 
       <BentoStatsGrid cards={bentoCardData} />
 
@@ -168,5 +182,6 @@ return (
         </div>
       </Tabs>
     </div>
+    </>
   );
 }

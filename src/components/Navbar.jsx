@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import PillNav from './PillNav';
@@ -15,6 +15,30 @@ const ROUTE_MAP = {
 export default function Navbar() {
   const { currentUser, logout } = useApp();
   const location = useLocation();
+  const [isVisible, setIsVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show/hide navbar on scroll
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      // Add glass effect when scrolled
+      setIsScrolled(currentScrollY > 20);
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   const defaultPath = useMemo(() => {
     return currentUser
@@ -40,9 +64,8 @@ export default function Navbar() {
 
     items.push({ href: ROUTE_MAP.leaderboards, label: 'Leaderboard' });
 
-    // Add Profile and Logout for logged in users
+    // Add Logout for logged in users
     if (currentUser) {
-      items.push({ href: ROUTE_MAP.profile, label: 'Profile' });
       items.push({ href: '/logout', label: 'Logout', action: 'logout' });
     }
 
@@ -73,7 +96,12 @@ export default function Navbar() {
       top: 0,
       left: 0,
       right: 0,
-      zIndex: 1000
+      zIndex: 1000,
+      transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+      transition: 'transform 0.3s ease-in-out, background 0.3s ease, backdrop-filter 0.3s ease',
+      background: isScrolled ? 'rgba(10, 10, 10, 0.85)' : 'transparent',
+      backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+      borderBottom: isScrolled ? '1px solid rgba(66, 165, 252, 0.15)' : 'none'
     }}>
       {/* Logo - on the left */}
       <div style={{

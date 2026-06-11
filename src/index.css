@@ -3673,6 +3673,46 @@ button {
   font-family: 'Poppins', sans-serif;
 }
 
+.glass-header-area {
+  margin-top: 1rem;
+}
+
+.glass-header-area .glass-surface__content {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.glass-header-area .page-header {
+  margin: 0;
+  padding: 0;
+}
+
+.glass-header-area .page-header h1 {
+  margin-bottom: 0.25rem;
+}
+
+/* Glass overlay that appears when scrolling */
+.glass-scroll-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid rgba(66, 165, 252, 0.2);
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glass-scroll-overlay.visible {
+  opacity: 1;
+}
+
 .coordinator-overview-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
