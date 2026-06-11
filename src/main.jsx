@@ -18,6 +18,7 @@ import './components/MagicRings.css'
 import './components/PillNav.css'
 import './components/Shuffle.css'
 import './components/ui/MagicButton.css'
+import './components/AppFooter.css'
 
 /* 3. Override / polish layers (loaded LAST, highest priority) */
 import './styles/design-polish.css'

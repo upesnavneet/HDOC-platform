@@ -48,20 +48,17 @@ export default function Navbar() {
   }, [currentUser]);
 
   const navItems = useMemo(() => {
-    const items = [];
-
-    if (currentUser?.role === 'participant') {
-      items.push({ href: ROUTE_MAP.dashboard, label: 'Dashboard' });
-      items.push({ href: ROUTE_MAP.questions, label: 'Challenges' });
-      items.push({ href: ROUTE_MAP.debugging, label: 'Debug' });
-      items.push({ href: ROUTE_MAP.profile, label: 'Profile' });
-    }
+    const items = [
+      { href: ROUTE_MAP.dashboard, label: 'Dashboard' },
+      { href: ROUTE_MAP.questions, label: 'Challenges' },
+      { href: ROUTE_MAP.debugging, label: 'Debug' },
+      { href: ROUTE_MAP.profile, label: 'Profile' },
+      { href: ROUTE_MAP.leaderboards, label: 'Leaderboard' }
+    ];
 
     if (currentUser?.role === 'admin') {
-      items.push({ href: ROUTE_MAP.coordinator, label: 'Dashboard' });
+      items.push({ href: ROUTE_MAP.coordinator, label: 'Admin Dashboard' });
     }
-
-    items.push({ href: ROUTE_MAP.leaderboards, label: 'Leaderboard' });
 
     if (currentUser) {
       items.push({ href: '/logout', label: 'Logout', action: 'logout' });

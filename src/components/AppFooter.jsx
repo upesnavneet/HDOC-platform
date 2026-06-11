@@ -1,48 +1,82 @@
 import React from 'react';
-import './AppFooter.css'; // Let's create a separate CSS file for it or put it in index.css. Wait, better to put in index.css
+import { Link } from 'react-router-dom';
+import './AppFooter.css';
 
 export default function AppFooter() {
   return (
-    <footer className="footer-container custom-footer">
-      <div className="footer-grid">
-        {/* Left Column: CONNECT */}
-        <div className="footer-col-left">
-          <h3>CONNECT</h3>
-          <div className="footer-social-links">
-            <a href="https://github.com/upesacm" target="_blank" rel="noopener noreferrer" title="GitHub">
-              <svg height="22" width="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+    <footer className="editorial-footer">
+      <div className="editorial-footer-grid">
+        {/* ================= LEFT COLUMN ================= */}
+        <div className="footer-left">
+          <div>
+            <div className="footer-brand">
+              <img src="/acm-acmw-white.png" alt="ACM Logo" className="footer-brand-logo" />
+              <img src="/logo-1.png" alt="HDOC Logo" className="footer-brand-logo" />
+            </div>
+            
+            <p className="footer-description">
+              The 100 Days of Code platform empowers students to build consistent coding habits, 
+              tackle daily challenges, and rise through the leaderboards. Designed by the 
+              Association for Computing Machinery to cultivate technical excellence and 
+              build a thriving developer community.
+            </p>
+          </div>
+
+          <div className="footer-socials">
+            <a href="https://instagram.com/upesacm" target="_blank" rel="noopener noreferrer" className="social-link-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
+              @upesacm
             </a>
-            <a href="https://www.linkedin.com/company/upesacm/posts/?feedView=all" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-              <svg height="22" width="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            <a href="https://www.linkedin.com/company/upesacm/" target="_blank" rel="noopener noreferrer" className="social-link-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
               </svg>
+              upesacm
+            </a>
+            <a href="https://github.com/upesacm" target="_blank" rel="noopener noreferrer" className="social-link-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+              </svg>
+              upesacm
             </a>
           </div>
         </div>
 
-        {/* Middle Column: CHAPTERS */}
-        <div className="footer-col-middle">
-          <h3>CHAPTERS</h3>
-          <div className="footer-chapter-links-new">
-            <a href="https://upesacm.org/" target="_blank" rel="noopener noreferrer" className="chapter-btn">UPES ACM</a>
-            <a href="https://www.upesacmw.org/" target="_blank" rel="noopener noreferrer" className="chapter-btn">UPES ACM-W</a>
+        {/* ================= RIGHT COLUMN ================= */}
+        <div className="footer-right">
+          <div className="footer-massive-links">
+            <Link to="/dashboard" className="massive-link">Dashboard</Link>
+            <Link to="/questions" className="massive-link">Challenges</Link>
+            <Link to="/debugging" className="massive-link">Debug</Link>
+            <Link to="/leaderboards" className="massive-link">Leaderboard</Link>
+            <Link to="/profile" className="massive-link">Profile</Link>
+            <a href="mailto:acmwupes@gmail.com" className="massive-link">Contact</a>
           </div>
-        </div>
 
-        {/* Right Column: Logos */}
-        <div className="footer-col-right">
-          <div className="footer-logos-container">
-            <img src="/logo-1.png" alt="Logo 1" className="footer-logo-img" />
-            <img src="/acm-acmw-white.png" alt="ACM Logo" className="footer-logo-img" />
+          <div className="footer-sublinks-grid">
+            <div className="sublinks-column">
+              <a href="https://upesacm.org/" target="_blank" rel="noopener noreferrer" className="sublink-item">UPES ACM</a>
+              <a href="https://www.upesacmw.org/" target="_blank" rel="noopener noreferrer" className="sublink-item">UPES ACM-W</a>
+              <a href="https://hdoc-platform.netlify.app" target="_blank" rel="noopener noreferrer" className="sublink-item">100DOC Platform</a>
+            </div>
+            <div className="sublinks-column">
+              <a href="mailto:acmwupes@gmail.com" className="sublink-item">Support</a>
+              <a href="#" className="sublink-item">Join Discord</a>
+              <a href="#" className="sublink-item">Privacy Policy</a>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="footer-bottom-bar">
-        <p>© 2026 Association for Computing Machinery (ACM) Student Chapter. All Rights Reserved.</p>
-        <p>Developed for the 100 Days of Code Chapter Challenge Season.</p>
+        <span>© 2026 Association for Computing Machinery (ACM) Student Chapter.</span>
+        <span>Developed for the 100 Days of Code Chapter Challenge Season.</span>
       </div>
     </footer>
   );
