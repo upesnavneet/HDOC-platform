@@ -87,12 +87,12 @@ const PillNav = ({
     window.addEventListener('resize', onResize);
 
     if (document.fonts?.ready) {
-      document.fonts.ready.then(layout).catch(() => {});
+      document.fonts.ready.then(layout).catch(() => { });
     }
 
     const menu = mobileMenuRef.current;
     if (menu) {
-      gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1 });
+      gsap.set(menu, { visibility: 'hidden', opacity: 0, xPercent: 100 });
     }
 
     if (initialLoadAnimation) {
@@ -155,48 +155,32 @@ const PillNav = ({
       overwrite: 'auto'
     });
   };
-
   const toggleMobileMenu = () => {
     const newState = !isMobileMenuOpen;
     setIsMobileMenuOpen(newState);
 
-    const hamburger = hamburgerRef.current;
     const menu = mobileMenuRef.current;
-
-    if (hamburger) {
-      const lines = hamburger.querySelectorAll('.hamburger-line');
-      if (newState) {
-        gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
-      } else {
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
-      }
-    }
-
     if (menu) {
       if (newState) {
         gsap.set(menu, { visibility: 'visible' });
         gsap.fromTo(
           menu,
-          { opacity: 0, y: 10, scaleY: 1 },
+          { opacity: 0, xPercent: 100 },
           {
             opacity: 1,
-            y: 0,
-            scaleY: 1,
-            duration: 0.3,
+            xPercent: 0,
+            duration: 0.4,
             ease,
-            transformOrigin: 'top center'
+            transformOrigin: 'right center'
           }
         );
       } else {
         gsap.to(menu, {
           opacity: 0,
-          y: 10,
-          scaleY: 1,
-          duration: 0.2,
+          xPercent: 100,
+          duration: 0.3,
           ease,
-          transformOrigin: 'top center',
+          transformOrigin: 'right center',
           onComplete: () => {
             gsap.set(menu, { visibility: 'hidden' });
           }
@@ -317,17 +301,25 @@ const PillNav = ({
         </div>
 
         <button
-          className="mobile-menu-button mobile-only"
+          className={`mobile-menu-button mobile-only ${isMobileMenuOpen ? 'is-open' : ''}`}
           onClick={toggleMobileMenu}
           aria-label="Toggle menu"
           ref={hamburgerRef}
         >
           <span className="hamburger-line" />
           <span className="hamburger-line" />
+          <span className="hamburger-line" />
         </button>
       </nav>
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
+        <button
+          className="mobile-menu-close"
+          onClick={toggleMobileMenu}
+          aria-label="Close menu"
+        >
+          ✕
+        </button>
         <ul className="mobile-menu-list">
           {items.map((item, i) => (
             <li key={item.href || `mobile-item-${i}`}>
@@ -335,7 +327,10 @@ const PillNav = ({
                 <Link
                   to={item.href}
                   className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    toggleMobileMenu();
+                    onItemClick?.(item);
+                  }}
                 >
                   {item.label}
                 </Link>
@@ -343,7 +338,10 @@ const PillNav = ({
                 <a
                   href={item.href}
                   className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={() => {
+                    toggleMobileMenu();
+                    onItemClick?.(item);
+                  }}
                 >
                   {item.label}
                 </a>
