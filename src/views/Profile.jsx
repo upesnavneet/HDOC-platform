@@ -14,14 +14,11 @@ export default function Profile() {
   const [filter, setFilter] = useState('All');
   const [gitHubError, setGitHubError] = useState('');
 
-  const updateGitHub = useCallback(
-    async (userId, gitHubId) => {
-      await updateUserProfile(userId, { gitHubId });
-    },
+  const _updateGitHub = useCallback(
+    async (userId, gitHubId) => { await updateUserProfile(userId, { gitHubId }); },
     []
   );
-
-  const { execute: saveGitHub, isLoading: isUpdatingGitHub } = useAsyncAction(updateGitHub);
+  const { execute: saveGitHub, isLoading: isUpdatingGitHub } = useAsyncAction(_updateGitHub);
 
   const handleGitHubUpdate = async (e) => {
     e.preventDefault();
@@ -132,54 +129,9 @@ export default function Profile() {
               <h1>{currentUser?.name || 'Unknown User'}</h1>
               <div className="np-user-meta">
                 <span>SAP ID: {currentUser?.studentId || 'N/A'}</span>
-                <span className="np-meta-dot">•</span>
+                <span className="np-meta-dot">ΓÇó</span>
                 <span>@{currentUser?.gitHubId || currentUser?.studentId || 'user'}</span>
               </div>
-              <div className="highlight-metric">
-                <span className="label">Total Score</span>
-                <span className="val">{currentUser.totalCodingScore + currentUser.totalDebuggingScore} pts</span>
-              </div>
-              <div className="highlight-metric">
-                <span className="label">Active Streaks</span>
-                <span className="val font-small">
-                  LC: {currentUser.leetCodeStreak}d <br />
-                  Git: {currentUser.gitHubStreak}d
-                </span>
-              </div>
-            </div>
-
-            {/* GitHub Section */}
-            <div className="github-heatmap-section">
-              {gitHubHeatmapUrl ? (
-                <>
-                  <h3>GitHub Activity</h3>
-                  <a href={`https://github.com/${currentUser.gitHubId}`} target="_blank" rel="noopener noreferrer">
-                    <img
-                      src={gitHubHeatmapUrl}
-                      alt={`${currentUser.gitHubId}'s GitHub activity`}
-                      className="github-heatmap"
-                    />
-                  </a>
-                </>
-              ) : (
-                <form onSubmit={handleGitHubUpdate} className="github-input-form">
-                  <h3>Connect GitHub</h3>
-                  <p className="github-input-hint">Add your GitHub username to show your activity heatmap</p>
-                  <div className="github-input-row">
-                    <input
-                      type="text"
-                      value={gitHubInput}
-                      onChange={(e) => setGitHubInput(e.target.value)}
-                      placeholder="GitHub username"
-                      className="github-input"
-                    />
-                    <button type="submit" className="github-submit-btn" disabled={isUpdatingGitHub}>
-                      {isUpdatingGitHub ? 'Saving...' : 'Save'}
-                    </button>
-                  </div>
-                  {gitHubError && <p className="form-error" style={{ color: '#ff6b6b', fontSize: '0.85rem', marginTop: '0.5rem' }}>{gitHubError}</p>}
-                </form>
-              )}
             </div>
           </div>
           
