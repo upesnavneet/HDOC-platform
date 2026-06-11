@@ -4746,3 +4746,133 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Sunday Debugging Question management styles */
+.debug-challenges-preview {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.debug-preview-heading {
+  font-size: 1.1rem;
+  color: var(--color-light-blue);
+  margin-bottom: 1.25rem;
+}
+
+.debug-challenges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.debug-challenge-preview-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(17, 24, 68, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.debug-challenge-preview-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(114, 136, 174, 0.4);
+  background: rgba(17, 24, 68, 0.55);
+}
+
+.debug-preview-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.debug-week-badge {
+  background: rgba(255, 138, 0, 0.15);
+  color: var(--color-orange);
+  border: 1px solid rgba(255, 138, 0, 0.3);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.debug-preview-info h5 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.debug-preview-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.debug-preview-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.debug-sub-count {
+  font-size: 0.85rem;
+  color: var(--color-teal);
+  background: rgba(0, 240, 255, 0.08);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+.challenge-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.author-tag {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.push-to-github-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-white);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.push-to-github-btn svg {
+  fill: currentColor;
+}
+
+.push-to-github-btn:hover:not(.disabled) {
+  background: var(--color-white);
+  color: #0a0b10;
+  border-color: var(--color-white);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.push-to-github-btn.disabled {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+}
+
+
+

@@ -6,6 +6,7 @@ import OverviewTab from './tabs/OverviewTab';
 import ChallengesTab from './tabs/ChallengesTab';
 import GradingTab from './tabs/GradingTab';
 import DebuggingGradingTab from './tabs/DebuggingGradingTab';
+import DebuggingQuestionsTab from './tabs/DebuggingQuestionsTab';
 import WeeksTab from './tabs/WeeksTab';
 import MagicBento from '../../components/MagicBento';
 
@@ -152,6 +153,9 @@ return (
           <Tabs.Trigger value="challenges" className="coord-tab" activeClassName="active">
             Questions &amp; Challenges
           </Tabs.Trigger>
+          <Tabs.Trigger value="debugQuestions" className="coord-tab" activeClassName="active">
+            Sunday Debug Questions
+          </Tabs.Trigger>
           <Tabs.Trigger value="grading" className="coord-tab" activeClassName="active">
             Mark Submissions ({stats.pendingGradeCount})
           </Tabs.Trigger>
@@ -169,6 +173,9 @@ return (
           </Tabs.Panel>
           <Tabs.Panel value="challenges">
             <ChallengesTab />
+          </Tabs.Panel>
+          <Tabs.Panel value="debugQuestions">
+            <DebuggingQuestionsTab />
           </Tabs.Panel>
           <Tabs.Panel value="grading">
             <GradingTab />

@@ -214,8 +214,12 @@ export async function seedFirestoreIfEmpty() {
 
     console.log('[Seed] Empty Firestore detected — seeding initial data...');
 
-    // 1. Seed system config (must match completionService path: system/config)
-    await setDoc(doc(firestoreDb, 'system', 'config'), getDefaultSystemConfig());
+    // 1. Seed system config at Day 8 so past debugging challenges are visible
+    await setDoc(doc(firestoreDb, 'system', 'config'), {
+      currentDay: 8,
+      simulatedTime: '2026-06-01T09:00:00+05:30',
+      completedWeeks: [1],
+    });
     console.log('[Seed] ✓ System config created');
 
     // 2. Seed questions

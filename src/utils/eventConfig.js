@@ -1,9 +1,9 @@
 export const EVENT_START_ISO = '2026-05-25T09:00:00+05:30';
 
 export const getDefaultSystemConfig = () => ({
-  currentDay: 1,
-  simulatedTime: EVENT_START_ISO,
-  completedWeeks: [],
+  currentDay: 8,
+  simulatedTime: '2026-06-01T09:00:00+05:30',
+  completedWeeks: [1],
 });
 
 export const normalizeSystemConfig = (config) => {
