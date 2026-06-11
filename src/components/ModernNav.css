@@ -1,0 +1,397 @@
+/* ModernNav.css - Morphing Pill & Fullscreen Modal */
+
+/* Wrapper keeps it fixed at the top and centered */
+.floating-navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px 24px 0 24px;
+  z-index: 10000;
+  pointer-events: none; /* Let clicks pass through empty space */
+  transition: padding 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* The actual pill navbar */
+.nav-pill {
+  pointer-events: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1.5rem;
+  border-radius: 32px;
+  background: rgba(48, 56, 65, 0.6); /* #303841 with opacity */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(243, 243, 243, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Scrolled state: morphs into a smaller pill */
+.floating-navbar-container.scrolled .nav-pill {
+  width: 240px; /* Shrinks */
+  background: rgba(48, 56, 65, 0.8);
+}
+
+/* Hide pill when modal is open */
+.nav-pill.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-20px);
+}
+
+@media (max-width: 860px) {
+  .nav-pill {
+    width: 100% !important; 
+  }
+  .floating-navbar-container.scrolled .nav-pill {
+    width: 200px !important;
+  }
+}
+
+/* Logo */
+.navbar-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.navbar-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo-link:hover .navbar-logo-img {
+  transform: scale(1.05);
+}
+
+/* Desktop Links List */
+.modern-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+
+/* Hide links when scrolled or modal open */
+.floating-navbar-container.scrolled .modern-nav-list,
+.nav-pill.modal-open .modern-nav-list {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute; /* Prevent taking up width */
+  pointer-events: none;
+  transform: translateX(20px);
+}
+
+@media (max-width: 860px) {
+  .modern-nav-list {
+    display: none;
+  }
+}
+
+/* Desktop Links */
+.modern-nav-link {
+  position: relative;
+  color: #F3F3F3;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.modern-nav-link:hover,
+.modern-nav-link.is-active {
+  color: #2185D5;
+}
+
+/* Hamburger Icon (visible when scrolled OR on mobile) */
+.morph-hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 10px; /* Sleek two lines like NewStudio */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10001;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  right: 1.5rem;
+  transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+/* Show hamburger when scrolled */
+.floating-navbar-container.scrolled .morph-hamburger {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 860px) {
+  .morph-hamburger {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+    right: 0;
+  }
+}
+
+.morph-hamburger-line {
+  width: 100%;
+  height: 1.5px;
+  background: #F3F3F3;
+  transition: all 0.3s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* ==========================================================================
+   FLOATING MODAL CARD MENU
+   ========================================================================== */
+
+/* Fullscreen backdrop to catch clicks */
+.modern-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 9400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.modern-mobile-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fullscreen-modal {
+  position: fixed;
+  top: 80px; /* Offset from top */
+  left: 50%;
+  transform: translateX(-50%) translateY(20px) scale(0.95);
+  width: 90%;
+  max-width: 440px;
+  background: rgba(243, 243, 243, 0.85); /* Frosted light */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  z-index: 9500;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.fullscreen-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* Modal Header inside the card */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.5s ease 0.1s;
+}
+
+.fullscreen-modal.is-open .modal-header {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-header-logo-img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #303841;
+  padding: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.modal-close-btn:hover {
+  transform: scale(1.1) rotate(90deg);
+  color: #2185D5;
+}
+
+/* Menu label above the links */
+.modal-menu-label {
+  color: #3A4750;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease 0.1s;
+}
+.fullscreen-modal.is-open .modal-menu-label {
+  opacity: 0.6;
+  transform: translateY(0);
+}
+
+/* Massive Typography Links with Blur Effect */
+.modal-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sibling blur effect on hover */
+.modal-nav-list:hover .modal-nav-item:not(:hover) {
+  filter: blur(4px);
+  opacity: 0.4;
+}
+
+.modal-nav-item {
+  overflow: hidden; /* For sliding text reveal */
+  margin-bottom: -5px; /* Tighter leading */
+  transition: filter 0.4s ease, opacity 0.4s ease;
+}
+
+.modal-nav-link {
+  display: block;
+  font-size: clamp(1.8rem, 5vw, 2.8rem); /* Scaled down for smaller card */
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #303841;
+  text-decoration: none;
+  line-height: 1.1;
+  transition: color 0.3s ease;
+  transform: translateY(100%);
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1), color 0.3s ease;
+}
+
+.fullscreen-modal.is-open .modal-nav-link {
+  transform: translateY(0);
+}
+
+/* Staggered animation delays for the giant links */
+.fullscreen-modal.is-open .modal-nav-item:nth-child(1) .modal-nav-link { transition-delay: 0.1s; }
+.fullscreen-modal.is-open .modal-nav-item:nth-child(2) .modal-nav-link { transition-delay: 0.15s; }
+.fullscreen-modal.is-open .modal-nav-item:nth-child(3) .modal-nav-link { transition-delay: 0.2s; }
+.fullscreen-modal.is-open .modal-nav-item:nth-child(4) .modal-nav-link { transition-delay: 0.25s; }
+.fullscreen-modal.is-open .modal-nav-item:nth-child(5) .modal-nav-link { transition-delay: 0.3s; }
+.fullscreen-modal.is-open .modal-nav-item:nth-child(6) .modal-nav-link { transition-delay: 0.35s; }
+
+.modal-nav-link:hover,
+.modal-nav-link.is-active {
+  color: #2185D5;
+}
+
+/* Modal Footer */
+.modal-footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s ease 0.4s;
+}
+
+.fullscreen-modal.is-open .modal-footer {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.footer-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-label {
+  font-size: 0.75rem;
+  color: rgba(58, 71, 80, 0.6);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-text {
+  font-size: 0.95rem;
+  color: #303841;
+  font-weight: 500;
+  margin: 0;
+}
+
+.footer-link {
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #2185D5;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon {
+  transition: stroke 0.2s ease, transform 0.2s ease;
+}
+
+.social-link:hover .social-icon {
+  stroke: #2185D5;
+  transform: scale(1.1);
+}
+
+.visit-us-link {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #303841;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 860px) {
+  .fullscreen-modal {
+    top: 60px;
+    width: 90%;
+    padding: 1.5rem 1.5rem;
+  }
+  .modal-nav-item {
+    margin-bottom: 0;
+  }
+  .modal-nav-link {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+  }
+}
