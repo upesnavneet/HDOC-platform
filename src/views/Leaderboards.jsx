@@ -69,8 +69,10 @@ export default function Leaderboards() {
                       <td>{row.codingScore} pts</td>
                       <td>{row.debugScore} pts</td>
                       <td className="streaks-col">
-                        <span className="streak-badge lc" title="LeetCode Streak">LC: {row.leetCodeStreak}d</span>
-                        <span className="streak-badge git" title="GitHub Streak">Git: {row.gitHubStreak}d</span>
+                        <div className="streaks-subrow">
+                          <span className="streak-badge lc" title="LeetCode Streak">LC: {row.leetCodeStreak}d</span>
+                          <span className="streak-badge git" title="GitHub Streak">Git: {row.gitHubStreak}d</span>
+                        </div>
                       </td>
                       <td className="score-col align-right">{row.totalScore} pts</td>
                     </tr>
