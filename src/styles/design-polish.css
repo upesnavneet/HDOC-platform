@@ -36,9 +36,8 @@ h1 {
 }
 
 .problem-text,
-.challenge-desc,
-.challenge-desc-new {
-  max-width: 100% !important;
+.challenge-desc {
+  max-width: var(--content-max-prose);
   line-height: 1.65;
 }
 
@@ -383,11 +382,7 @@ h1 {
 }
 
 .archive-top-gallery-panel {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: #303841 !important;
 }
 
 .gallery-day-card {
@@ -557,8 +552,8 @@ h1 {
 
 .leaderboards-container .leaderboard-table thead,
 .leaderboards-container .leaderboard-table th {
-  background-color: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background-color: #F3F3F3 !important;
+  color: #303841 !important;
 }
 
 .leaderboards-container,
@@ -573,15 +568,15 @@ h1 {
 }
 
 .leaderboard-tabs-bar .tab-btn.active {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #F3F3F3 !important;
+  color: #303841 !important;
   box-shadow: none !important;
 }
 
 .h-tag {
-  background-color: #2185D5 !important;
-  border-color: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background-color: #F3F3F3 !important;
+  border-color: #F3F3F3 !important;
+  color: #303841 !important;
 }
 
 .rank-badge {
@@ -662,8 +657,8 @@ body {
 .streak-grid-wrapper.redesigned-journey,
 .redesigned-timeline-panel,
 .redesigned-leaderboard-panel {
-  background: linear-gradient(135deg, rgba(48, 56, 65, 0.65), rgba(58, 71, 80, 0.45)) !important;
-  border: 1px solid rgba(243, 243, 243, 0.1) !important;
+  background: rgba(48, 56, 65, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 6px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
@@ -674,10 +669,10 @@ body {
 /* Global rule overrides for cards (sitting on page or inside panels) */
 .metric-card,
 .redesigned-challenge-card {
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
-  border: 1px solid rgba(243, 243, 243, 0.12) !important;
+  background: rgba(48, 56, 65, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 6px !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
@@ -695,8 +690,8 @@ body {
 
 /* ── Progress Metrics Strip (Unified Horizontal Panel) ── */
 .metrics-strip-unified {
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
-  border: 1px solid rgba(243, 243, 243, 0.12) !important;
+  background: rgba(48, 56, 65, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 8px !important;
   display: flex !important;
   justify-content: space-around !important;
@@ -706,7 +701,7 @@ body {
   width: 100% !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
 @media (max-width: 768px) {
@@ -790,10 +785,10 @@ body {
 }
 
 .redesigned-challenge-card-unified {
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
-  border: 1px solid rgba(243, 243, 243, 0.12) !important;
+  background: rgba(48, 56, 65, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 8px !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
@@ -818,42 +813,6 @@ body {
   height: 1px;
   background-color: rgba(243, 243, 243, 0.08);
   margin: 0.5rem 0;
-}
-
-/* ── Unified Question Details Card (Archive/Questions) ── */
-.question-detailed-view-vertical-unified {
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
-  border: 1px solid rgba(243, 243, 243, 0.12) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
-  color: #F3F3F3 !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  padding: 1.75rem !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1.5rem !important;
-}
-
-.archive-question-block-new {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
-  border: 1px solid rgba(243, 243, 243, 0.12) !important;
-  border-radius: 6px !important;
-  padding: 1.25rem !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
-}
-
-.problem-section-body-new {
-  padding: 0.5rem 0;
-}
-
-.section-card-footer-new {
-  margin-top: 0.5rem;
 }
 
 
@@ -1143,8 +1102,8 @@ body {
 }
 
 .leaderboard-row.current-user {
-  border-left: 2px solid #2185D5 !important;
-  background: rgba(33, 133, 213, 0.07) !important;
+  border-left: 2px solid #F3F3F3 !important;
+  background: rgba(243, 243, 243, 0.07) !important;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -1163,8 +1122,8 @@ body {
   height: 32px;
   border-radius: 50%;
   background: #3A4750 !important;
-  color: #2185D5 !important;
-  border: 1px solid rgba(33, 133, 213, 0.4) !important;
+  color: #F3F3F3 !important;
+  border: 1px solid rgba(243, 243, 243, 0.4) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1201,14 +1160,14 @@ body {
 
 .leaderboard-bar {
   height: 100%;
-  background: #2185D5 !important;
+  background: #F3F3F3 !important;
   border-radius: 2px;
 }
 
 .leaderboard-score {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #2185D5 !important;
+  color: #F3F3F3 !important;
   font-family: 'JetBrains Mono', monospace;
   text-align: right;
   flex-shrink: 0;
@@ -1218,7 +1177,7 @@ body {
   display: inline-block;
   margin-top: 1rem;
   font-size: 0.85rem;
-  color: #2185D5 !important;
+  color: #F3F3F3 !important;
   text-decoration: none;
   font-weight: 600;
 }
@@ -1317,41 +1276,4 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-}
-
-/* ── Section Subtitle (Explanation / Example Headings) Color ── */
-.section-subtitle {
-  color: #2185D5 !important;
-}
-
-/* ── Example Text Color Override ── */
-.example-text,
-.challenge-example {
-  color: #F3F3F3 !important;
-}
-
-/* ── Two-Column Side-by-Side Questions Layout in Archive ── */
-@media (min-width: 768px) {
-  .detailed-body-vertical-scroll {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 2rem !important;
-  }
-  .question-detailed-view-vertical-unified .challenge-divider-horizontal {
-    display: none !important;
-  }
-}
-
-/* ── Hover Zoom Effects on Challenge / Question Cards ── */
-.redesigned-challenge-card-unified,
-.question-detailed-view-vertical-unified,
-.archive-question-block-new {
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease !important;
-}
-
-.redesigned-challenge-card-unified:hover,
-.question-detailed-view-vertical-unified:hover,
-.archive-question-block-new:hover {
-  transform: translateY(-4px) scale(1.01) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
 }
