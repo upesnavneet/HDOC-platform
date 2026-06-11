@@ -8,6 +8,7 @@ import GradingTab from './tabs/GradingTab';
 import DebuggingGradingTab from './tabs/DebuggingGradingTab';
 import DebuggingQuestionsTab from './tabs/DebuggingQuestionsTab';
 import WeeksTab from './tabs/WeeksTab';
+import SubmissionsTab from './tabs/SubmissionsTab';
 import MagicBento from '../../components/MagicBento';
 
 export default function CoordinatorDashboard() {
@@ -165,6 +166,9 @@ return (
           <Tabs.Trigger value="weeks" className="coord-tab" activeClassName="active">
             Week Completion
           </Tabs.Trigger>
+          <Tabs.Trigger value="submissions" className="coord-tab" activeClassName="active">
+            GitHub Submissions
+          </Tabs.Trigger>
         </Tabs.List>
 
         <div className="coordinator-workspace">
@@ -185,6 +189,9 @@ return (
           </Tabs.Panel>
           <Tabs.Panel value="weeks">
             <WeeksTab />
+          </Tabs.Panel>
+          <Tabs.Panel value="submissions">
+            <SubmissionsTab />
           </Tabs.Panel>
         </div>
       </Tabs>
