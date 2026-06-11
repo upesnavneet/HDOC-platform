@@ -163,28 +163,29 @@ export const updateSystemConfig = async (configData) => {
   }
 };
 
-// Auto-advance day at midnight (new day)
+// Auto-advance day at midnight UTC (server time)
 export const checkAndAutoAdvanceDay = async () => {
   try {
     const config = await getSystemConfig();
     if (!config) return null;
 
-    const now = new Date();
-    const lastAdvance = config.lastDayAdvanceTime?.toDate?.() || new Date(config.lastDayAdvanceTime);
+    // Use UTC time for consistency across all users
+    const nowUTC = new Date();
+    const lastAdvanceUTC = config.lastDayAdvanceTime?.toDate?.() || new Date(config.lastDayAdvanceTime);
 
-    // Get start of today and start of last advance day
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfLastAdvance = new Date(lastAdvance.getFullYear(), lastAdvance.getMonth(), lastAdvance.getDate());
+    // Get start of today UTC and start of last advance day UTC
+    const startOfTodayUTC = Date.UTC(nowUTC.getFullYear(), nowUTC.getMonth(), nowUTC.getDate());
+    const startOfLastAdvanceUTC = Date.UTC(lastAdvanceUTC.getFullYear(), lastAdvanceUTC.getMonth(), lastAdvanceUTC.getDate());
 
-    // If we're on a new day (midnight passed), advance
-    if (startOfToday > startOfLastAdvance) {
+    // If we're on a new day (midnight UTC passed), advance
+    if (startOfTodayUTC > startOfLastAdvanceUTC) {
       const newDay = (config.currentDay || 1) + 1;
       await updateSystemConfig({
         currentDay: newDay,
-        lastDayAdvanceTime: now,
+        lastDayAdvanceTime: nowUTC,
         completedWeeks: config.completedWeeks,
       });
-      console.log(`Auto-advanced to Day ${newDay} (midnight reset)`);
+      console.log(`Auto-advanced to Day ${newDay} (midnight UTC reset)`);
       return newDay;
     }
 
