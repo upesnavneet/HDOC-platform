@@ -253,14 +253,17 @@ export default function Dashboard() {
         <div className="dashboard-grid-layout">
           {/* Left Column (Main Area) */}
           <div className="dashboard-main-col">
-            {/* ── Today's Coding Challenges ── */}
-            <div className="redesigned-challenge-card-unified" id="todays-challenges">
-              <h3 className="redesigned-section-header">Today's Challenges - Day {currentDay}</h3>
+            {/* ── Today's Coding Challenges Section ── */}
+            <section id="todays-challenges" className="redesigned-challenge-card-unified">
+              <h3 className="redesigned-section-header">
+                Today's Challenges - Day {currentDay}
+              </h3>
+
               <div className="unified-challenge-content">
                 {/* Challenge 1: LeetCode */}
                 <div className="challenge-question-block">
                   <div className="challenge-card-header">
-                    <span className="challenge-type-tag">LEETCODE CHALLENGE</span>
+                    <span className="challenge-type-tag">LeetCode Challenge</span>
                     <span className="xp-badge">
                       {todayLcQ?.difficulty === 'Easy' ? '100 XP' : todayLcQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
                     </span>
@@ -285,7 +288,7 @@ export default function Dashboard() {
                 {/* Challenge 2: Custom DSA */}
                 <div className="challenge-question-block">
                   <div className="challenge-card-header">
-                    <span className="challenge-type-tag">CUSTOM DSA CHALLENGE</span>
+                    <span className="challenge-type-tag">Custom DSA Challenge</span>
                     <span className="xp-badge">
                       {todayCustomQ?.difficulty === 'Easy' ? '100 XP' : todayCustomQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
                     </span>
@@ -310,7 +313,7 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Heatmap Section */}
             <StreakGrid

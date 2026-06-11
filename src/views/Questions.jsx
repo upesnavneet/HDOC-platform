@@ -41,6 +41,10 @@ export default function Questions() {
 
   return (
     <div className="questions-container">
+      <div className="page-header">
+        <h1>Daily Challenges</h1>
+      </div>
+
       <div className="archive-vertical-layout">
         <div className="archive-top-gallery-panel">
           <div className="filter-controls-card-compact">
@@ -149,7 +153,7 @@ export default function Questions() {
 
         <div className="archive-bottom-details-panel">
           {selectedQuestion ? (
-            <div className={`question-detailed-view-vertical-unified ${selectedQuestion.isMaster ? 'master-styled' : ''}`}>
+            <div className={`question-detailed-view-vertical ${selectedQuestion.isMaster ? 'master-styled' : ''}`}>
               <div className="detailed-header">
                 <div className="header-meta">
                   <span className="day-large">DAY {selectedQuestion.day}</span>
@@ -158,6 +162,7 @@ export default function Questions() {
                     <span className="master-challenge-tag">Master Challenge</span>
                   )}
                 </div>
+                <h2>{selectedQuestion.titleLc} &amp; {selectedQuestion.titleCustom}</h2>
               </div>
 
               {selectedQuestion.isMaster && (
@@ -171,26 +176,28 @@ export default function Questions() {
               )}
 
               <div className="detailed-body-vertical-scroll">
-                <div className="archive-question-block-new">
+                <div className="problem-section-card-stack">
                   <div className="section-header-tag custom-tag">Part A: LeetCode Problem</div>
                   <h3 className="section-card-title">{selectedQuestion.titleLc}</h3>
-                  <div className="problem-section-body-new">
+                  <div className="problem-section-body">
                     <h4 className="section-subtitle">Explanation</h4>
                     <p className="problem-text">{selectedQuestion.descLc}</p>
+                    <h4 className="section-subtitle">Example</h4>
+                    <p className="example-text">
+                      Click the button below to view examples, constraints, and submit on LeetCode.
+                    </p>
                   </div>
-                  <div className="section-card-footer-new">
-                    <a href={selectedQuestion.linkLc} target="_blank" rel="noopener noreferrer" className="solve-button-new">
-                      Solve on LeetCode &rarr;
+                  <div className="section-card-footer">
+                    <a href={selectedQuestion.linkLc} target="_blank" rel="noopener noreferrer" className="open-problem-btn">
+                      Solve on LeetCode →
                     </a>
                   </div>
                 </div>
 
-                <div className="challenge-divider-horizontal"></div>
-
-                <div className="archive-question-block-new">
+                <div className="problem-section-card-stack">
                   <div className="section-header-tag custom-tag">Part B: Custom ACM DSA Problem</div>
                   <h3 className="section-card-title">{selectedQuestion.titleCustom}</h3>
-                  <div className="problem-section-body-new">
+                  <div className="problem-section-body">
                     {(() => {
                       const { explanation, example } = parseChallengeContent(selectedQuestion.descCustom);
                       return (
