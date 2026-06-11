@@ -797,9 +797,15 @@ body {
 }
 
 .unified-challenge-content {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .unified-challenge-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 .challenge-question-block {
