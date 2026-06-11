@@ -1,10 +1,26 @@
+import { useState, useEffect } from 'react';
 import GradientBlinds from '../../components/GradientBlinds';
 import BorderGlow from '../../components/BorderGlow';
 import LetterGlitch from '../../components/LetterGlitch';
 
 export default function AuthLayout({ children, alerts }) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="auth-view-container" style={{ position: 'relative', overflow: 'hidden', fontFamily: "'Poppins', sans-serif" }}>
+      {/* Glass overlay that appears when scrolling */}
+      <div className={`glass-scroll-overlay ${isScrolled ? 'visible' : ''}`} style={{
+        background: 'rgba(0, 0, 0, 0.7)',
+      }} />
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         <LetterGlitch
           glitchSpeed={50}

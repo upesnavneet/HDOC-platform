@@ -106,8 +106,8 @@ export default function Navbar() {
       {/* Logo - on the left */}
       <div style={{
         position: 'absolute',
-        top: '-30px',
-        left: '50px',
+        top: '5px',
+        left: '20px',
         zIndex: 100
       }}>
         <Link
@@ -118,8 +118,8 @@ export default function Navbar() {
             src="/logo.png"
             alt="HDOC Logo"
             style={{
-              width: '200px',
-              height: '200px',
+              width: '180px',
+              height: '100px',
               objectFit: 'contain'
             }}
           />
