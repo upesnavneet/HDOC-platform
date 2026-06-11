@@ -38,9 +38,11 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
       baseBg = 'var(--bg-panel)';
     }
 
-    setStyle({
-      transform: `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01,1.01,1.01)`,
-      background: `
+    const isUfoDisabled = classes.includes('dashboard-hero-left') || classes.includes('challenge-card');
+
+    const backgroundStyle = isUfoDisabled
+      ? baseBg
+      : `
         radial-gradient(
           ellipse 60% 50% at ${(nx * 100).toFixed(1)}% ${(ny * 100).toFixed(1)}%,
           rgba(9, 12, 40, 0.45) 0%,
@@ -48,7 +50,11 @@ export function useTiltCard(maxTilt = 8, shadowMul = 0.6) {
           transparent     100%
         ),
         ${baseBg}
-      `,
+      `;
+
+    setStyle({
+      transform: `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01,1.01,1.01)`,
+      background: backgroundStyle,
       boxShadow: [
         `0 8px 24px rgba(9, 12, 40, 0.4)`,
         `inset ${sx}px ${sy}px ${depth}px rgba(9, 12, 40, 0.38)`,
