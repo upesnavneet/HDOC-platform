@@ -91,48 +91,27 @@ export default function Navbar() {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1000,
-      transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-      transition: 'transform 0.3s ease-in-out, background 0.3s ease, backdrop-filter 0.3s ease',
-      background: isScrolled ? 'rgba(10, 10, 10, 0.85)' : 'transparent',
-      backdropFilter: isScrolled ? 'blur(12px)' : 'none',
-      borderBottom: isScrolled ? '1px solid rgba(66, 165, 252, 0.15)' : 'none'
-    }}>
+    <div
+      className={`floating-navbar ${isScrolled ? 'scrolled' : ''}`}
+      style={{
+        transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+      }}
+    >
       {/* Logo - on the left */}
-      <div style={{
-        position: 'absolute',
-        top: '5px',
-        left: '20px',
-        zIndex: 100
-      }}>
-        <Link
-          to={defaultPath}
-          aria-label="Home"
-        >
-          <img
-            src="/logo.png"
-            alt="HDOC Logo"
-            style={{
-              width: '180px',
-              height: '100px',
-              objectFit: 'contain'
-            }}
-          />
-        </Link>
-      </div>
+      <Link
+        to={defaultPath}
+        aria-label="Home"
+        className="navbar-logo-link"
+      >
+        <img
+          src="/logo.png"
+          alt="HDOC Logo"
+          className="navbar-logo-img"
+        />
+      </Link>
 
       {/* Pill Nav - on the right */}
-      <div style={{
-        position: 'absolute',
-        top: '20px',
-        right: '20px',
-        zIndex: 99
-      }}>
+      <div className="navbar-pill-wrapper">
         <PillNav
           logo="/logo.png"
           logoAlt="HDOC Logo"
