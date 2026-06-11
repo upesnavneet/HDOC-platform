@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatRating } from '../utils/ratingHelper';
 import { parseChallengeContent } from '../utils/challengeContent';
@@ -7,6 +7,7 @@ export default function Questions() {
   const { db } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [manualSelection, setManualSelection] = useState(null);
+  const [smoothScrollValue, setSmoothScrollValue] = useState(0);
 
   const currentDay = db.currentDay;
   const questions = db.questions;
@@ -33,6 +34,11 @@ export default function Questions() {
 
   const selectedQuestion = defaultSelection;
 
+  useEffect(() => {
+    const idx = archivedQuestions.findIndex(q => q.id === selectedQuestion?.id);
+    setSmoothScrollValue(idx === -1 ? 0 : idx);
+  }, [selectedQuestion, archivedQuestions]);
+
   return (
     <div className="questions-container">
       <div className="page-header">
@@ -58,42 +64,91 @@ export default function Questions() {
             />
           </div>
 
-          <div className="days-horizontal-gallery">
+          <div 
+            className="days-horizontal-gallery"
+            onWheel={(e) => {
+              if (archivedQuestions.length === 0) return;
+              const currentIndex = archivedQuestions.findIndex(q => q.id === selectedQuestion?.id);
+              if (currentIndex === -1) return;
+              if (e.deltaY > 0) {
+                if (currentIndex < archivedQuestions.length - 1) setManualSelection(archivedQuestions[currentIndex + 1]);
+              } else {
+                if (currentIndex > 0) setManualSelection(archivedQuestions[currentIndex - 1]);
+              }
+            }}
+          >
             {archivedQuestions.length === 0 ? (
               <div className="no-results-compact">No days match your filter criteria.</div>
             ) : (
-              archivedQuestions.map((q) => {
-                const isToday = q.day === currentDay;
-                const isMaster = q.isMaster || q.day >= 99;
-                const isSelected = selectedQuestion?.id === q.id;
-                return (
-                  <button
-                    type="button"
-                    key={q.id}
-                    className={`gallery-day-card ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
-                    onClick={() => setManualSelection(q)}
-                    aria-pressed={isSelected}
-                    aria-label={`Day ${q.day}, ${q.titleLc}, ${q.titleCustom}${isToday ? ', today' : ''}`}
-                  >
-                    <div className="day-card-header">
-                      <span className="day-card-number">Day {q.day}</span>
-                      {isToday && <span className="day-card-today-badge">TODAY</span>}
-                      {isMaster && <span className="day-card-master-badge">★</span>}
-                    </div>
-                    <div className="day-card-body">
-                      <div className="day-card-titles">
-                        <span className="day-card-title-lc">{q.titleLc}</span>
-                        <span className="day-card-title-custom">{q.titleCustom}</span>
-                      </div>
-                      <div className="day-card-footer">
-                        <span className="day-card-rating">Rating {formatRating(q)}</span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })
+              <div className="circular-gallery-wrapper">
+                <div className="circular-gallery-container">
+                  {archivedQuestions.map((q, index) => {
+                    const isToday = q.day === currentDay;
+                    const isMaster = q.isMaster || q.day >= 99;
+                    const isSelected = selectedQuestion?.id === q.id;
+                    const activeIndex = archivedQuestions.findIndex(item => item.id === selectedQuestion?.id);
+                    const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex;
+                    const offset = index - safeActiveIndex;
+                    
+                    return (
+                      <button
+                        type="button"
+                        key={q.id}
+                        className={`gallery-day-card circular-item ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
+                        onClick={() => setManualSelection(q)}
+                        aria-pressed={isSelected}
+                        aria-label={`Day ${q.day}, ${q.titleLc}, ${q.titleCustom}${isToday ? ', today' : ''}`}
+                        style={{
+                          transform: `translateX(${offset * 115}%) translateZ(${Math.abs(offset) * -100}px) rotateY(${offset * -18}deg)`,
+                          zIndex: 100 - Math.abs(offset),
+                          opacity: Math.abs(offset) > 4 ? 0 : 1,
+                          pointerEvents: Math.abs(offset) > 2 ? 'none' : 'auto',
+                          visibility: Math.abs(offset) > 4 ? 'hidden' : 'visible'
+                        }}
+                      >
+                        <div className="day-card-header">
+                          <span className="day-card-number">Day {q.day}</span>
+                          {isToday && <span className="day-card-today-badge">TODAY</span>}
+                          {isMaster && <span className="day-card-master-badge">★</span>}
+                        </div>
+                        <div className="day-card-body">
+                          <div className="day-card-titles">
+                            <span className="day-card-title-lc">{q.titleLc}</span>
+                            <span className="day-card-title-custom">{q.titleCustom}</span>
+                          </div>
+                          <div className="day-card-footer">
+                            <span className="day-card-rating">Rating {formatRating(q)}</span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </div>
+
+          {archivedQuestions.length > 0 && (
+            <div className="gallery-scrollbar-container">
+              <input
+                type="range"
+                className="gallery-custom-scrollbar"
+                min="0"
+                max={archivedQuestions.length - 1}
+                step="0.01"
+                value={smoothScrollValue}
+                onChange={(e) => {
+                  const rawVal = parseFloat(e.target.value);
+                  setSmoothScrollValue(rawVal);
+                  const newIndex = Math.round(rawVal);
+                  if (newIndex >= 0 && newIndex < archivedQuestions.length) {
+                    setManualSelection(archivedQuestions[newIndex]);
+                  }
+                }}
+                aria-label="Scroll through daily challenges"
+              />
+            </div>
+          )}
         </div>
 
         <div className="archive-bottom-details-panel">

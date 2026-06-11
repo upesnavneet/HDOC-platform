@@ -4517,31 +4517,32 @@ button {
 }
 
 .days-horizontal-gallery {
+  position: relative;
+  perspective: 1200px;
+  height: 180px;
   display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 10px 4px 20px 4px; /* extra bottom padding for the scrollbar */
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 10px 0 30px;
+  /* hide scrollbar since it's now mouse wheel driven */
 }
 
-/* Custom Bottom Scrollbar for the horizontal days gallery */
-.days-horizontal-gallery::-webkit-scrollbar {
-  height: 8px;
+.circular-gallery-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
 }
 
-.days-horizontal-gallery::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 10px;
-}
-
-.days-horizontal-gallery::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-}
-
-.days-horizontal-gallery::-webkit-scrollbar-thumb:hover {
-  background: var(--color-orange);
+.circular-gallery-container {
+  position: relative;
+  width: 240px;
+  height: 130px;
+  transform-style: preserve-3d;
 }
 
 /* Gallery Day Card */
@@ -4559,14 +4560,73 @@ button {
   min-height: 120px;
 }
 
+.gallery-day-card.circular-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s, visibility 0.5s, z-index 0.5s, background 0.3s;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
 .gallery-day-card:hover {
-  transform: translateY(-4px) scale(1.02);
   background: rgba(255, 255, 255, 0.05);
 }
 
 .gallery-day-card.active {
-  background: rgba(230, 92, 0, 0.06);
-  transform: scale(1.02);
+  background: rgba(33, 133, 213, 0.08);
+  border-color: #2185D5;
+  box-shadow: 0 0 20px rgba(33, 133, 213, 0.3);
+}
+
+/* Gallery Custom Scrollbar */
+.gallery-scrollbar-container {
+  display: flex;
+  justify-content: center;
+  padding: 0 20px 20px;
+  width: 100%;
+}
+
+.gallery-custom-scrollbar {
+  -webkit-appearance: none;
+  width: 100%;
+  max-width: 400px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.gallery-custom-scrollbar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 40px;
+  height: 12px;
+  border-radius: 10px;
+  background: #2185D5;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.15s ease-out;
+}
+.gallery-custom-scrollbar::-webkit-slider-thumb:hover {
+  background: #2b9fff;
+  transform: scale(1.1);
+}
+
+.gallery-custom-scrollbar::-moz-range-thumb {
+  width: 40px;
+  height: 12px;
+  border-radius: 10px;
+  background: #2185D5;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s, transform 0.15s ease-out;
+}
+.gallery-custom-scrollbar::-moz-range-thumb:hover {
+  background: #2b9fff;
+  transform: scale(1.1);
 }
 
 .day-card-header {
