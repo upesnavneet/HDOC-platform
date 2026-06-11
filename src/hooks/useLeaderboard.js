@@ -11,10 +11,7 @@ export function useLeaderboardData(db, currentUserId) {
   const startDayOfWeek = (currentWeek - 1) * 7 + 1;
   const endDayOfWeek = currentWeek * 7;
 
-  const participants = useMemo(
-    () => db.users.filter((u) => u.role !== 'admin'),
-    [db.users]
-  );
+  const participants = useMemo(() => db.users.filter((u) => u.role !== 'admin'), [db.users]);
 
   /* ── Helper: compute badges for a participant ── */
   const getBadges = (p, allSubs) => {

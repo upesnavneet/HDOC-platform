@@ -6,3 +6,13 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# M5: HTTP Security Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://securetoken.googleapis.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://github-readme-activity-graph.vercel.app; img-src 'self' data: https:; frame-src 'self' https://*.firebaseapp.com"

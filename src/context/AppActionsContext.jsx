@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import { error as logError } from '../utils/logger';
 import { useAuth } from './AuthContext';
 import { useData } from './DataContext';
 import { updateUserProfile } from '../services/userService';
@@ -73,7 +74,7 @@ export function AppActionsProvider({ children }) {
       try {
         await addOrUpdateSubmission(subId, subDetails);
         await syncParticipantProfile(db, myUid).catch((err) =>
-          console.error('Failed to sync scores/streaks after submit:', err)
+          logError('Failed to sync scores/streaks after submit:', err)
         );
         return {
           success: true,
@@ -84,7 +85,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit solution.' };
       }
     },
-    [currentUser, db]
+    [currentUser, db.questions, db.submissions, db.simulatedTime]
   );
 
   // H12: Commit URL submission — writes Schema B (same as submitQuestionCode)
@@ -128,7 +129,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit commit.' };
       }
     },
-    [currentUser, db]
+    [currentUser, db.submissions, db.simulatedTime]
   );
 
   const submitDebuggingChallenge = useCallback(
@@ -152,7 +153,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit debugging solution.' };
       }
     },
-    [currentUser, db]
+    [currentUser, db.debuggingChallenges, db.simulatedTime]
   );
 
   const syncParticipantScores = useCallback(
@@ -174,7 +175,7 @@ export function AppActionsProvider({ children }) {
         totalDebuggingScore: totalDebugScore,
       });
     },
-    [db]
+    [db.submissions, db.debuggingChallenges]
   );
 
   const gradeSubmission = useCallback(
@@ -194,7 +195,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to grade submission.' };
       }
     },
-    [db, syncParticipantScores]
+    [db.submissions, syncParticipantScores]
   );
 
   const gradeDebuggingSubmission = useCallback(
@@ -250,7 +251,10 @@ export function AppActionsProvider({ children }) {
         handout: questionData.handout || '',
         solutionCode: questionData.solutionCode || '',
       });
-      return { success: true, message: `Question for Day ${questionData.day} uploaded successfully.` };
+      return {
+        success: true,
+        message: `Question for Day ${questionData.day} uploaded successfully.`,
+      };
     } catch {
       return { success: false, message: 'Failed to upload question.' };
     }
@@ -360,7 +364,10 @@ export function AppActionsProvider({ children }) {
         starterCode: challengeData.starterCode,
         publishedDate: challengeData.publishedDate,
       });
-      return { success: true, message: `Week ${challengeData.week} Debugging Challenge scheduled.` };
+      return {
+        success: true,
+        message: `Week ${challengeData.week} Debugging Challenge scheduled.`,
+      };
     } catch {
       return { success: false, message: 'Failed to schedule debugging challenge.' };
     }

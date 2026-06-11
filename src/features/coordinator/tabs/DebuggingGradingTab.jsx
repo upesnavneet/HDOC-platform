@@ -29,7 +29,9 @@ export default function DebuggingGradingTab() {
   return (
     <div className="coord-panel admin-grading-panel">
       <h3>Sunday Debugging - Grade &amp; Edit Scores</h3>
-      <p className="panel-desc">Score debugging submissions out of 20. Changes sync to the leaderboard immediately.</p>
+      <p className="panel-desc">
+        Score debugging submissions out of 20. Changes sync to the leaderboard immediately.
+      </p>
       {debugGradeMsg && (
         <div className="feedback-alert info" role="status" aria-live="polite">
           {debugGradeMsg}
@@ -77,7 +79,12 @@ export default function DebuggingGradingTab() {
                 <div className="sub-body">
                   <div className="problem-details" style={{ flex: 1 }}>
                     <h4>{selectedChallenge.theme}</h4>
-                    <a href={sub.link} target="_blank" rel="noopener noreferrer" className="repo-link">
+                    <a
+                      href={sub.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="repo-link"
+                    >
                       View GitHub Submission
                     </a>
                     {hasScore && (
@@ -96,8 +103,14 @@ export default function DebuggingGradingTab() {
                         min="0"
                         max="20"
                         placeholder={hasScore ? String(sub.score) : 'Score'}
-                        value={debugGradesInput[sub.userId] !== undefined ? debugGradesInput[sub.userId] : ''}
-                        onChange={(e) => setDebugGradesInput((prev) => ({ ...prev, [sub.userId]: e.target.value }))}
+                        value={
+                          debugGradesInput[sub.userId] !== undefined
+                            ? debugGradesInput[sub.userId]
+                            : ''
+                        }
+                        onChange={(e) =>
+                          setDebugGradesInput((prev) => ({ ...prev, [sub.userId]: e.target.value }))
+                        }
                         className="score-input"
                         autoComplete="off"
                       />

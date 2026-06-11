@@ -42,7 +42,8 @@ h1 {
 }
 
 /* ── Global interaction quality (UI/UX Pro Max checklist) ── */
-:where(a,
+:where(
+  a,
   button,
   [role='button'],
   .nav-item,
@@ -52,22 +53,17 @@ h1 {
   .gallery-day-card,
   .user-avatar-text,
   .user-name-text,
-  .navbar-brand-block) {
+  .navbar-brand-block
+) {
   cursor: pointer;
 }
 
-:where(a,
-  button,
-  input,
-  select,
-  textarea,
-  .nav-item,
-  .tab-btn,
-  .coord-tab):focus {
+:where(a, button, input, select, textarea, .nav-item, .tab-btn, .coord-tab):focus {
   outline: none;
 }
 
-:where(a,
+:where(
+  a,
   button,
   input,
   select,
@@ -78,7 +74,8 @@ h1 {
   .hero-btn,
   .auth-action-btn,
   .small-action-btn,
-  .navbar-hamburger):focus-visible {
+  .navbar-hamburger
+):focus-visible {
   box-shadow: var(--focus-ring);
   outline: none;
 }
@@ -169,7 +166,10 @@ h1 {
   background: rgba(226, 226, 182, 0.12);
   border-color: rgba(226, 226, 182, 0.45);
   color: var(--color-title);
-  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .auth-action-btn::before {
@@ -195,7 +195,10 @@ h1 {
 
 
 .tab-btn {
-  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .tab-btn.active {
@@ -253,7 +256,6 @@ h1 {
 
 /* ── Accessibility: respect motion preferences ── */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -344,6 +346,19 @@ h1 {
 }
 
 /* ─── Challenges/Daily Questions Section Overrides ─── */
+.problem-section-card-stack {
+  background: #303841 !important;
+}
+
+.problem-section-card-stack:hover {
+  background: #303841 !important;
+}
+
+.problem-section-card-stack .problem-section-body {
+  background: #3a4750 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: var(--space-4);
+}
 /* Removed solid background overrides so glassmorphism from index.css works */
 
 .problem-section-card-stack,
@@ -353,7 +368,7 @@ h1 {
 .problem-section-card-stack .example-text,
 .problem-section-card-stack .section-header-tag,
 .problem-section-card-stack .open-problem-btn {
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
 
 .archive-bottom-details-panel {
@@ -368,36 +383,36 @@ h1 {
 }
 
 .gallery-day-card {
-  background: #3A4750 !important;
+  background: #3a4750 !important;
 }
 
 .gallery-day-card.active {
-  background: #3A4750 !important;
-  border-color: #2185D5 !important;
+  background: #3a4750 !important;
+  border-color: #2185d5 !important;
   box-shadow: 0 0 20px rgba(33, 133, 213, 0.6) !important;
 }
 
 .gallery-day-card:hover {
-  background: #3A4750 !important;
+  background: #3a4750 !important;
 }
 
 .archive-top-gallery-panel,
 .archive-top-gallery-panel *,
 .gallery-day-card,
 .gallery-day-card * {
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
 
 .filter-controls-card-compact {
-  background: #3A4750 !important;
+  background: #3a4750 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Day and Rating badge backgrounds & unified styles */
 .day-large,
 .rating-tag {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #2185d5 !important;
+  color: #f3f3f3 !important;
   font-size: 0.8rem !important;
   font-weight: 800 !important;
   padding: 0.2rem 0.6rem !important;
@@ -410,18 +425,18 @@ h1 {
 }
 
 .day-card-rating {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #2185d5 !important;
+  color: #f3f3f3 !important;
 }
 
 .day-card-today-badge {
-  background: #2185D5 !important;
-  color: #FFFFFF !important;
+  background: #2185d5 !important;
+  color: #ffffff !important;
 }
 
 /* Scroller elements styling */
 .gallery-custom-scrollbar::-webkit-slider-thumb {
-  background: #2185D5 !important;
+  background: #2185d5 !important;
 }
 
 .gallery-custom-scrollbar {
@@ -450,41 +465,41 @@ h1 {
 .active-debug-card .grading-feedback-box,
 .active-debug-card .alert-notice,
 .active-debug-card .week-tag {
-  background: #3A4750 !important;
+  background: #3a4750 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .active-debug-card input {
   background: rgba(255, 255, 255, 0.07) !important;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
 
 .active-debug-card,
 .active-debug-card *,
 .past-challenges-list,
 .past-challenges-list * {
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
 
 .active-debug-card .card-top-tag {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #2185d5 !important;
+  color: #f3f3f3 !important;
 }
 
 .lock-illustration {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #2185d5 !important;
+  color: #f3f3f3 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .week-tag {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #2185d5 !important;
+  color: #f3f3f3 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .past-challenge-row .outcome-missed {
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   text-shadow: none !important;
   box-shadow: none !important;
   filter: none !important;
@@ -502,30 +517,83 @@ h1 {
 .profile-container .handle-tag,
 .profile-container .editor-block,
 .profile-container .challenge-type-tag {
-  background: #3A4750 !important;
+  background: #3a4750 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .profile-container input {
   background: rgba(255, 255, 255, 0.07) !important;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
 
 .profile-container,
 .profile-container * {
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
 
 .profile-container .history-table thead,
 .profile-container .history-table th {
-  background-color: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background-color: #2185d5 !important;
+  color: #f3f3f3 !important;
 }
 
 .profile-avatar {
-  background-color: #2185D5 !important;
+  background-color: #2185d5 !important;
 }
 
+/* ─── Leaderboards Section Overrides ─── */
+.leaderboards-container .table-responsive-container,
+.leaderboards-container .leaderboard-tabs-bar {
+  background: #303841 !important;
+}
+
+.leaderboards-container .leaderboard-table thead,
+.leaderboards-container .leaderboard-table th {
+  background-color: #f3f3f3 !important;
+  color: #303841 !important;
+}
+
+.leaderboards-container,
+.leaderboards-container * {
+  color: #f3f3f3 !important;
+}
+
+.leaderboard-tabs-bar .tab-btn {
+  background: #3a4750 !important;
+  color: #f3f3f3 !important;
+  margin: 0 4px !important;
+}
+
+.leaderboard-tabs-bar .tab-btn.active {
+  background: #f3f3f3 !important;
+  color: #303841 !important;
+  box-shadow: none !important;
+}
+
+.h-tag {
+  background-color: #f3f3f3 !important;
+  border-color: #f3f3f3 !important;
+  color: #303841 !important;
+}
+
+.rank-badge {
+  background-color: #3a4750 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f3f3f3 !important;
+}
+
+.streak-badge {
+  background-color: #3a4750 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f3f3f3 !important;
+}
+
+.badge-status.missed {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #f3f3f3 !important;
+  border: none !important;
+}
 /* (Legacy leaderboard overrides removed — new component uses lb- prefixed classes) */
 
 /* ─── Dashboard Heatmap Padding ─── */
@@ -567,7 +635,7 @@ h1 {
 
 /* Style Solve on LeetCode button */
 .problem-section-card-stack .open-problem-btn {
-  background-color: #3A4750 !important;
+  background-color: #3a4750 !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
@@ -579,9 +647,8 @@ h1 {
 
 /* ── Redesigned Color Theme & Reset ── */
 body {
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
 }
-
 
 /* Global rule overrides for panels (large containers) */
 .streak-grid-wrapper.redesigned-journey,
@@ -591,7 +658,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 6px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
 }
@@ -604,6 +671,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 6px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+  color: #f3f3f3 !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   color: #F3F3F3 !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
@@ -613,7 +683,7 @@ body {
   background: #303841 !important;
   border: 1px solid rgba(243, 243, 243, 0.08) !important;
   border-radius: 6px !important;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   box-shadow: none !important;
@@ -660,7 +730,7 @@ body {
 }
 
 .metric-card-icon {
-  color: #2185D5 !important;
+  color: #2185d5 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -687,17 +757,17 @@ body {
 .metric-card-value {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .metric-card-value .highlight {
-  color: #2185D5 !important;
+  color: #2185d5 !important;
 }
 
 /* ── Today's Challenges ── */
 .section-heading-icon {
-  color: #2185D5 !important;
+  color: #2185d5 !important;
   margin-right: 0.5rem;
   display: inline-flex;
   align-items: center;
@@ -707,7 +777,7 @@ body {
 .redesigned-section-header {
   font-size: 1.25rem !important;
   font-weight: 600 !important;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   padding-bottom: 0.5rem !important;
   border-bottom: 1px solid rgba(243, 243, 243, 0.08) !important;
   margin-bottom: 1.25rem !important;
@@ -720,6 +790,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 8px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+  color: #f3f3f3 !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   color: #F3F3F3 !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
@@ -752,7 +825,6 @@ body {
   margin: 0.5rem 0;
 }
 
-
 .redesigned-challenge-card {
   padding: 1.5rem !important;
   position: relative !important;
@@ -781,7 +853,7 @@ body {
 
 .xp-badge {
   background: rgba(33, 133, 213, 0.15) !important;
-  color: #2185D5 !important;
+  color: #2185d5 !important;
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.2rem 0.5rem;
@@ -792,7 +864,7 @@ body {
 .challenge-title-new {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   margin-bottom: 0.75rem;
 }
 
@@ -810,9 +882,9 @@ body {
   justify-content: center;
   width: 100%;
   padding: 0.6rem 1rem;
-  border: 1px solid #2185D5 !important;
+  border: 1px solid #2185d5 !important;
   background: transparent !important;
-  color: #2185D5 !important;
+  color: #2185d5 !important;
   font-weight: 600;
   border-radius: 4px;
   text-decoration: none;
@@ -824,7 +896,7 @@ body {
 }
 
 .solve-button-new:hover {
-  background: #2185D5 !important;
+  background: #2185d5 !important;
   color: #303841 !important;
 }
 
@@ -860,7 +932,7 @@ body {
 .redesigned-journey .grid-cell-compact.level-1,
 .redesigned-journey .grid-cell-compact.pending,
 .redesigned-journey .grid-cell-compact.missed {
-  background-color: rgba(33, 133, 213, 0.10) !important;
+  background-color: rgba(33, 133, 213, 0.1) !important;
   border: 1px solid rgba(243, 243, 243, 0.08) !important;
 }
 
@@ -878,7 +950,7 @@ body {
 
 .redesigned-journey .grid-cell-compact.level-4,
 .redesigned-journey .grid-cell-compact.solved {
-  background-color: #2185D5 !important;
+  background-color: #2185d5 !important;
   border: 1px solid rgba(243, 243, 243, 0.08) !important;
 }
 
@@ -909,11 +981,22 @@ body {
   border-radius: 2px;
 }
 
-.legend-cell.lvl-0 { background-color: rgba(243, 243, 243, 0.05); border: 1px solid rgba(243, 243, 243, 0.08); }
-.legend-cell.lvl-1 { background-color: rgba(33, 133, 213, 0.10); }
-.legend-cell.lvl-2 { background-color: rgba(33, 133, 213, 0.35); }
-.legend-cell.lvl-3 { background-color: rgba(33, 133, 213, 0.65); }
-.legend-cell.lvl-4 { background-color: #2185D5; }
+.legend-cell.lvl-0 {
+  background-color: rgba(243, 243, 243, 0.05);
+  border: 1px solid rgba(243, 243, 243, 0.08);
+}
+.legend-cell.lvl-1 {
+  background-color: rgba(33, 133, 213, 0.1);
+}
+.legend-cell.lvl-2 {
+  background-color: rgba(33, 133, 213, 0.35);
+}
+.legend-cell.lvl-3 {
+  background-color: rgba(33, 133, 213, 0.65);
+}
+.legend-cell.lvl-4 {
+  background-color: #2185d5;
+}
 
 /* ── Recent Activity Timeline ── */
 .redesigned-timeline-panel {
@@ -956,12 +1039,12 @@ body {
 }
 
 .timeline-dot.today {
-  background: #2185D5 !important;
-  border: 2px solid #2185D5 !important;
+  background: #2185d5 !important;
+  border: 2px solid #2185d5 !important;
 }
 
 .timeline-dot.completed {
-  border: 2px solid #2185D5 !important;
+  border: 2px solid #2185d5 !important;
 }
 
 .timeline-dot.missed {
@@ -989,7 +1072,7 @@ body {
 }
 
 .timeline-day-label.today {
-  color: #2185D5 !important;
+  color: #2185d5 !important;
 }
 
 .timeline-day-label.past {
@@ -1002,7 +1085,7 @@ body {
 }
 
 .timeline-tag-pill {
-  background: #3A4750 !important;
+  background: #3a4750 !important;
   color: rgba(243, 243, 243, 0.6) !important;
   border: 1px solid rgba(243, 243, 243, 0.1) !important;
   padding: 0.15rem 0.5rem;
@@ -1040,7 +1123,7 @@ body {
 }
 
 .leaderboard-row.current-user {
-  border-left: 2px solid #F3F3F3 !important;
+  border-left: 2px solid #f3f3f3 !important;
   background: rgba(243, 243, 243, 0.07) !important;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -1059,8 +1142,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #3A4750 !important;
-  color: #F3F3F3 !important;
+  background: #3a4750 !important;
+  color: #f3f3f3 !important;
   border: 1px solid rgba(243, 243, 243, 0.4) !important;
   display: flex;
   align-items: center;
@@ -1082,7 +1165,7 @@ body {
 .leaderboard-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1098,14 +1181,14 @@ body {
 
 .leaderboard-bar {
   height: 100%;
-  background: #F3F3F3 !important;
+  background: #f3f3f3 !important;
   border-radius: 2px;
 }
 
 .leaderboard-score {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   font-family: 'JetBrains Mono', monospace;
   text-align: right;
   flex-shrink: 0;
@@ -1115,7 +1198,7 @@ body {
   display: inline-block;
   margin-top: 1rem;
   font-size: 0.85rem;
-  color: #F3F3F3 !important;
+  color: #f3f3f3 !important;
   text-decoration: none;
   font-weight: 600;
 }
@@ -1133,7 +1216,7 @@ body {
   display: flex;
   height: 16px;
   width: 100%;
-  background: #3A4750;
+  background: #3a4750;
   border-radius: 4px;
   overflow: hidden;
   margin-top: 1.25rem;
@@ -1146,15 +1229,15 @@ body {
 }
 
 .bar-segment.javascript {
-  background-color: #2185D5 !important;
+  background-color: #2185d5 !important;
 }
 
 .bar-segment.python {
-  background-color: rgba(33, 133, 213, 0.70) !important;
+  background-color: rgba(33, 133, 213, 0.7) !important;
 }
 
 .bar-segment.algorithms {
-  background-color: rgba(33, 133, 213, 0.40) !important;
+  background-color: rgba(33, 133, 213, 0.4) !important;
 }
 
 .bar-segment.remainder {
@@ -1184,10 +1267,19 @@ body {
   margin-right: 0.5rem;
 }
 
-.breakdown-label-dot.js { background-color: #2185D5; }
-.breakdown-label-dot.py { background-color: rgba(33, 133, 213, 0.70); }
-.breakdown-label-dot.algo { background-color: rgba(33, 133, 213, 0.40); }
-.breakdown-label-dot.rem { background-color: #303841; border: 1px solid rgba(243, 243, 243, 0.1); }
+.breakdown-label-dot.js {
+  background-color: #2185d5;
+}
+.breakdown-label-dot.py {
+  background-color: rgba(33, 133, 213, 0.7);
+}
+.breakdown-label-dot.algo {
+  background-color: rgba(33, 133, 213, 0.4);
+}
+.breakdown-label-dot.rem {
+  background-color: #303841;
+  border: 1px solid rgba(243, 243, 243, 0.1);
+}
 
 /* ── Two Column Responsive Layout ── */
 .dashboard-grid-layout {

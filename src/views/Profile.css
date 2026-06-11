@@ -5,7 +5,15 @@
   max-width: 100%;
   margin: 0 auto;
   padding: 0 0 3.4rem 0; /* Remove horizontal padding so it perfectly flushes with main area */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   color: #c9d1d9;
   background: transparent;
   display: flex;
@@ -214,10 +222,18 @@
   height: 9px;
   border-radius: 2px;
 }
-.np-legend-box.l1 { background: #161b22; }
-.np-legend-box.l2 { background: #0e4429; }
-.np-legend-box.l3 { background: #26a641; }
-.np-legend-box.l4 { background: #39d353; }
+.np-legend-box.l1 {
+  background: #161b22;
+}
+.np-legend-box.l2 {
+  background: #0e4429;
+}
+.np-legend-box.l3 {
+  background: #26a641;
+}
+.np-legend-box.l4 {
+  background: #39d353;
+}
 
 .np-activity-content {
   width: 100%;
@@ -368,7 +384,9 @@
   font-size: 0.65rem;
   outline: none;
   width: 170px;
-  transition: width 0.2s ease, border-color 0.2s ease;
+  transition:
+    width 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .np-search-wrapper input:focus {
@@ -504,12 +522,12 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .np-header-stats {
     flex-wrap: wrap;
     gap: 0.85rem;
   }
-  
+
   .np-stat-divider {
     display: none;
   }

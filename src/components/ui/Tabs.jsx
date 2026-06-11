@@ -8,7 +8,14 @@ function useTabsContext() {
   return ctx;
 }
 
-export function Tabs({ value, onChange, className = '', listClassName = '', children, 'aria-label': ariaLabel }) {
+export function Tabs({
+  value,
+  onChange,
+  className = '',
+  listClassName = '',
+  children,
+  'aria-label': ariaLabel,
+}) {
   const baseId = useId();
   const tabValuesRef = useRef([]);
 
@@ -23,7 +30,8 @@ export function Tabs({ value, onChange, className = '', listClassName = '', chil
       const tabs = tabValuesRef.current;
       const idx = tabs.indexOf(currentValue);
       if (idx === -1) return;
-      const next = direction === 'next' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+      const next =
+        direction === 'next' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
       onChange(tabs[next]);
       const nextId = `${baseId}-tab-${tabs[next]}`;
       document.getElementById(nextId)?.focus();
@@ -43,11 +51,7 @@ export function Tabs({ value, onChange, className = '', listClassName = '', chil
 function List({ children, className = '' }) {
   const { listClassName, ariaLabel } = useTabsContext();
   return (
-    <div
-      role="tablist"
-      aria-label={ariaLabel}
-      className={`${listClassName} ${className}`.trim()}
-    >
+    <div role="tablist" aria-label={ariaLabel} className={`${listClassName} ${className}`.trim()}>
       {children}
     </div>
   );
@@ -92,13 +96,7 @@ function Panel({ value, children, className = '' }) {
   const panelId = `${baseId}-panel-${value}`;
 
   return (
-    <div
-      role="tabpanel"
-      id={panelId}
-      aria-labelledby={tabId}
-      tabIndex={0}
-      className={className}
-    >
+    <div role="tabpanel" id={panelId} aria-labelledby={tabId} tabIndex={0} className={className}>
       {children}
     </div>
   );

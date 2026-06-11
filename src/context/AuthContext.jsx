@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { auth } from '../firebaseConfig';
+import { error as logError } from '../utils/logger';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -76,7 +77,10 @@ export const AuthProvider = ({ children }) => {
           if (profile) {
             if (profile.isActive === false) {
               await signOut(auth);
-              dispatch({ type: 'AUTH_FAIL', payload: 'Your account has been deactivated by the administrator.' });
+              dispatch({
+                type: 'AUTH_FAIL',
+                payload: 'Your account has been deactivated by the administrator.',
+              });
             } else {
               dispatch({ type: 'AUTH_SUCCESS', payload: { ...profile, isAdmin: isAdminUser } });
               updateActivity();
@@ -144,7 +148,8 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
 
     if (!validatePassword(password)) {
-      const errMsg = 'Password must be at least 8 characters long, contain at least 1 number, and 1 special character.';
+      const errMsg =
+        'Password must be at least 8 characters long, contain at least 1 number, and 1 special character.';
       dispatch({ type: 'AUTH_FAIL', payload: errMsg });
       return { success: false, message: errMsg };
     }
@@ -187,7 +192,7 @@ export const AuthProvider = ({ children }) => {
       updateActivity();
       return { success: true, user: { ...newProfile, isAdmin: false } };
     } catch (error) {
-      console.error('Registration failed:', error);
+      logError('Registration failed:', error);
       const errMsg = error.message || 'Registration failed. Please try again.';
       dispatch({ type: 'AUTH_FAIL', payload: errMsg });
       return { success: false, message: errMsg };
@@ -199,7 +204,7 @@ export const AuthProvider = ({ children }) => {
       await signOut(auth);
       dispatch({ type: 'LOGOUT' });
     } catch (error) {
-      console.error('Logout failed:', error);
+      logError('Logout failed:', error);
     }
   };
 
@@ -208,7 +213,7 @@ export const AuthProvider = ({ children }) => {
       await sendPasswordResetEmail(auth, email);
       return { success: true };
     } catch (error) {
-      console.error('Password reset failed:', error);
+      logError('Password reset failed:', error);
       return { success: false, message: error.message };
     }
   };

@@ -89,7 +89,9 @@ export default function GradingTab() {
             const student = db.users.find((u) => u.id === sub.userId);
             const q = db.questions.find((question) => question.id === sub.questionId);
             const titleText = q
-              ? (sub.type === 'leetcode' ? `Part A (LeetCode): ${q.titleLc}` : `Part B (Custom): ${q.titleCustom}`)
+              ? sub.type === 'leetcode'
+                ? `Part A (LeetCode): ${q.titleLc}`
+                : `Part B (Custom): ${q.titleCustom}`
               : `Day ${sub.day} Challenge`;
 
             return (
@@ -110,22 +112,37 @@ export default function GradingTab() {
                     <h4>{titleText}</h4>
                     {sub.code ? (
                       <div className="submitted-code-block" style={{ marginTop: '0.75rem' }}>
-                        <div className="editor-tab" style={{ fontSize: '0.7rem', width: 'fit-content' }}>
+                        <div
+                          className="editor-tab"
+                          style={{ fontSize: '0.7rem', width: 'fit-content' }}
+                        >
                           Language: {sub.language ? sub.language.toUpperCase() : 'CPP'}
                         </div>
-                        <pre className="editor-block" style={{ maxHeight: '200px', fontSize: '0.75rem', padding: '0.75rem', margin: 0 }}>
+                        <pre
+                          className="editor-block"
+                          style={{
+                            maxHeight: '200px',
+                            fontSize: '0.75rem',
+                            padding: '0.75rem',
+                            margin: 0,
+                          }}
+                        >
                           <code>{sub.code}</code>
                         </pre>
                       </div>
                     ) : (
-                      <p className="no-items-alert" style={{ marginTop: '0.75rem' }}>No code submitted.</p>
+                      <p className="no-items-alert" style={{ marginTop: '0.75rem' }}>
+                        No code submitted.
+                      </p>
                     )}
                     <span className="sub-time" style={{ display: 'block', marginTop: '0.5rem' }}>
                       Submitted: {formatDateTime(sub.timestamp)}
                     </span>
                     {sub.marks !== null && (
                       <div className="grade-result" style={{ marginTop: '0.5rem' }}>
-                        <span><strong>Current Score:</strong> {sub.marks} / 10</span>
+                        <span>
+                          <strong>Current Score:</strong> {sub.marks} / 10
+                        </span>
                         {sub.comments && <p className="comment">&ldquo;{sub.comments}&rdquo;</p>}
                       </div>
                     )}
@@ -142,7 +159,9 @@ export default function GradingTab() {
                         max="10"
                         placeholder={sub.marks !== null ? String(sub.marks) : 'Grade'}
                         value={gradesInput[sub.id] !== undefined ? gradesInput[sub.id] : ''}
-                        onChange={(e) => setGradesInput((prev) => ({ ...prev, [sub.id]: e.target.value }))}
+                        onChange={(e) =>
+                          setGradesInput((prev) => ({ ...prev, [sub.id]: e.target.value }))
+                        }
                         className="score-input"
                         autoComplete="off"
                       />
@@ -153,14 +172,22 @@ export default function GradingTab() {
                         id={`feedback-${sub.id}`}
                         name="feedback"
                         type="text"
-                        placeholder={sub.comments ? sub.comments : 'Write brief evaluation remarks…'}
+                        placeholder={
+                          sub.comments ? sub.comments : 'Write brief evaluation remarks…'
+                        }
                         value={commentsInput[sub.id] !== undefined ? commentsInput[sub.id] : ''}
-                        onChange={(e) => setCommentsInput((prev) => ({ ...prev, [sub.id]: e.target.value }))}
+                        onChange={(e) =>
+                          setCommentsInput((prev) => ({ ...prev, [sub.id]: e.target.value }))
+                        }
                         className="comment-input"
                         autoComplete="off"
                       />
                     </div>
-                    <button type="button" className="grade-submit-btn" onClick={() => handleGradeSubmit(sub.id)}>
+                    <button
+                      type="button"
+                      className="grade-submit-btn"
+                      onClick={() => handleGradeSubmit(sub.id)}
+                    >
                       {sub.marks !== null ? 'Update Score' : 'Save Score'}
                     </button>
                   </div>

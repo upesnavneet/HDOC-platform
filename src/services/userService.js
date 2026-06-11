@@ -1,8 +1,45 @@
+// @ts-check
 import { db } from '../firebaseConfig';
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs, onSnapshot, query, where, limit } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+  limit,
+} from 'firebase/firestore';
+import { error as logError } from '../utils/logger';
+
+/**
+ * @typedef {Object} UserProfile
+ * @property {string} id
+ * @property {string} uid
+ * @property {string} name
+ * @property {string} email
+ * @property {string} studentId
+ * @property {string} gitHubId
+ * @property {string} leetCodeId
+ * @property {number} gitHubStreak
+ * @property {number} leetCodeStreak
+ * @property {number} totalCodingScore
+ * @property {number} totalDebuggingScore
+ * @property {boolean} isActive
+ * @property {number[]} completedDays
+ * @property {string} createdAt
+ * @property {boolean} [isAdmin]
+ * @property {number} [overallRank]
+ */
 
 const USERS_COLLECTION = 'users';
 
+/**
+ * @param {string} uid
+ * @returns {Promise<UserProfile|null>}
+ */
 export const getUserProfile = async (uid) => {
   try {
     const docRef = doc(db, USERS_COLLECTION, uid);
@@ -12,7 +49,7 @@ export const getUserProfile = async (uid) => {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching user profile:', error);
+    logError('Error fetching user profile:', error);
     throw error;
   }
 };
@@ -23,7 +60,7 @@ export const createUserProfile = async (uid, userData) => {
     await setDoc(docRef, userData);
     return { id: uid, ...userData };
   } catch (error) {
-    console.error('Error creating user profile:', error);
+    logError('Error creating user profile:', error);
     throw error;
   }
 };
@@ -33,7 +70,7 @@ export const updateUserProfile = async (uid, updateData) => {
     const docRef = doc(db, USERS_COLLECTION, uid);
     await updateDoc(docRef, updateData);
   } catch (error) {
-    console.error('Error updating user profile:', error);
+    logError('Error updating user profile:', error);
     throw error;
   }
 };
@@ -47,7 +84,7 @@ export const getAllUsers = async () => {
     });
     return users;
   } catch (error) {
-    console.error('Error getting all users:', error);
+    logError('Error getting all users:', error);
     throw error;
   }
 };
@@ -66,20 +103,24 @@ export const checkStudentIdExists = async (studentId) => {
     const snap = await getDocs(q);
     return !snap.empty;
   } catch (error) {
-    console.error('Error checking student ID:', error);
+    logError('Error checking student ID:', error);
     throw error;
   }
 };
 
 export const subscribeToUsers = (callback) => {
   const colRef = collection(db, USERS_COLLECTION);
-  return onSnapshot(colRef, (querySnapshot) => {
-    const users = [];
-    querySnapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() });
-    });
-    callback(users);
-  }, (error) => {
-    console.error('Error subscribing to users:', error);
-  });
+  return onSnapshot(
+    colRef,
+    (querySnapshot) => {
+      const users = [];
+      querySnapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      callback(users);
+    },
+    (error) => {
+      logError('Error subscribing to users:', error);
+    }
+  );
 };

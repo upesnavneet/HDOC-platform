@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from 'react';
+import { warn } from '../utils/logger';
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -66,7 +67,7 @@ export default function IntroSplash({ onComplete }) {
         osc3.stop(ctx.currentTime + 1.5);
       }, 250);
     } catch (error) {
-      console.warn('AudioContext failed to start:', error);
+      warn('AudioContext failed to start:', error);
     }
   };
 
@@ -94,15 +95,26 @@ export default function IntroSplash({ onComplete }) {
           <div className="intro-logo-glow-layer-1" aria-hidden="true" />
           <div className="intro-logo-glow-layer-2" aria-hidden="true" />
 
-          <div className="intro-logos-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
-            <img src="/acm-acmw-white.png" alt="ACM & ACM-W Logo" className="intro-logo-image responsive-logo" style={{ maxHeight: '100px', width: 'auto', objectFit: 'contain' }} />
-            <img src="/logo-1.png" alt="HDOC Logo" className="intro-logo-image responsive-logo" style={{ maxHeight: '100px', width: 'auto', objectFit: 'contain' }} />
+          <div
+            className="intro-logos-row"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}
+          >
+            <img
+              src="/acm-acmw-white.png"
+              alt="ACM & ACM-W Logo"
+              className="intro-logo-image responsive-logo"
+              style={{ maxHeight: '100px', width: 'auto', objectFit: 'contain' }}
+            />
+            <img
+              src="/logo-1.png"
+              alt="HDOC Logo"
+              className="intro-logo-image responsive-logo"
+              style={{ maxHeight: '100px', width: 'auto', objectFit: 'contain' }}
+            />
           </div>
         </div>
 
-        <div className="intro-subtitle">
-          UPES ACM &amp; ACM-W STUDENT CHAPTERS
-        </div>
+        <div className="intro-subtitle">UPES ACM &amp; ACM-W STUDENT CHAPTERS</div>
       </div>
     </div>
   );

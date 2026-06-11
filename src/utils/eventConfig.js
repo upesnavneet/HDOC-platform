@@ -14,8 +14,7 @@ export const normalizeSystemConfig = (config) => {
   }
 
   const parsedDay = Number(config.currentDay);
-  const currentDay =
-    Number.isFinite(parsedDay) && parsedDay >= 1 ? parsedDay : defaults.currentDay;
+  const currentDay = Number.isFinite(parsedDay) && parsedDay >= 1 ? parsedDay : defaults.currentDay;
 
   let simulatedTime = config.simulatedTime;
   if (!simulatedTime || Number.isNaN(new Date(simulatedTime).getTime())) {

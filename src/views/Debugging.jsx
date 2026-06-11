@@ -67,10 +67,7 @@ function highlightCode(code) {
   if (!code) return { __html: '' };
 
   // Escape HTML first
-  let escaped = code
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  let escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   // Order matters: comments first, then strings, then keywords/types/functions
   const rules = [
@@ -98,11 +95,13 @@ function highlightCode(code) {
   }
 
   // C++ keywords
-  const keywords = /\b(#include|#define|#pragma|#ifndef|#endif|#ifdef|using|namespace|return|if|else|for|while|do|switch|case|break|continue|class|struct|public|private|protected|virtual|override|const|static|void|int|char|bool|float|double|long|unsigned|auto|template|typename|new|delete|throw|try|catch|nullptr)\b/g;
+  const keywords =
+    /\b(#include|#define|#pragma|#ifndef|#endif|#ifdef|using|namespace|return|if|else|for|while|do|switch|case|break|continue|class|struct|public|private|protected|virtual|override|const|static|void|int|char|bool|float|double|long|unsigned|auto|template|typename|new|delete|throw|try|catch|nullptr)\b/g;
   tokenized = tokenized.replace(keywords, '<span class="code-keyword">$1</span>');
 
   // Standard library types and namespaces
-  const types = /\b(std::[a-zA-Z_:]+|string|vector|map|set|pair|mutex|thread|lock_guard|scoped_lock|unique_lock|cout|cin|endl|chrono|this_thread|milliseconds|atomic)\b/g;
+  const types =
+    /\b(std::[a-zA-Z_:]+|string|vector|map|set|pair|mutex|thread|lock_guard|scoped_lock|unique_lock|cout|cin|endl|chrono|this_thread|milliseconds|atomic)\b/g;
   tokenized = tokenized.replace(types, '<span class="code-type">$1</span>');
 
   // Function names (word followed by parenthesis)
@@ -136,7 +135,8 @@ function getCodeFileName(challenge) {
   const code = challenge?.starterCode || '';
   if (code.includes('#include') || code.includes('std::')) return 'starter_code.cpp';
   if (code.includes('def ') || code.includes('import ')) return 'starter_code.py';
-  if (code.includes('function ') || code.includes('const ') || code.includes('let ')) return 'starter_code.js';
+  if (code.includes('function ') || code.includes('const ') || code.includes('let '))
+    return 'starter_code.js';
   if (code.includes('public class') || code.includes('System.out')) return 'StarterCode.java';
   return 'starter_code.txt';
 }
@@ -150,7 +150,16 @@ const ErrorCircleIcon = () => (
 );
 
 const LightbulbIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ width: 16, height: 16 }}
+  >
     <path d="M9 18h6" />
     <path d="M10 22h4" />
     <path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z" />
@@ -158,27 +167,61 @@ const LightbulbIcon = () => (
 );
 
 const ChevronDownIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" style={{ width: 16, height: 16 }}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ width: 16, height: 16 }}
+  >
     <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 const FileIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" style={{ width: 14, height: 14 }}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ width: 14, height: 14 }}
+  >
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
     <polyline points="14 2 14 8 20 8" />
   </svg>
 );
 
 const CopyIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
   </svg>
 );
 
 const LinkIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
   </svg>
@@ -191,7 +234,16 @@ const SendIcon = () => (
 );
 
 const LockIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg" style={{ width: 14, height: 14 }}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ width: 14, height: 14 }}
+  >
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
@@ -251,7 +303,6 @@ export default function Debugging() {
     }
   }, [activeChallenge?.starterCode]);
 
-
   const difficulty = activeChallenge?.difficulty || 'Medium';
   const difficultyClass = difficulty.toLowerCase();
   const codeContent = activeChallenge?.starterCode || '';
@@ -264,8 +315,14 @@ export default function Debugging() {
     'Thread dumps show threads permanently blocked on resource acquisition.',
   ];
   const hints = activeChallenge?.hints || [
-    { title: 'Hint 1: Resource Ordering', body: 'Look closely at the order in which different threads attempt to lock shared resources. A consistent ordering can prevent circular dependencies.' },
-    { title: 'Hint 2: Standard Library Solutions', body: 'Consider using mechanisms that acquire multiple locks simultaneously without deadlock risk. Many languages provide built-in utilities for this.' },
+    {
+      title: 'Hint 1: Resource Ordering',
+      body: 'Look closely at the order in which different threads attempt to lock shared resources. A consistent ordering can prevent circular dependencies.',
+    },
+    {
+      title: 'Hint 2: Standard Library Solutions',
+      body: 'Consider using mechanisms that acquire multiple locks simultaneously without deadlock risk. Many languages provide built-in utilities for this.',
+    },
   ];
 
   if (timeStatus === 'open' && activeChallenge) {
@@ -285,11 +342,11 @@ export default function Debugging() {
 
               {/* Title + Meta */}
               <div className="debug-title-row">
-                <h1>Week {activeChallenge.week} — {activeChallenge.theme}</h1>
+                <h1>
+                  Week {activeChallenge.week} — {activeChallenge.theme}
+                </h1>
                 <div className="debug-title-meta">
-                  <span className={`debug-difficulty-badge ${difficultyClass}`}>
-                    {difficulty}
-                  </span>
+                  <span className={`debug-difficulty-badge ${difficultyClass}`}>{difficulty}</span>
                   <span className="debug-points">100 pts</span>
                 </div>
               </div>
@@ -312,7 +369,9 @@ export default function Debugging() {
                 <ul className="debug-symptoms-list">
                   {symptoms.map((symptom, i) => (
                     <li key={i} className="debug-symptom-item">
-                      <span className="debug-symptom-icon"><ErrorCircleIcon /></span>
+                      <span className="debug-symptom-icon">
+                        <ErrorCircleIcon />
+                      </span>
                       <span className="debug-symptom-text">{symptom}</span>
                     </li>
                   ))}
@@ -326,14 +385,16 @@ export default function Debugging() {
                   <details key={i} className="debug-hint-accordion">
                     <summary>
                       <div className="debug-hint-summary-left">
-                        <span className="debug-hint-icon"><LightbulbIcon /></span>
+                        <span className="debug-hint-icon">
+                          <LightbulbIcon />
+                        </span>
                         {hint.title}
                       </div>
-                      <span className="debug-hint-chevron"><ChevronDownIcon /></span>
+                      <span className="debug-hint-chevron">
+                        <ChevronDownIcon />
+                      </span>
                     </summary>
-                    <div className="debug-hint-content">
-                      {hint.body}
-                    </div>
+                    <div className="debug-hint-content">{hint.body}</div>
                   </details>
                 ))}
               </div>
@@ -365,7 +426,9 @@ export default function Debugging() {
             {/* IDE Tab Bar */}
             <div className="debug-ide-tabs">
               <div className="debug-ide-tab">
-                <span className="tab-icon"><FileIcon /></span>
+                <span className="tab-icon">
+                  <FileIcon />
+                </span>
                 <span className="tab-name">{fileName}</span>
               </div>
             </div>
@@ -404,9 +467,15 @@ export default function Debugging() {
             </div>
 
             {/* Sticky Submission Dock */}
-            <form className="debug-submission-dock" onSubmit={handleSub} key={activeChallengeSub?.timestamp || 'new'}>
+            <form
+              className="debug-submission-dock"
+              onSubmit={handleSub}
+              key={activeChallengeSub?.timestamp || 'new'}
+            >
               <div className="debug-url-input-wrap">
-                <span className="input-icon"><LinkIcon /></span>
+                <span className="input-icon">
+                  <LinkIcon />
+                </span>
                 <input
                   className="debug-url-input"
                   id="git-debug-link"
@@ -419,7 +488,11 @@ export default function Debugging() {
                   autoComplete="off"
                 />
               </div>
-              {submitMsg && <span className="debug-submit-msg" role="alert">{submitMsg}</span>}
+              {submitMsg && (
+                <span className="debug-submit-msg" role="alert">
+                  {submitMsg}
+                </span>
+              )}
               <button type="submit" className="debug-submit-btn">
                 <SendIcon />
                 {activeChallengeSub ? 'Update Fix' : 'Submit Fix'}
@@ -438,9 +511,12 @@ export default function Debugging() {
         <div className="lock-icon">🔒</div>
         {timeStatus === 'upcoming' && activeChallenge ? (
           <>
-            <h2>Week {activeChallenge.week} Challenge: {activeChallenge.theme}</h2>
+            <h2>
+              Week {activeChallenge.week} Challenge: {activeChallenge.theme}
+            </h2>
             <p className="upcoming-note">
-              This week&apos;s debugging challenge goes live at 21:00 tonight. Come back then to start.
+              This week&apos;s debugging challenge goes live at 21:00 tonight. Come back then to
+              start.
             </p>
             <div className="debug-closed-timer">{countdown}</div>
           </>

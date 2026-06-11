@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { error as logError } from '../utils/logger';
 
 /**
  * LiquidDistortionBackground
@@ -132,7 +133,7 @@ export default function DistortionBackground() {
       gl.shaderSource(sh, src);
       gl.compileShader(sh);
       if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(sh));
+        logError(gl.getShaderInfoLog(sh));
         gl.deleteShader(sh);
         return null;
       }
@@ -148,7 +149,7 @@ export default function DistortionBackground() {
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error(gl.getProgramInfoLog(prog));
+      logError(gl.getProgramInfoLog(prog));
       return;
     }
     gl.useProgram(prog);
@@ -166,13 +167,13 @@ export default function DistortionBackground() {
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
     // ── uniform locations ─────────────────────────────────────────────────
-    const uTime       = gl.getUniformLocation(prog, 'u_time');
-    const uMouse      = gl.getUniformLocation(prog, 'u_mouse');
+    const uTime = gl.getUniformLocation(prog, 'u_time');
+    const uMouse = gl.getUniformLocation(prog, 'u_mouse');
     const uResolution = gl.getUniformLocation(prog, 'u_resolution');
 
     // ── resize handling ───────────────────────────────────────────────────
     function resize() {
-      canvas.width  = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
       gl.viewport(0, 0, canvas.width, canvas.height);
     }

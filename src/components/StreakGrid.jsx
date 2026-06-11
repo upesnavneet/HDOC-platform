@@ -33,7 +33,9 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
       const hasLate = daySubs.some((s) => s.status === 'Late');
       const allSubmitted = daySubs.length === 2;
       if (allSubmitted) {
-        return hasLate ? { class: 'late', text: 'Submitted (Late)' } : { class: 'solved', text: 'Solved' };
+        return hasLate
+          ? { class: 'late', text: 'Submitted (Late)' }
+          : { class: 'solved', text: 'Solved' };
       }
       return { class: 'partial', text: 'Partially Submitted' };
     }
@@ -70,12 +72,30 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
     <div className="streak-grid-wrapper redesigned-journey">
       <h3 className="redesigned-section-header">
         <span className="section-heading-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" /><path d="M9 4v13" /><path d="M15 7v13" /></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 7l6 -3l6 3l6 -3v13l-6 3l-6 -3l-6 3v-13" />
+            <path d="M9 4v13" />
+            <path d="M15 7v13" />
+          </svg>
         </span>
         Your Journey
       </h3>
 
-      <div className="grid-container grid-container-compact" role="group" aria-label="100 day coding streak grid">
+      <div
+        className="grid-container grid-container-compact"
+        role="group"
+        aria-label="100 day coding streak grid"
+      >
         {Array.from({ length: 100 }, (_, i) => {
           const d = i + 1;
           const status = getDayStatus(d);
@@ -91,7 +111,9 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
               onFocus={() => {
                 const isSunday = d % 7 === 0;
                 const weekNum = d / 7;
-                const debugChallenge = isSunday ? db.debuggingChallenges.find(c => c.week === weekNum) : null;
+                const debugChallenge = isSunday
+                  ? db.debuggingChallenges.find((c) => c.week === weekNum)
+                  : null;
                 setFocusedDay({ day: d, status, q, debugChallenge });
               }}
               onBlur={() => setFocusedDay(null)}

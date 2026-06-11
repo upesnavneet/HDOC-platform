@@ -1,7 +1,13 @@
 import { useEffect, useRef, useId } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 
-export default function Modal({ isOpen, onClose, title, children, className = 'coord-profile-card' }) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className = 'coord-profile-card',
+}) {
   const dialogRef = useRef(null);
   const titleId = useId();
   useFocusTrap(dialogRef, isOpen);
