@@ -1,12 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { Tabs } from '../components/ui/Tabs';
 import { useLeaderboardData } from '../hooks/useLeaderboard';
+
+const PAGE_SIZE = 25;
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  if (totalPages <= 1) return null;
+
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pages.push(i);
+  }
+
+  return (
+    <div className="pagination-controls">
+      <button
+        className="pagination-btn"
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+      >
+        ← Prev
+      </button>
+      {pages.map((p) => (
+        <button
+          key={p}
+          className={`pagination-btn ${p === currentPage ? 'active' : ''}`}
+          onClick={() => onPageChange(p)}
+        >
+          {p}
+        </button>
+      ))}
+      <button
+        className="pagination-btn"
+        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+      >
+        Next →
+      </button>
+      <span className="pagination-info">
+        {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, totalPages * PAGE_SIZE)} of entries
+      </span>
+    </div>
+  );
+}
 
 export default function Leaderboards() {
   const { db } = useApp();
   const [activeTab, setActiveTab] = useState('overall');
   const { currentWeek, codingBoard, debuggingBoard, combinedBoard } = useLeaderboardData(db);
+
+  // M7: Pagination state per tab
+  const [overallPage, setOverallPage] = useState(1);
+  const [codingPage, setCodingPage] = useState(1);
+  const [debugPage, setDebugPage] = useState(1);
+
+  const overallTotalPages = Math.max(1, Math.ceil(combinedBoard.length / PAGE_SIZE));
+  const codingTotalPages = Math.max(1, Math.ceil(codingBoard.length / PAGE_SIZE));
+  const debugTotalPages = Math.max(1, Math.ceil(debuggingBoard.length / PAGE_SIZE));
+
+  const pagedOverall = useMemo(() => combinedBoard.slice((overallPage - 1) * PAGE_SIZE, overallPage * PAGE_SIZE), [combinedBoard, overallPage]);
+  const pagedCoding = useMemo(() => codingBoard.slice((codingPage - 1) * PAGE_SIZE, codingPage * PAGE_SIZE), [codingBoard, codingPage]);
+  const pagedDebug = useMemo(() => debuggingBoard.slice((debugPage - 1) * PAGE_SIZE, debugPage * PAGE_SIZE), [debuggingBoard, debugPage]);
 
   return (
     <div className="leaderboards-container">
@@ -47,8 +102,8 @@ export default function Leaderboards() {
                   <tr>
                     <td colSpan={7}>No rankings yet - scores will appear once challenges are graded.</td>
                   </tr>
-                ) : combinedBoard.map((row, idx) => {
-                  const rankNum = idx + 1;
+                ) : pagedOverall.map((row, idx) => {
+                  const rankNum = (overallPage - 1) * PAGE_SIZE + idx + 1;
                   const isTop10 = rankNum <= 10;
                   return (
                     <tr key={row.id} className={`${isTop10 ? 'top10-highlight' : ''} ${rankNum === 1 ? 'gold-medalist' : ''}`}>
@@ -80,6 +135,7 @@ export default function Leaderboards() {
                 })}
               </tbody>
             </table>
+            <Pagination currentPage={overallPage} totalPages={overallTotalPages} onPageChange={setOverallPage} />
           </Tabs.Panel>
 
           <Tabs.Panel value="coding">
@@ -95,8 +151,8 @@ export default function Leaderboards() {
                 </tr>
               </thead>
               <tbody>
-                {codingBoard.map((row, idx) => {
-                  const rankNum = idx + 1;
+                {pagedCoding.map((row, idx) => {
+                  const rankNum = (codingPage - 1) * PAGE_SIZE + idx + 1;
                   return (
                     <tr key={row.id}>
                       <td className="rank-col">
@@ -111,6 +167,7 @@ export default function Leaderboards() {
                 })}
               </tbody>
             </table>
+            <Pagination currentPage={codingPage} totalPages={codingTotalPages} onPageChange={setCodingPage} />
           </Tabs.Panel>
 
           <Tabs.Panel value="debugging">
@@ -126,8 +183,8 @@ export default function Leaderboards() {
                 </tr>
               </thead>
               <tbody>
-                {debuggingBoard.map((row, idx) => {
-                  const rankNum = idx + 1;
+                {pagedDebug.map((row, idx) => {
+                  const rankNum = (debugPage - 1) * PAGE_SIZE + idx + 1;
                   return (
                     <tr key={row.id}>
                       <td className="rank-col">
@@ -144,6 +201,7 @@ export default function Leaderboards() {
                 })}
               </tbody>
             </table>
+            <Pagination currentPage={debugPage} totalPages={debugTotalPages} onPageChange={setDebugPage} />
           </Tabs.Panel>
         </div>
       </Tabs>

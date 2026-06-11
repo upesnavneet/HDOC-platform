@@ -3,6 +3,7 @@
 
 import { db as firestoreDb } from '../firebaseConfig';
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { log, error as logError } from './logger';
 import { getDefaultSystemConfig } from './eventConfig';
 
 const seedQuestions = [
@@ -212,7 +213,7 @@ export async function seedFirestoreIfEmpty() {
       return false;
     }
 
-    console.log('[Seed] Empty Firestore detected - seeding initial data...');
+    log('[Seed] Empty Firestore detected - seeding initial data...');
 
     // 1. Seed system config at Day 8 so past debugging challenges are visible
     await setDoc(doc(firestoreDb, 'system', 'config'), {
@@ -221,24 +222,24 @@ export async function seedFirestoreIfEmpty() {
       completedWeeks: [1],
       lastDayAdvanceTime: new Date(),
     });
-    console.log('[Seed] ✓ System config created');
+    log('[Seed] ✓ System config created');
 
     // 2. Seed questions
     for (const q of seedQuestions) {
       await setDoc(doc(firestoreDb, 'questions', `day-${q.day}`), q);
     }
-    console.log(`[Seed] ✓ ${seedQuestions.length} questions seeded`);
+    log(`[Seed] ✓ ${seedQuestions.length} questions seeded`);
 
     // 3. Seed debugging challenges
     for (const c of seedDebuggingChallenges) {
       await setDoc(doc(firestoreDb, 'debuggingChallenges', `week-${c.week}`), c);
     }
-    console.log(`[Seed] ✓ ${seedDebuggingChallenges.length} debugging challenges seeded`);
+    log(`[Seed] ✓ ${seedDebuggingChallenges.length} debugging challenges seeded`);
 
-    console.log('[Seed] ✅ Firestore seeding complete!');
+    log('[Seed] ✅ Firestore seeding complete!');
     return true;
   } catch (error) {
-    console.error('[Seed] Failed to seed Firestore:', error);
+    logError('[Seed] Failed to seed Firestore:', error);
     return false;
   }
 }

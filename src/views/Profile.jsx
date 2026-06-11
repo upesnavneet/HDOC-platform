@@ -1,28 +1,38 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatDate } from '../utils/dateFormat';
 import { updateUserProfile } from '../services/userService';
+import { error as logError } from '../utils/logger';
+import { useAsyncAction } from '../hooks/useAsyncAction';
 import StreakGrid from '../components/StreakGrid';
 import './Profile.css';
 
 export default function Profile() {
   const { db, currentUser } = useApp();
   const [gitHubInput, setGitHubInput] = useState(currentUser?.gitHubId || '');
-  const [isUpdatingGitHub, setIsUpdatingGitHub] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
+  const [gitHubError, setGitHubError] = useState('');
+
+  const updateGitHub = useCallback(
+    async (userId, gitHubId) => {
+      await updateUserProfile(userId, { gitHubId });
+    },
+    []
+  );
+
+  const { execute: saveGitHub, isLoading: isUpdatingGitHub } = useAsyncAction(updateGitHub);
 
   const handleGitHubUpdate = async (e) => {
     e.preventDefault();
     if (!gitHubInput.trim() || !currentUser?.id) return;
-
-    setIsUpdatingGitHub(true);
+    setGitHubError('');
     try {
-      await updateUserProfile(currentUser.id, { gitHubId: gitHubInput.trim() });
+      await saveGitHub(currentUser.id, gitHubInput.trim());
     } catch (error) {
-      console.error('Failed to update GitHub ID:', error);
+      logError('Failed to update GitHub ID:', error);
+      setGitHubError('Failed to update GitHub ID. Please try again.');
     }
-    setIsUpdatingGitHub(false);
   };
 
   if (!currentUser) {
@@ -125,6 +135,51 @@ export default function Profile() {
                 <span className="np-meta-dot">•</span>
                 <span>@{currentUser?.gitHubId || currentUser?.studentId || 'user'}</span>
               </div>
+              <div className="highlight-metric">
+                <span className="label">Total Score</span>
+                <span className="val">{currentUser.totalCodingScore + currentUser.totalDebuggingScore} pts</span>
+              </div>
+              <div className="highlight-metric">
+                <span className="label">Active Streaks</span>
+                <span className="val font-small">
+                  LC: {currentUser.leetCodeStreak}d <br />
+                  Git: {currentUser.gitHubStreak}d
+                </span>
+              </div>
+            </div>
+
+            {/* GitHub Section */}
+            <div className="github-heatmap-section">
+              {gitHubHeatmapUrl ? (
+                <>
+                  <h3>GitHub Activity</h3>
+                  <a href={`https://github.com/${currentUser.gitHubId}`} target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={gitHubHeatmapUrl}
+                      alt={`${currentUser.gitHubId}'s GitHub activity`}
+                      className="github-heatmap"
+                    />
+                  </a>
+                </>
+              ) : (
+                <form onSubmit={handleGitHubUpdate} className="github-input-form">
+                  <h3>Connect GitHub</h3>
+                  <p className="github-input-hint">Add your GitHub username to show your activity heatmap</p>
+                  <div className="github-input-row">
+                    <input
+                      type="text"
+                      value={gitHubInput}
+                      onChange={(e) => setGitHubInput(e.target.value)}
+                      placeholder="GitHub username"
+                      className="github-input"
+                    />
+                    <button type="submit" className="github-submit-btn" disabled={isUpdatingGitHub}>
+                      {isUpdatingGitHub ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
+                  {gitHubError && <p className="form-error" style={{ color: '#ff6b6b', fontSize: '0.85rem', marginTop: '0.5rem' }}>{gitHubError}</p>}
+                </form>
+              )}
             </div>
           </div>
           

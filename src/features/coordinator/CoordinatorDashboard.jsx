@@ -11,6 +11,7 @@ import WeeksTab from './tabs/WeeksTab';
 import SubmissionsTab from './tabs/SubmissionsTab';
 import MagicBento from '../../components/MagicBento';
 import { updateSystemConfig } from '../../services/completionService';
+import { error as logError } from '../../utils/logger';
 
 export default function CoordinatorDashboard() {
   const { db } = useApp();
@@ -47,7 +48,7 @@ export default function CoordinatorDashboard() {
         lastDayAdvanceTime: new Date(),
       });
     } catch (error) {
-      console.error('Failed to advance day:', error);
+      logError('Failed to advance day:', error);
       alert('Failed to advance day. Please try again.');
     } finally {
       setIsAdvancing(false);

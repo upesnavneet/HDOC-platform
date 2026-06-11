@@ -1,10 +1,9 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute, GuestRoute, HomeRedirect } from './guards';
 import { RouteErrorBoundary } from '../components/ErrorBoundary';
 
-// H10: Every route-level view is lazy-loaded. Only the code for the
-// current route is downloaded, parsed, and executed.
+// H10: Every route-level view is lazy-loaded.
 const Auth = lazy(() => import('../views/Auth'));
 const Dashboard = lazy(() => import('../views/Dashboard'));
 const Questions = lazy(() => import('../views/Questions'));
@@ -13,6 +12,8 @@ const Leaderboards = lazy(() => import('../views/Leaderboards'));
 const Profile = lazy(() => import('../views/Profile'));
 const CoordinatorDashboard = lazy(() => import('../features/coordinator/CoordinatorDashboard'));
 const LiquidChrome = lazy(() => import('../components/LiquidChrome'));
+// M9: Lazy-loaded 404 page
+const NotFound = lazy(() => import('../views/NotFound'));
 
 function PageLoader() {
   return (
@@ -45,14 +46,15 @@ export default function AppRoutes() {
         <Routes>
           <Route path="/" element={<HomeRedirect />} />
 
-          <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
+          <Route path="/auth" element={<HomeRedirect />} />
           <Route path="/auth/:mode" element={<GuestRoute><RouteErrorBoundary><Auth /></RouteErrorBoundary></GuestRoute>} />
 
           <Route path="/dashboard" element={<ProtectedRoute><RouteErrorBoundary><Dashboard /></RouteErrorBoundary></ProtectedRoute>} />
           <Route path="/questions" element={<ProtectedRoute><RouteErrorBoundary><Questions /></RouteErrorBoundary></ProtectedRoute>} />
           <Route path="/debugging" element={<ProtectedRoute><RouteErrorBoundary><Debugging /></RouteErrorBoundary></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><RouteErrorBoundary><Profile /></RouteErrorBoundary></ProtectedRoute>} />
-          <Route path="/leaderboards" element={<RouteErrorBoundary><Leaderboards /></RouteErrorBoundary>} />
+          {/* M16: Leaderboard now requires authentication */}
+          <Route path="/leaderboards" element={<ProtectedRoute><RouteErrorBoundary><Leaderboards /></RouteErrorBoundary></ProtectedRoute>} />
           <Route
             path="/coordinator"
             element={
@@ -64,7 +66,8 @@ export default function AppRoutes() {
             }
           />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* M9: Styled 404 page instead of silent redirect */}
+          <Route path="*" element={<RouteErrorBoundary><NotFound /></RouteErrorBoundary>} />
         </Routes>
       </Suspense>
     </>

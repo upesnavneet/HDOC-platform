@@ -1,5 +1,42 @@
+// @ts-check
 import { db } from '../firebaseConfig';
 import { doc, setDoc, updateDoc, collection, getDocs, onSnapshot, getDoc, query, where } from 'firebase/firestore';
+import { log, error as logError } from '../utils/logger';
+
+/**
+ * @typedef {Object} Submission
+ * @property {string} id
+ * @property {string} userId
+ * @property {string} questionId
+ * @property {number} day
+ * @property {string} type - 'leetcode' | 'custom' | 'commit'
+ * @property {string} [code]
+ * @property {string} [link]
+ * @property {string} [language]
+ * @property {string} timestamp
+ * @property {string} status - 'Submitted' | 'Late'
+ * @property {number|null} marks
+ * @property {string} gradedBy
+ * @property {string} comments
+ */
+
+/**
+ * @typedef {Object} DebuggingChallenge
+ * @property {string} id
+ * @property {number} week
+ * @property {string} title
+ * @property {string} description
+ * @property {string} publishedDate
+ * @property {Array<{userId: string, link: string, timestamp: string, score: number|null}>} submissions
+ */
+
+/**
+ * @typedef {Object} SystemConfig
+ * @property {number} currentDay
+ * @property {string} simulatedTime
+ * @property {number[]} completedWeeks
+ * @property {Date} [lastDayAdvanceTime]
+ */
 
 const SUBMISSIONS_COLLECTION = 'submissions';
 const DEBUGGING_CHALLENGES_COLLECTION = 'debuggingChallenges';
@@ -17,7 +54,7 @@ export const getSubmissions = async () => {
     });
     return subs;
   } catch (error) {
-    console.error('Error fetching submissions:', error);
+    logError('Error fetching submissions:', error);
     throw error;
   }
 };
@@ -29,7 +66,7 @@ export const addOrUpdateSubmission = async (subId, subData) => {
     await setDoc(docRef, fullData, { merge: true });
     return fullData;
   } catch (error) {
-    console.error('Error adding/updating submission:', error);
+    logError('Error adding/updating submission:', error);
     throw error;
   }
 };
@@ -43,7 +80,7 @@ export const subscribeToSubmissions = (callback) => {
     });
     callback(subs);
   }, (error) => {
-    console.error('Error subscribing to submissions:', error);
+    logError('Error subscribing to submissions:', error);
   });
 };
 
@@ -60,7 +97,7 @@ export const subscribeToUserSubmissions = (userId, callback) => {
     });
     callback(subs);
   }, (error) => {
-    console.error('Error subscribing to user submissions:', error);
+    logError('Error subscribing to user submissions:', error);
   });
 };
 
@@ -74,7 +111,7 @@ export const getDebuggingChallenges = async () => {
     });
     return challenges.sort((a, b) => a.week - b.week);
   } catch (error) {
-    console.error('Error fetching debugging challenges:', error);
+    logError('Error fetching debugging challenges:', error);
     throw error;
   }
 };
@@ -91,7 +128,7 @@ export const addOrUpdateDebuggingChallenge = async (weekNum, challengeData) => {
     await setDoc(docRef, fullData, { merge: true });
     return fullData;
   } catch (error) {
-    console.error('Error adding/updating debugging challenge:', error);
+    logError('Error adding/updating debugging challenge:', error);
     throw error;
   }
 };
@@ -106,7 +143,7 @@ export const subscribeToDebuggingChallenges = (callback) => {
     challenges.sort((a, b) => a.week - b.week);
     callback(challenges);
   }, (error) => {
-    console.error('Error subscribing to debugging challenges:', error);
+    logError('Error subscribing to debugging challenges:', error);
   });
 };
 
@@ -126,7 +163,7 @@ export const submitDebuggingSolution = async (challengeId, userId, link, timesta
     await setDoc(docRef, fullData, { merge: true });
     return fullData;
   } catch (error) {
-    console.error('Error submitting debugging solution:', error);
+    logError('Error submitting debugging solution:', error);
     throw error;
   }
 };
@@ -137,7 +174,7 @@ export const gradeDebuggingSolution = async (challengeId, userId, score) => {
     const docRef = doc(db, DEBUGGING_SUBMISSIONS_COLLECTION, docId);
     await updateDoc(docRef, { score: Number(score) });
   } catch (error) {
-    console.error('Error grading debugging solution:', error);
+    logError('Error grading debugging solution:', error);
     throw error;
   }
 };
@@ -151,7 +188,7 @@ export const subscribeToDebuggingSubmissions = (callback) => {
     });
     callback(subs);
   }, (error) => {
-    console.error('Error subscribing to debugging submissions:', error);
+    logError('Error subscribing to debugging submissions:', error);
   });
 };
 
@@ -165,7 +202,7 @@ export const getSystemConfig = async () => {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching system config:', error);
+    logError('Error fetching system config:', error);
     throw error;
   }
 };
@@ -175,7 +212,7 @@ export const updateSystemConfig = async (configData) => {
     const docRef = doc(db, SYSTEM_COLLECTION, CONFIG_DOC);
     await setDoc(docRef, configData, { merge: true });
   } catch (error) {
-    console.error('Error updating system config:', error);
+    logError('Error updating system config:', error);
     throw error;
   }
 };
@@ -202,13 +239,13 @@ export const checkAndAutoAdvanceDay = async () => {
         lastDayAdvanceTime: nowUTC,
         completedWeeks: config.completedWeeks,
       });
-      console.log(`Auto-advanced to Day ${newDay} (midnight UTC reset)`);
+      log(`Auto-advanced to Day ${newDay} (midnight UTC reset)`);
       return newDay;
     }
 
     return null;
   } catch (error) {
-    console.error('Error checking auto-advance:', error);
+    logError('Error checking auto-advance:', error);
     return null;
   }
 };
@@ -222,6 +259,6 @@ export const subscribeToSystemConfig = (callback) => {
       callback(null);
     }
   }, (error) => {
-    console.error('Error subscribing to system config:', error);
+    logError('Error subscribing to system config:', error);
   });
 };

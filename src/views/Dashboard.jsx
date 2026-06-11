@@ -9,6 +9,7 @@ import { calculateFinishRate } from '../services/statsService';
 import { parseChallengeContent } from '../utils/challengeContent';
 import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
+import { error as logError } from '../utils/logger';
 
 
 export default function Dashboard() {
@@ -110,7 +111,7 @@ export default function Dashboard() {
         setSubmitMsg(result.message || 'Failed to submit. Please try again.');
       }
     } catch (error) {
-      console.error('Error submitting commit:', error);
+      logError('Error submitting commit:', error);
       setSubmitMsg('Failed to submit. Please try again.');
     } finally {
       setIsSubmitting(false);

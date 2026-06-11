@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
+import { error as logError } from '../utils/logger';
 
 
 const MAX_COLORS = 8;
@@ -282,7 +283,7 @@ void main() {
         try {
           renderer.render({ scene: meshRef.current });
         } catch (e) {
-          console.error(e);
+          logError(e);
         }
       }
     };

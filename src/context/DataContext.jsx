@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { log, warn, error as logError } from '../utils/logger';
 import { useAuth } from './AuthContext';
 import { subscribeToUsers } from '../services/userService';
 import { subscribeToQuestions } from '../services/questionService';
@@ -33,12 +34,15 @@ export function DataProvider({ children }) {
   useEffect(() => {
     const unsubs = [];
 
-    seedFirestoreIfEmpty().catch((err) => console.warn('[Seed] Seeding skipped:', err));
+    // M11: Only seed in development — prevents unnecessary production Firestore reads.
+    if (import.meta.env.DEV) {
+      seedFirestoreIfEmpty().catch((err) => warn('[Seed] Seeding skipped:', err));
+    }
 
     // Check and auto-advance day after 24 hours
     checkAndAutoAdvanceDay().then((newDay) => {
       if (newDay) {
-        console.log(`[Auto-Advance] Day advanced to ${newDay}`);
+        log(`[Auto-Advance] Day advanced to ${newDay}`);
       }
     });
 
@@ -52,7 +56,7 @@ export function DataProvider({ children }) {
               currentDay: normalized.currentDay,
               simulatedTime: normalized.simulatedTime,
               completedWeeks: normalized.completedWeeks,
-            }).catch((err) => console.error('Failed to repair system config:', err));
+            }).catch((err) => logError('Failed to repair system config:', err));
           }
 
           setDb((prev) => ({
@@ -105,7 +109,7 @@ export function DataProvider({ children }) {
         })
       );
     } catch (error) {
-      console.error('Firestore subscription failed:', error);
+      logError('Firestore subscription failed:', error);
       setDbError('Failed to load data. Please try again later.');
     }
 

@@ -1,4 +1,5 @@
 import { useEffect, useCallback } from 'react';
+import { warn } from '../utils/logger';
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -66,7 +67,7 @@ export default function IntroSplash({ onComplete }) {
         osc3.stop(ctx.currentTime + 1.5);
       }, 250);
     } catch (error) {
-      console.warn('AudioContext failed to start:', error);
+      warn('AudioContext failed to start:', error);
     }
   };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { error as logError } from '../utils/logger';
 
 /**
  * App-level error boundary — catches any unhandled error in the React tree.
@@ -15,7 +16,7 @@ export class AppErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('[AppErrorBoundary]', error, errorInfo);
+    logError('[AppErrorBoundary]', error, errorInfo);
     // H8: When Sentry is added, call Sentry.captureException(error, { extra: errorInfo }) here.
   }
 
@@ -75,7 +76,7 @@ export class RouteErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('[RouteErrorBoundary]', error, errorInfo);
+    logError('[RouteErrorBoundary]', error, errorInfo);
   }
 
   render() {

@@ -10,19 +10,18 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 class GSAPSplitText {
   constructor(element, options = {}) {
     this.element = element;
-    this.originalHTML = element.innerHTML;
     this.originalText = element.textContent;
     this.chars = [];
 
     const text = this.originalText;
-    element.innerHTML = ''; // clear element
+    element.textContent = ''; // clear element
 
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
       if (char === ' ') {
         const spaceSpan = document.createElement('span');
         spaceSpan.className = options.charsClass || 'shuffle-char';
-        spaceSpan.innerHTML = '&nbsp;';
+        spaceSpan.textContent = '\u00A0';
         element.appendChild(spaceSpan);
         this.chars.push(spaceSpan);
       } else {
@@ -36,7 +35,7 @@ class GSAPSplitText {
   }
 
   revert() {
-    this.element.innerHTML = this.originalHTML;
+    this.element.textContent = this.originalText;
   }
 }
 
