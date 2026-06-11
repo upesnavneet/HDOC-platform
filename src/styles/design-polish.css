@@ -382,21 +382,21 @@ h1 {
 }
 
 .archive-top-gallery-panel {
-  background: #303841 !important;
+  background: transparent !important;
 }
 
 .gallery-day-card {
-  background: transparent !important;
+  background: #3A4750 !important;
 }
 
 .gallery-day-card.active {
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
+  background: #3A4750 !important;
+  border-color: #2185D5 !important;
+  box-shadow: 0 0 20px rgba(33, 133, 213, 0.6) !important;
 }
 
 .gallery-day-card:hover {
-  background: transparent !important;
+  background: #3A4750 !important;
 }
 
 .archive-top-gallery-panel,
