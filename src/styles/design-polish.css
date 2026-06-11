@@ -889,6 +889,7 @@ body {
   cursor: pointer;
   font-size: 0.875rem;
   font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
 .solve-button-new:hover {

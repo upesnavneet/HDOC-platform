@@ -4,10 +4,14 @@ import { formatRating } from '../utils/ratingHelper';
 import { parseChallengeContent } from '../utils/challengeContent';
 
 export default function Questions() {
-  const { db } = useApp();
+  const { db, submitCommitUrl } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [manualSelection, setManualSelection] = useState(null);
   const [smoothScrollValue, setSmoothScrollValue] = useState(0);
+
+  const [commitUrl, setCommitUrl] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMsg, setSubmitMsg] = useState('');
 
   const currentDay = db.currentDay;
   const questions = db.questions;
@@ -38,6 +42,37 @@ export default function Questions() {
     const idx = archivedQuestions.findIndex(q => q.id === selectedQuestion?.id);
     setSmoothScrollValue(idx === -1 ? 0 : idx);
   }, [selectedQuestion, archivedQuestions]);
+
+  const handleCommitSubmit = async (e) => {
+    e.preventDefault();
+    if (!commitUrl.trim() || !selectedQuestion) {
+      setSubmitMsg('Please enter a GitHub commit URL');
+      return;
+    }
+    const commitUrlPattern = /^https?:\/\/github\.com\/[\w-]+\/[\w-]+\/commit\/[a-f0-9]{7,40}(\?.*)?$/i;
+    if (!commitUrlPattern.test(commitUrl.trim())) {
+      setSubmitMsg('Please enter a valid GitHub commit URL');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitMsg('');
+
+    try {
+      const result = await submitCommitUrl(selectedQuestion.day, commitUrl.trim());
+      if (result.success) {
+        setCommitUrl('');
+        setSubmitMsg('Submitted successfully!');
+      } else {
+        setSubmitMsg(result.message || 'Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting commit:', error);
+      setSubmitMsg('Failed to submit. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="questions-container">
@@ -187,8 +222,8 @@ export default function Questions() {
                       Click the button below to view examples, constraints, and submit on LeetCode.
                     </p>
                   </div>
-                  <div className="section-card-footer">
-                    <a href={selectedQuestion.linkLc} target="_blank" rel="noopener noreferrer" className="open-problem-btn">
+                  <div className="section-card-footer" style={{ marginTop: '1.5rem' }}>
+                    <a href={selectedQuestion.linkLc} target="_blank" rel="noopener noreferrer" className="solve-button-new">
                       Solve on LeetCode →
                     </a>
                   </div>
@@ -210,6 +245,31 @@ export default function Questions() {
                       );
                     })()}
                   </div>
+                </div>
+
+                {/* GitHub Submission Form */}
+                <div className="github-submission-section" style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(243, 243, 243, 0.08)' }}>
+                  <h4 className="section-card-title" style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Submit Your Code</h4>
+                  <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <input
+                      type="url"
+                      placeholder="https://github.com/user/repo/commit/..."
+                      value={commitUrl}
+                      onChange={(e) => setCommitUrl(e.target.value)}
+                      required
+                      style={{ flex: 1, minWidth: '200px', padding: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(0, 0, 0, 0.2)', color: '#F3F3F3', fontFamily: 'inherit', boxSizing: 'border-box' }}
+                    />
+                    <div style={{ flex: '0 0 auto', width: '200px' }}>
+                      <button type="submit" disabled={isSubmitting} className="solve-button-new">
+                        {isSubmitting ? 'Submitting...' : 'Submit Commit →'}
+                      </button>
+                    </div>
+                  </form>
+                  {submitMsg && (
+                    <p style={{ marginTop: '0.75rem', color: submitMsg.includes('successfully') ? '#4caf50' : '#f44336', fontSize: '0.875rem', fontWeight: '500' }}>
+                      {submitMsg}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
