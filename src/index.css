@@ -55,9 +55,9 @@
   --color-pending-bg: rgba(110, 172, 218, 0.05);
   --color-pending-border: rgba(110, 172, 218, 0.25);
 
-  /* Typography — Myriad Pro + display pairing */
-  --font-sans: 'Myriad Pro', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-display: 'Orbitron', var(--font-sans);
+  /* Typography — Poppins as primary font */
+  --font-sans: 'Poppins', 'Myriad Pro', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Poppins', 'Orbitron', var(--font-sans);
   --font-mono: 'JetBrains Mono', 'Consolas', monospace;
 
   /* 8px spatial rhythm */
@@ -94,10 +94,13 @@
   padding: 0;
 }
 
+body, input, select, textarea, button {
+  font-family: var(--font-sans);
+}
+
 body {
   background-color: #0a0b10;  /* Let the WebGL canvas show through, but set base to primary background */
   color: var(--color-text);
-  font-family: var(--font-sans);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -3646,7 +3649,8 @@ button {
 }
 
 .footer-container p {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.85rem;
 }
 
 /* Animation utilities */
@@ -4924,8 +4928,8 @@ button {
 .footer-container {
   width: 100%;
   max-width: none;
-  margin: 2rem 0 0 0;
-  padding: 1rem 2rem;
+  margin: 0.5rem 0 0 0;
+  padding: 0.3rem 1.5rem;
   background: rgba(10, 10, 10, 0.45);
   border-top: 1px solid var(--border-subtle);
   border-left: none;

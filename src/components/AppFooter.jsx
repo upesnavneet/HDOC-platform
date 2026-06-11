@@ -5,16 +5,16 @@ export default function AppFooter() {
     <footer className="footer-container">
       <div className="footer-dashes" style={{
         borderTop: '2px dashed rgba(66, 165, 252, 0.3)',
-        marginBottom: '1.5rem',
-        paddingTop: '1.5rem'
+        marginBottom: '0.5rem',
+        paddingTop: '0.5rem'
       }} />
 
-      <div className="footer-chapter-links" style={{ gap: '2rem', marginBottom: '1rem' }}>
+      <div className="footer-chapter-links" style={{ gap: '2rem', marginBottom: '0.35rem' }}>
         <a href="https://upesacm.org/" target="_blank" rel="noopener noreferrer" className="footer-btn">UPES ACM</a>
         <a href="https://www.upesacmw.org/" target="_blank" rel="noopener noreferrer" className="footer-btn">UPES ACM-W</a>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.35rem' }}>
         <a
           href="https://github.com/upesacm"
           target="_blank"
