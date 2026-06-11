@@ -3,6 +3,12 @@ import React from 'react';
 export default function AppFooter() {
   return (
     <footer className="footer-container">
+      <div className="footer-dashes" style={{
+        borderTop: '2px dashed rgba(66, 165, 252, 0.3)',
+        marginBottom: '1.5rem',
+        paddingTop: '1.5rem'
+      }} />
+
       <div className="footer-chapter-links" style={{ gap: '2rem', marginBottom: '1rem' }}>
         <a href="https://upesacm.org/" target="_blank" rel="noopener noreferrer" className="footer-btn">UPES ACM</a>
         <a href="https://www.upesacmw.org/" target="_blank" rel="noopener noreferrer" className="footer-btn">UPES ACM-W</a>
@@ -30,7 +36,7 @@ export default function AppFooter() {
           </svg>
         </a>
         <a
-          href="https://linkedin.com/company/upesacm"
+          href="https://www.linkedin.com/company/upesacm/posts/?feedView=all"
           target="_blank"
           rel="noopener noreferrer"
           style={{
