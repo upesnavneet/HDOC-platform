@@ -251,14 +251,13 @@ export default function Debugging() {
     }
   }, [activeChallenge?.starterCode]);
 
-  // All display data is derived from activeChallenge (admin-controlled via backend)
+
   const difficulty = activeChallenge?.difficulty || 'Medium';
   const difficultyClass = difficulty.toLowerCase();
   const codeContent = activeChallenge?.starterCode || '';
   const lineCount = getLineCount(codeContent);
   const fileName = getCodeFileName(activeChallenge);
-  // Symptoms & hints can be driven from challenge data in the future;
-  // for now they use sensible defaults that the admin can override.
+
   const symptoms = activeChallenge?.symptoms || [
     'Application freezes during high-volume concurrent operations.',
     'CPU utilization drops to 0% while threads are stuck in waiting states.',
