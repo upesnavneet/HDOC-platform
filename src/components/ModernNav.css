@@ -22,8 +22,8 @@
   align-items: center;
   height: 64px;
   width: 100%;
-  max-width: 1200px;
-  padding: 0 1.5rem;
+  max-width: 95%; /* Extends the width significantly across the screen */
+  padding: 0 2rem;
   border-radius: 32px;
   background: rgba(48, 56, 65, 0.6); /* #303841 with opacity */
   backdrop-filter: blur(16px);
