@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, onSnapshot, query, where, limit } from 'firebase/firestore';
 
 const USERS_COLLECTION = 'users';
 
@@ -48,6 +48,25 @@ export const getAllUsers = async () => {
     return users;
   } catch (error) {
     console.error('Error getting all users:', error);
+    throw error;
+  }
+};
+
+/**
+ * Check if a studentId already exists in the users collection.
+ * Uses a targeted query (reads at most 1 document) instead of fetching all users.
+ */
+export const checkStudentIdExists = async (studentId) => {
+  try {
+    const q = query(
+      collection(db, USERS_COLLECTION),
+      where('studentId', '==', studentId),
+      limit(1)
+    );
+    const snap = await getDocs(q);
+    return !snap.empty;
+  } catch (error) {
+    console.error('Error checking student ID:', error);
     throw error;
   }
 };

@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { subscribeToUsers } from '../services/userService';
 import { subscribeToQuestions } from '../services/questionService';
 import {
   subscribeToSubmissions,
+  subscribeToUserSubmissions,
   subscribeToDebuggingChallenges,
   subscribeToDebuggingSubmissions,
   subscribeToSystemConfig,
@@ -15,6 +17,7 @@ import { getDefaultSystemConfig, normalizeSystemConfig } from '../utils/eventCon
 const DataContext = createContext(null);
 
 export function DataProvider({ children }) {
+  const { currentUser } = useAuth();
   const defaultConfig = getDefaultSystemConfig();
   const [db, setDb] = useState({
     users: [],
@@ -62,7 +65,19 @@ export function DataProvider({ children }) {
       );
 
       unsubs.push(subscribeToQuestions((qs) => setDb((prev) => ({ ...prev, questions: qs }))));
-      unsubs.push(subscribeToSubmissions((subs) => setDb((prev) => ({ ...prev, submissions: subs }))));
+
+      // H3: Scope submission subscription to the current user.
+      // Admins get all submissions (needed for coordinator grading views).
+      // Participants get only their own submissions.
+      if (currentUser) {
+        if (currentUser.isAdmin) {
+          unsubs.push(subscribeToSubmissions((subs) => setDb((prev) => ({ ...prev, submissions: subs }))));
+        } else {
+          const uid = currentUser.uid || currentUser.id;
+          unsubs.push(subscribeToUserSubmissions(uid, (subs) => setDb((prev) => ({ ...prev, submissions: subs }))));
+        }
+      }
+
       unsubs.push(subscribeToUsers((us) => setDb((prev) => ({ ...prev, users: us }))));
 
       let currentChallenges = [];
@@ -95,7 +110,7 @@ export function DataProvider({ children }) {
     }
 
     return () => unsubs.forEach((unsub) => unsub());
-  }, []);
+  }, [currentUser]);
 
   return <DataContext.Provider value={{ db, dbError }}>{children}</DataContext.Provider>;
 }

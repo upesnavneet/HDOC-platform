@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { doc, setDoc, updateDoc, collection, getDocs, onSnapshot, getDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, collection, getDocs, onSnapshot, getDoc, query, where } from 'firebase/firestore';
 
 const SUBMISSIONS_COLLECTION = 'submissions';
 const DEBUGGING_CHALLENGES_COLLECTION = 'debuggingChallenges';
@@ -44,6 +44,23 @@ export const subscribeToSubmissions = (callback) => {
     callback(subs);
   }, (error) => {
     console.error('Error subscribing to submissions:', error);
+  });
+};
+
+// H3: User-scoped subscription — reads only this user's submissions.
+export const subscribeToUserSubmissions = (userId, callback) => {
+  const q = query(
+    collection(db, SUBMISSIONS_COLLECTION),
+    where('userId', '==', userId)
+  );
+  return onSnapshot(q, (querySnapshot) => {
+    const subs = [];
+    querySnapshot.forEach((doc) => {
+      subs.push({ id: doc.id, ...doc.data() });
+    });
+    callback(subs);
+  }, (error) => {
+    console.error('Error subscribing to user submissions:', error);
   });
 };
 

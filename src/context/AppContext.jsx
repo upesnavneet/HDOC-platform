@@ -7,7 +7,7 @@ const AppContext = createContext(null);
 
 function getOverallRank(userId, allUsers) {
   const participants = allUsers
-    .filter((u) => u.role === 'participant')
+    .filter((u) => u.role !== 'admin')
     .sort((a, b) => {
       const scoreA = (a.totalCodingScore || 0) + (a.totalDebuggingScore || 0);
       const scoreB = (b.totalCodingScore || 0) + (b.totalDebuggingScore || 0);

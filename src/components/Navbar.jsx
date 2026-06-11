@@ -41,7 +41,7 @@ export default function Navbar() {
 
   const defaultPath = useMemo(() => {
     return currentUser
-      ? currentUser.role === 'admin'
+      ? currentUser.isAdmin === true
         ? ROUTE_MAP.coordinator
         : ROUTE_MAP.dashboard
       : '/';
@@ -52,7 +52,7 @@ export default function Navbar() {
 
     // Logged IN users see the main app features
     if (currentUser) {
-      if (currentUser.role === 'admin') {
+      if (currentUser.isAdmin === true) {
         items.push({ href: ROUTE_MAP.coordinator, label: 'Admin Dashboard' });
       } else {
         // Participants or default logged-in users
@@ -198,16 +198,16 @@ export default function Navbar() {
           <div className="footer-block">
             <span className="footer-label">Connect With Us</span>
             <div className="social-links" style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-              <a href="https://instagram.com/upesacm" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-link">
+              <a href="https://instagram.com/upesacm" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="social-link">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#303841" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="social-icon"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
               </a>
-              <a href="https://www.linkedin.com/company/upesacm/" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="social-link">
+              <a href="https://www.linkedin.com/company/upesacm/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="social-link">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#303841" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="social-icon"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
               </a>
             </div>
           </div>
           <div className="footer-block" style={{ alignItems: 'flex-end', justifyContent: 'flex-end', paddingBottom: '0.2rem' }}>
-            <a href="https://upesacm.org" target="_blank" rel="noreferrer" className="footer-link visit-us-link">Visit Us</a>
+            <a href="https://upesacm.org" target="_blank" rel="noopener noreferrer" className="footer-link visit-us-link">Visit Us</a>
           </div>
         </div>
       </div>

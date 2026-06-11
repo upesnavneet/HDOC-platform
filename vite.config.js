@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     cssCodeSplit: false,
-    cssMinify: false,
+    cssMinify: true,
   },
 })

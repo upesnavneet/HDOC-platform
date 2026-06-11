@@ -1,13 +1,16 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute, GuestRoute, HomeRedirect } from './guards';
-import Auth from '../views/Auth';
-import Dashboard from '../views/Dashboard';
-import Questions from '../views/Questions';
-import Debugging from '../views/Debugging';
-import Leaderboards from '../views/Leaderboards';
-import Profile from '../views/Profile';
+import { RouteErrorBoundary } from '../components/ErrorBoundary';
 
+// H10: Every route-level view is lazy-loaded. Only the code for the
+// current route is downloaded, parsed, and executed.
+const Auth = lazy(() => import('../views/Auth'));
+const Dashboard = lazy(() => import('../views/Dashboard'));
+const Questions = lazy(() => import('../views/Questions'));
+const Debugging = lazy(() => import('../views/Debugging'));
+const Leaderboards = lazy(() => import('../views/Leaderboards'));
+const Profile = lazy(() => import('../views/Profile'));
 const CoordinatorDashboard = lazy(() => import('../features/coordinator/CoordinatorDashboard'));
 const LiquidChrome = lazy(() => import('../components/LiquidChrome'));
 
@@ -43,18 +46,20 @@ export default function AppRoutes() {
           <Route path="/" element={<HomeRedirect />} />
 
           <Route path="/auth" element={<Navigate to="/auth/login" replace />} />
-          <Route path="/auth/:mode" element={<GuestRoute><Auth /></GuestRoute>} />
+          <Route path="/auth/:mode" element={<GuestRoute><RouteErrorBoundary><Auth /></RouteErrorBoundary></GuestRoute>} />
 
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/questions" element={<ProtectedRoute><Questions /></ProtectedRoute>} />
-          <Route path="/debugging" element={<ProtectedRoute><Debugging /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/leaderboards" element={<Leaderboards />} />
+          <Route path="/dashboard" element={<ProtectedRoute><RouteErrorBoundary><Dashboard /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/questions" element={<ProtectedRoute><RouteErrorBoundary><Questions /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/debugging" element={<ProtectedRoute><RouteErrorBoundary><Debugging /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><RouteErrorBoundary><Profile /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/leaderboards" element={<RouteErrorBoundary><Leaderboards /></RouteErrorBoundary>} />
           <Route
             path="/coordinator"
             element={
               <AdminRoute>
-                <CoordinatorDashboard />
+                <RouteErrorBoundary>
+                  <CoordinatorDashboard />
+                </RouteErrorBoundary>
               </AdminRoute>
             }
           />

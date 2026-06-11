@@ -7,7 +7,7 @@ export function useLeaderboardData(db) {
   const endDayOfWeek = currentWeek * 7;
 
   const participants = useMemo(
-    () => db.users.filter((u) => u.role === 'participant'),
+    () => db.users.filter((u) => u.role !== 'admin'),
     [db.users]
   );
 

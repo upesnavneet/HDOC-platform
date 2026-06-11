@@ -9,12 +9,11 @@ import { calculateFinishRate } from '../services/statsService';
 import { parseChallengeContent } from '../utils/challengeContent';
 import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db as firestoreDb } from '../firebaseConfig';
+
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { db, currentUser } = useApp();
+  const { db, currentUser, submitCommitUrl } = useApp();
   const [timeLeft, setTimeLeft] = useState('');
   const [commitUrl, setCommitUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,14 +68,14 @@ export default function Dashboard() {
   // Find rank preview
   const codingRank = userId
     ? db.users
-      .filter((u) => u.role === 'participant')
+      .filter((u) => u.role !== 'admin')
       .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
       .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const debugRank = userId
     ? db.users
-      .filter((u) => u.role === 'participant')
+      .filter((u) => u.role !== 'admin')
       .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
       .findIndex((u) => u.id === userId) + 1
     : 0;
@@ -103,17 +102,13 @@ export default function Dashboard() {
     setSubmitMsg('');
 
     try {
-      await addDoc(collection(firestoreDb, 'submissions'), {
-        studentId: currentUser.id || currentUser.uid,
-        studentName: currentUser.name || currentUser.displayName || '',
-        studentEmail: currentUser.email || '',
-        studentGitHubId: currentUser.gitHubId || '',
-        dayNumber: currentDay,
-        commitUrl: commitUrl.trim(),
-        submittedAt: serverTimestamp(),
-      });
-      setCommitUrl('');
-      setSubmitMsg('Submitted successfully!');
+      const result = await submitCommitUrl(currentDay, commitUrl.trim());
+      if (result.success) {
+        setCommitUrl('');
+        setSubmitMsg('Submitted successfully!');
+      } else {
+        setSubmitMsg(result.message || 'Failed to submit. Please try again.');
+      }
     } catch (error) {
       console.error('Error submitting commit:', error);
       setSubmitMsg('Failed to submit. Please try again.');
@@ -186,7 +181,7 @@ export default function Dashboard() {
           </div>
           <div className="hero-stats-row">
             <div className="hero-stat">
-              <span className="hero-stat-num">{db.users.filter(u => u.role === 'participant').length}</span>
+              <span className="hero-stat-num">{db.users.filter(u => u.role !== 'admin').length}</span>
               <span className="hero-stat-label">Active Now</span>
             </div>
             <div className="hero-stat">
@@ -388,7 +383,7 @@ export default function Dashboard() {
               <div className="leaderboard-list">
                 {(() => {
                   const participants = db.users
-                    .filter(u => u.role === 'participant')
+                    .filter(u => u.role !== 'admin')
                     .sort((a, b) => b.totalCodingScore - a.totalCodingScore);
                   
                   const top10 = participants.slice(0, 10);

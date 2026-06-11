@@ -31,3 +31,10 @@ dist-ssr
 .env.local
 .env.production
 .env.*.local
+
+# Secrets & service accounts — never commit
+service-account*.json
+*-service-account.json
+*.pem
+*.key
+*.p12
