@@ -4,7 +4,7 @@ import { formatDate } from '../utils/dateFormat';
 import { updateUserProfile } from '../services/userService';
 
 export default function Profile() {
-  const { currentUser } = useApp();
+  const { db, currentUser } = useApp();
   const [gitHubInput, setGitHubInput] = useState(currentUser?.gitHubId || '');
   const [isUpdatingGitHub, setIsUpdatingGitHub] = useState(false);
 
