@@ -7,6 +7,7 @@ import ChallengesTab from './tabs/ChallengesTab';
 import GradingTab from './tabs/GradingTab';
 import DebuggingGradingTab from './tabs/DebuggingGradingTab';
 import WeeksTab from './tabs/WeeksTab';
+import MagicBento from '../../components/MagicBento';
 
 export default function CoordinatorDashboard() {
   const { db } = useApp();
@@ -63,20 +64,71 @@ export default function CoordinatorDashboard() {
     };
   }, [db, currentDay, participants]);
 
+  const bentoCardData = [
+  {
+    color: '#120F17',
+    title: 'Active Today',
+    description: `${stats.activeToday} participants`,
+    label: 'Live'
+  },
+  {
+    color: '#120F17',
+    title: 'Submissions',
+    description: `${stats.uniqueTodaySubmitters} today`,
+    label: 'Today'
+  },
+  {
+    color: '#120F17',
+    title: 'Debug Subs',
+    description: `${stats.debugSubsToday} this week`,
+    label: 'Debug'
+  },
+  {
+    color: '#120F17',
+    title: 'Pending Grades',
+    description: `${stats.pendingGradeCount} submissions`,
+    label: 'Review'
+  },
+  {
+    color: '#120F17',
+    title: 'Top Performer',
+    description: stats.topPerformer ? stats.topPerformer.name : 'N/A',
+    label: 'Leader'
+  },
+  {
+    color: '#120F17',
+    title: 'Total Participants',
+    description: `${participants.length} enrolled`,
+    label: 'Users'
+  }
+];
+
+const BentoStatsGrid = ({ cards }) => {
   return (
+    <MagicBento
+      cards={cards}
+      textAutoHide={true}
+      enableStars={true}
+      enableSpotlight={true}
+      enableBorderGlow={true}
+      enableTilt={false}
+      enableMagnetism={true}
+      clickEffect={true}
+      spotlightRadius={400}
+      particleCount={8}
+      glowColor="66, 165, 252"
+    />
+  );
+};
+
+return (
     <div className="coordinator-dashboard-container">
       <div className="page-header">
         <h1>Coordinator Dashboard</h1>
         <p className="subtitle">Manage participants, schedule challenges, and track weekly completion.</p>
       </div>
 
-      <CoordinatorStats
-        participants={participants}
-        activeToday={stats.activeToday}
-        uniqueTodaySubmitters={stats.uniqueTodaySubmitters}
-        debugSubsToday={stats.debugSubsToday}
-        topPerformer={stats.topPerformer}
-      />
+      <BentoStatsGrid cards={bentoCardData} />
 
       <Tabs value={activeTab} onChange={setActiveTab} listClassName="coordinator-tabs" aria-label="Coordinator sections">
         <Tabs.List>

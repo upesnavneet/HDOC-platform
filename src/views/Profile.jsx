@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatDate } from '../utils/dateFormat';
+import { updateUserProfile } from '../services/userService';
 
 export default function Profile() {
-  const { db, currentUser } = useApp();
+  const { currentUser } = useApp();
+  const [gitHubInput, setGitHubInput] = useState(currentUser?.gitHubId || '');
+  const [isUpdatingGitHub, setIsUpdatingGitHub] = useState(false);
+
+  const gitHubHeatmapUrl = currentUser?.gitHubId
+    ? `https://github-readme-activity-graph.vercel.app/graph?username=${currentUser.gitHubId}&bg_color=0d1117&color=58a6ff&line=58a6ff&point=58a6ff&area=true&hide_border=true`
+    : null;
+
+  const handleGitHubUpdate = async (e) => {
+    e.preventDefault();
+    if (!gitHubInput.trim() || !currentUser?.id) return;
+
+    setIsUpdatingGitHub(true);
+    try {
+      await updateUserProfile(currentUser.id, { gitHubId: gitHubInput.trim() });
+    } catch (error) {
+      console.error('Failed to update GitHub ID:', error);
+    }
+    setIsUpdatingGitHub(false);
+  };
 
   if (!currentUser) {
     return (
@@ -67,6 +87,39 @@ export default function Profile() {
                   Git: {currentUser.gitHubStreak}d
                 </span>
               </div>
+            </div>
+
+            {/* GitHub Section */}
+            <div className="github-heatmap-section">
+              {gitHubHeatmapUrl ? (
+                <>
+                  <h3>GitHub Activity</h3>
+                  <a href={`https://github.com/${currentUser.gitHubId}`} target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={gitHubHeatmapUrl}
+                      alt={`${currentUser.gitHubId}'s GitHub activity`}
+                      className="github-heatmap"
+                    />
+                  </a>
+                </>
+              ) : (
+                <form onSubmit={handleGitHubUpdate} className="github-input-form">
+                  <h3>Connect GitHub</h3>
+                  <p className="github-input-hint">Add your GitHub username to show your activity heatmap</p>
+                  <div className="github-input-row">
+                    <input
+                      type="text"
+                      value={gitHubInput}
+                      onChange={(e) => setGitHubInput(e.target.value)}
+                      placeholder="GitHub username"
+                      className="github-input"
+                    />
+                    <button type="submit" className="github-submit-btn" disabled={isUpdatingGitHub}>
+                      {isUpdatingGitHub ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
 
