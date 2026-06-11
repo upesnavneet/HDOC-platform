@@ -19,6 +19,15 @@ export default function Dashboard() {
   const [commitUrl, setCommitUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMsg, setSubmitMsg] = useState('');
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const currentDay = db.currentDay;
   const questions = db.questions;
@@ -36,11 +45,11 @@ export default function Dashboard() {
   useEffect(() => {
     const updateCountdown = () => {
       const simTime = new Date(db.simulatedTime);
-      
+
       // Midnight of the current day in simulated time (deadline)
       const startDate = new Date('2026-05-25T00:00:00');
       const deadline = new Date(startDate.getTime() + currentDay * 24 * 60 * 60 * 1000);
-      
+
       const diff = deadline - simTime;
       if (diff <= 0) {
         setTimeLeft('Deadline Passed');
@@ -60,16 +69,16 @@ export default function Dashboard() {
   // Find rank preview
   const codingRank = userId
     ? db.users
-        .filter((u) => u.role === 'participant')
-        .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
-        .findIndex((u) => u.id === userId) + 1
+      .filter((u) => u.role === 'participant')
+      .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
+      .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const debugRank = userId
     ? db.users
-        .filter((u) => u.role === 'participant')
-        .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
-        .findIndex((u) => u.id === userId) + 1
+      .filter((u) => u.role === 'participant')
+      .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
+      .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const overallRank = currentUser?.overallRank ?? '-';
@@ -83,10 +92,10 @@ export default function Dashboard() {
       setSubmitMsg('Please enter a GitHub commit URL');
       return;
     }
-    // Validate GitHub commit URL for specific repo: upesacm/100DaysOfCode-2026
-    const commitUrlPattern = /^https?:\/\/github\.com\/upesacm\/100DaysOfCode-2026\/commit\/[a-f0-9]{7,40}(\?.*)?$/i;
+    // Validate GitHub commit URL format: github.com/user/repo/commit/abc123
+    const commitUrlPattern = /^https?:\/\/github\.com\/[\w-]+\/[\w-]+\/commit\/[a-f0-9]{7,40}(\?.*)?$/i;
     if (!commitUrlPattern.test(commitUrl.trim())) {
-      setSubmitMsg('Please enter a valid commit URL from upesacm/100DaysOfCode-2026 repository');
+      setSubmitMsg('Please enter a valid GitHub commit URL (github.com/user/repo/commit/abc123)');
       return;
     }
 
@@ -125,12 +134,41 @@ export default function Dashboard() {
     );
   }
 
+  // Calculate zoom out and fade out variables for the hero based on scroll position
+  const fadeThreshold = 400;
+  const progress = Math.min(scrollY / fadeThreshold, 1);
+  const scale = 1 - progress * 0.15; // zooms out from 1.0 to 0.85
+  const opacity = 1 - progress; // fades out from 1.0 to 0
+
+  // Calculate fade in and slide up variables for the content below
+  const fadeStart = 100; // starts fading in after 100px of scrolling
+  const fadeEnd = 400;   // fully visible at 400px of scrolling
+  const belowProgress = Math.min(Math.max((scrollY - fadeStart) / (fadeEnd - fadeStart), 0), 1);
+  const belowOpacity = belowProgress;
+  const belowTranslateY = 30 - belowProgress * 30; // slides up from 30px to 0px
+
   return (
     <div className="dashboard-container" ref={dashboardFocusRef}>
       {/* Hero - From Bugs to Brilliance */}
-      <section className="dashboard-hero-section dashboard-focus-section" data-dashboard-focus>
-        <TiltCard className="dashboard-hero-left press-card hero-panel-deep" maxTilt={6}>
-          <span className="hero-batch-badge">BATCH 2026</span>
+      <section 
+        className="dashboard-hero-section" 
+        style={{
+          position: 'sticky',
+          top: '100px',
+          zIndex: 1,
+          transform: `scale(${scale})`,
+          opacity: opacity,
+          pointerEvents: opacity <= 0.05 ? 'none' : 'auto',
+          transformOrigin: 'center center',
+          transition: 'transform 0.05s ease-out, opacity 0.05s ease-out',
+          minHeight: 'calc(100vh - 180px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          boxSizing: 'border-box',
+        }}
+      >
+        <div className="dashboard-hero-left hero-panel-deep">
           <h1 className="hero-headline">
             <span className="hero-orange"><ScrambledText text="From" triggerOnHover={false} /></span>{' '}
             <span className="hero-green"><ScrambledText text="Bugs" triggerOnHover={false} /></span>{' '}
@@ -156,181 +194,239 @@ export default function Dashboard() {
               <span className="hero-stat-label">Finish Rate</span>
             </div>
           </div>
-        </TiltCard>
+        </div>
       </section>
 
-      {/* Today's Coding Challenges Section - Daily Questions */}
-      <section id="todays-challenges" className="todays-challenges-section dashboard-focus-section" data-dashboard-focus>
-        <div className="section-header-row">
-          <h2>Today's Challenges - Day {currentDay}</h2>
-          <div className={`countdown-timer ${timeLeft === 'Deadline Passed' ? 'expired' : ''}`}>
-            {timeLeft === 'Deadline Passed' ? 'Submission window has closed.' : <>Window closes in <strong>{timeLeft}</strong></>}
+      {/* Content wrapper that fades in as user scrolls */}
+      <div 
+        className="dashboard-scroll-content"
+        style={{
+          opacity: belowOpacity,
+          transform: `translateY(${belowTranslateY}px)`,
+          transition: 'transform 0.05s ease-out, opacity 0.05s ease-out',
+          position: 'relative',
+          zIndex: 10,
+        }}
+      >
+        {/* ── Progress Metrics Strip ── */}
+        <div className="metrics-strip-unified">
+          <div className="metric-item">
+            <div className="metric-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21l8 0" /><path d="M12 17l0 4" /><path d="M7 4l10 0" /><path d="M17 4v8a5 5 0 0 1 -10 0v-8" /><path d="M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /></svg>
+            </div>
+            <div className="metric-card-content">
+              <span className="metric-card-label">Global Standing</span>
+              <span className="metric-card-value">#{overallRank}</span>
+            </div>
+          </div>
+
+          <div className="metric-divider"></div>
+
+          <div className="metric-item">
+            <div className="metric-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 12c2 -2.96 0 -7 -1 -8c0 3 -3 4.5 -4.5 6c-1.5 1.5 -2.5 3.05 -2.5 5c0 4.418 3.582 8 8 8s8 -3.582 8 -8c0 -1.95 -1 -3.5 -2.5 -5c-1.5 -1.5 -4.5 -3 -4.5 -6c-1 1 -3 5.04 -1 8z" /></svg>
+            </div>
+            <div className="metric-card-content">
+              <span className="metric-card-label">Current Streak</span>
+              <span className="metric-card-value">
+                <span className="highlight">{currentUser.leetCodeStreak}</span> Days
+              </span>
+            </div>
+          </div>
+
+          <div className="metric-divider"></div>
+
+          <div className="metric-item">
+            <div className="metric-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="18" r="2" /><circle cx="6" cy="6" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 8v8" /><path d="M6 12a4 4 0 0 0 4 4h6" /></svg>
+            </div>
+            <div className="metric-card-content">
+              <span className="metric-card-label">GitHub Streak</span>
+              <span className="metric-card-value">
+                <span className="highlight">{currentUser.gitHubStreak}</span> Days
+              </span>
+            </div>
           </div>
         </div>
 
-        <p className="challenge-cards-scroll-hint">Scroll sideways to see both challenges</p>
+        {/* ── Two Column Layout ── */}
+        <div className="dashboard-grid-layout">
+          {/* Left Column (Main Area) */}
+          <div className="dashboard-main-col">
+            {/* ── Today's Coding Challenges Section ── */}
+            <section id="todays-challenges" className="redesigned-challenge-card-unified">
+              <h3 className="redesigned-section-header">
+                Today's Challenges - Day {currentDay}
+              </h3>
 
-        <div className="challenge-cards-scroll-stack" ref={challengeStackRef}>
-          {/* Challenge 1: LeetCode */}
-          <div className="challenge-card-shell">
-          <TiltCard className="challenge-card press-card" maxTilt={6}>
-            <div className="card-top-tag leetcode">LeetCode Challenge</div>
-            {todayLcQ ? (
-              <div className="challenge-details">
-                <h3 className="challenge-title">{todayLcQ.titleLc}</h3>
-                
-                <div className="challenge-section">
-                  <h4 className="section-subtitle">Explanation</h4>
-                  <p className="challenge-desc">{todayLcQ.descLc}</p>
-                </div>
-                
-                <div className="challenge-section">
-                  <h4 className="section-subtitle">Example</h4>
-                  <p className="challenge-example">
-                    Click <strong>Open LeetCode Page</strong> to view example test cases, constraints, and submit your code.
-                  </p>
+              <div className="unified-challenge-content">
+                {/* Challenge 1: LeetCode */}
+                <div className="challenge-question-block">
+                  <div className="challenge-card-header">
+                    <span className="challenge-type-tag">LeetCode Challenge</span>
+                    <span className="xp-badge">
+                      {todayLcQ?.difficulty === 'Easy' ? '100 XP' : todayLcQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
+                    </span>
+                  </div>
+                  {todayLcQ ? (
+                    <>
+                      <h4 className="challenge-title-new">{todayLcQ.titleLc}</h4>
+                      <p className="challenge-desc-new">{todayLcQ.descLc}</p>
+                    </>
+                  ) : (
+                    <p className="challenge-desc-new">Today's LeetCode challenge hasn't been posted yet. Check back soon.</p>
+                  )}
+                  {todayLcQ && (
+                    <a href={todayLcQ.linkLc} target="_blank" rel="noopener noreferrer" className="solve-button-new">
+                      Solve on LeetCode &rarr;
+                    </a>
+                  )}
                 </div>
 
-                <div className="challenge-meta">
-                  <a href={todayLcQ.linkLc} target="_blank" rel="noopener noreferrer" className="external-problem-link">
-                    Open LeetCode Page →
-                  </a>
+                <div className="challenge-divider-horizontal"></div>
+
+                {/* Challenge 2: Custom DSA */}
+                <div className="challenge-question-block">
+                  <div className="challenge-card-header">
+                    <span className="challenge-type-tag">Custom DSA Challenge</span>
+                    <span className="xp-badge">
+                      {todayCustomQ?.difficulty === 'Easy' ? '100 XP' : todayCustomQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
+                    </span>
+                  </div>
+                  {todayCustomQ ? (
+                    (() => {
+                      const { explanation } = parseChallengeContent(todayCustomQ.descCustom);
+                      return (
+                        <>
+                          <h4 className="challenge-title-new">{todayCustomQ.titleCustom}</h4>
+                          <p className="challenge-desc-new">{explanation}</p>
+                        </>
+                      );
+                    })()
+                  ) : (
+                    <p className="challenge-desc-new">Today's custom DSA challenge hasn't been posted yet. Check back soon.</p>
+                  )}
+                  {todayCustomQ && (
+                    <button type="button" onClick={() => navigate('/questions')} className="solve-button-new">
+                      Solve Challenge &rarr;
+                    </button>
+                  )}
                 </div>
               </div>
-            ) : (
-              <div className="no-challenge-placeholder">Today&apos;s LeetCode challenge hasn&apos;t been posted yet. Check back soon.</div>
-            )}
-          </TiltCard>
+            </section>
+
+            {/* Heatmap Section */}
+            <StreakGrid
+              currentDay={currentDay}
+              submissions={userSubs}
+              questions={questions}
+            />
           </div>
 
-          {/* Challenge 2: Custom DSA */}
-          <div className="challenge-card-shell">
-          <TiltCard className="challenge-card press-card" maxTilt={6}>
-            <div className="card-top-tag custom-dsa">Custom DSA Challenge</div>
-            {todayCustomQ ? (
-              (() => {
-                const { explanation, example } = parseChallengeContent(todayCustomQ.descCustom);
-                return (
-                  <div className="challenge-details">
-                    <h3 className="challenge-title">{todayCustomQ.titleCustom}</h3>
-                    
-                    <div className="challenge-section">
-                      <h4 className="section-subtitle">Explanation</h4>
-                      <p className="challenge-desc">{explanation}</p>
-                    </div>
-                    
-                    <div className="challenge-section">
-                      <h4 className="section-subtitle">Example</h4>
-                      <p className="challenge-example">{example}</p>
-                    </div>
+          {/* Right Column (Side Area) */}
+          <div className="dashboard-side-col">
+            {/* Recent Activity Timeline Widget */}
+            <div className="redesigned-timeline-panel">
+              <h3 className="redesigned-section-header">
+                <span className="section-heading-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h4l3 8l4 -16l3 8h4" /></svg>
+                </span>
+                Recent Activity
+              </h3>
+              <div className="timeline-container">
+                <div className="timeline-rail" />
+                {Array.from({ length: Math.min(currentDay, 4) }, (_, i) => {
+                  const d = currentDay - i;
+                  const isToday = d === currentDay;
+                  const daySubs = userSubs.filter(s => s.dayNumber === d);
+                  const isCompleted = daySubs.length > 0;
+                  
+                  let dotClass = 'missed';
+                  if (isToday) {
+                    dotClass = 'today';
+                  } else if (isCompleted) {
+                    dotClass = 'completed';
+                  }
 
-                    <div className="challenge-meta">
-                      <span className="author-tag">By Technical Head</span>
-                    </div>
+                  const q = questions.find(q => q.day === d);
+                  const tag = q?.difficulty ? `${q.difficulty} · Coding` : 'Coding';
 
-                    {/* GitHub Commit Submission */}
-                    <form onSubmit={handleCommitSubmit} className="commit-submit-form">
-                      <div className="commit-input-wrapper">
-                        <input
-                          type="text"
-                          value={commitUrl}
-                          onChange={(e) => setCommitUrl(e.target.value)}
-                          placeholder="Paste commit URL from upesacm/100DaysOfCode-2026..."
-                          className="commit-url-input"
-                        />
-                        <button
-                          type="submit"
-                          className="commit-submit-btn"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? 'Submitting...' : 'Submit'}
-                        </button>
+                  return (
+                    <div key={d} className="timeline-item">
+                      <div className={`timeline-dot ${dotClass}`} />
+                      <div className="timeline-content">
+                        <div className="timeline-info">
+                          <span className={`timeline-day-label ${isToday ? 'today' : 'past'}`}>
+                            {isToday ? `Today (Day ${d})` : `Day ${d}`}
+                          </span>
+                          <span className="timeline-details">
+                            {isCompleted 
+                              ? `Completed with ${daySubs.length} submission(s)` 
+                              : isToday 
+                                ? 'Pending submission for today' 
+                                : 'No submissions found'
+                            }
+                          </span>
+                        </div>
+                        <span className="timeline-tag-pill">{tag}</span>
                       </div>
-                      {submitMsg && (
-                        <p className={`submit-msg ${submitMsg.includes('success') ? 'success' : 'error'}`}>
-                          {submitMsg}
-                        </p>
-                      )}
-                    </form>
-                  </div>
-                );
-              })()
-            ) : (
-              <div className="no-challenge-placeholder">Today&apos;s custom DSA challenge hasn&apos;t been posted yet. Check back soon.</div>
-            )}
-          </TiltCard>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Leaderboard Widget */}
+            <div className="redesigned-leaderboard-panel">
+              <h3 className="redesigned-section-header">
+                <span className="section-heading-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="9" r="6" /><path d="M9 14.2l-1.5 5.8l4.5 -3l4.5 3l-1.5 -5.8" /><path d="M7 9a5 5 0 0 0 10 0" /></svg>
+                </span>
+                Leaderboard Standings
+              </h3>
+              
+              <div className="leaderboard-list">
+                {(() => {
+                  const participants = db.users
+                    .filter(u => u.role === 'participant')
+                    .sort((a, b) => b.totalCodingScore - a.totalCodingScore);
+                  
+                  const top10 = participants.slice(0, 10);
+                  const maxVal = top10[0]?.totalCodingScore || 100;
+
+                  return top10.map((user, index) => {
+                    const isSelf = user.id === userId;
+                    const initials = user.name
+                      ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2)
+                      : 'CD';
+                    
+                    return (
+                      <div key={user.id} className={`leaderboard-row ${isSelf ? 'current-user' : ''}`}>
+                        <span className="leaderboard-rank">#{index + 1}</span>
+                        <div className="leaderboard-avatar">{initials}</div>
+                        <div className="leaderboard-info">
+                          <span className="leaderboard-name">{user.name}</span>
+                          <div className="leaderboard-bar-wrapper">
+                            <div 
+                              className="leaderboard-bar" 
+                              style={{ width: `${Math.max((user.totalCodingScore / maxVal) * 100, 5)}%` }}
+                            />
+                          </div>
+                        </div>
+                        <span className="leaderboard-score">{user.totalCodingScore} XP</span>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+
+              <button type="button" className="view-all-link" onClick={() => navigate('/leaderboards')}>
+                View Full Leaderboard &rarr;
+              </button>
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* Heatmap and Streak Section */}
-      <section className="dashboard-streak-section dashboard-focus-section" data-dashboard-focus>
-        <div className="dashboard-hero-right">
-          <StreakGrid
-            currentDay={currentDay}
-            submissions={userSubs}
-            questions={questions}
-            tiltProps={{
-              ref: streakTilt.ref,
-              style: streakTilt.style,
-              onMouseMove: streakTilt.onMouseMove,
-              onMouseLeave: streakTilt.onMouseLeave,
-            }}
-          />
-        </div>
-      </section>
-
-      {/* Overview Stats Section */}
-      <section className="overview-stats-section dashboard-focus-section" data-dashboard-focus>
-        <TiltCard className="stat-card press-card" maxTilt={7}>
-          <div className="stat-label">Event Progress</div>
-          <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
-          <div className="stat-progress-bar-wrapper">
-            <div className="stat-progress-bar progress-animate" style={{ width: `${currentDay}%` }}></div>
-          </div>
-        </TiltCard>
-
-        <TiltCard className="stat-card press-card" maxTilt={7}>
-          <div className="stat-label">LeetCode Streak</div>
-          <div className="stat-value-row">
-            <span className="stat-value">{currentUser.leetCodeStreak}</span>
-            <span className="stat-icon-flame">Days</span>
-          </div>
-          {currentUser.leetCodeStreak === 0 && (
-            <span className="stat-status-alert error">Streak broken - solve today&apos;s LeetCode to restart it.</span>
-          )}
-          {currentUser.leetCodeStreak > 0 && (
-            <span className="stat-status-alert success">Streak is live - keep it going!</span>
-          )}
-        </TiltCard>
-
-        <TiltCard className="stat-card press-card" maxTilt={7}>
-          <div className="stat-label">GitHub Push Streak</div>
-          <div className="stat-value-row">
-            <span className="stat-value">{currentUser.gitHubStreak}</span>
-            <span className="stat-icon-github">Days</span>
-          </div>
-          {currentUser.gitHubStreak === 0 && (
-            <span className="stat-status-alert error">No pushes yet - commit today&apos;s solution to GitHub.</span>
-          )}
-          {currentUser.gitHubStreak > 0 && (
-            <span className="stat-status-alert success">Daily pushes on track!</span>
-          )}
-        </TiltCard>
-
-        <TiltCard className="stat-card press-card ranking" maxTilt={7}>
-          <div className="stat-label">Overall Standing</div>
-          <div className="stat-value">#{overallRank}</div>
-          <div className="ranks-sub-row">
-            <span>Coding: #{codingRank}</span>
-            <span>•</span>
-            <span>Debug: #{debugRank}</span>
-          </div>
-          <button type="button" className="stat-link" onClick={() => navigate('/leaderboards')}>
-            View Leaderboards &rarr;
-          </button>
-        </TiltCard>
-      </section>
+      </div>
     </div>
   );
 }

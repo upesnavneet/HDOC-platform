@@ -1655,7 +1655,7 @@ button {
 }
 
 .previous-day-section {
-  background: #3A4750 !important;
+  background: #303841 !important;
   border: 1px solid #2185D5 !important;
   border-radius: 6px;
   padding: 0.75rem;
@@ -5189,12 +5189,12 @@ button {
   background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
 }
 
-/* Make daily questions and heatmap cards opaque #303841 */
+/* Make daily questions and heatmap cards glassmorphic using #3A4750, #303841, and #F3F3F3 */
 .streak-grid-wrapper,
 .challenge-card {
-  background: #303841 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   border: 1px solid rgba(243, 243, 243, 0.15) !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   opacity: 1 !important;
@@ -5202,7 +5202,7 @@ button {
 
 .streak-grid-wrapper:hover,
 .challenge-card:hover {
-  background: #303841 !important;
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
 }
 
 /* Replace specific cream/muted elements with #2185D5 */
