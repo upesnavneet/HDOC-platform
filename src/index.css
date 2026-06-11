@@ -1691,6 +1691,12 @@ button {
   color: var(--color-white);
 }
 
+.section-header-tag.custom-tag {
+  background: rgba(255, 255, 255, 0.1);
+  color: #F3F3F3;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .hero-btn.outline {
   background: transparent;
   color: var(--color-white);
@@ -2159,6 +2165,12 @@ button {
   -webkit-backdrop-filter: none;
   border: 1px solid var(--border-subtle);
   color: #f3f3f3;
+  background: rgba(48, 56, 65, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+  color: #F3F3F3;
   border-radius: 0;
   overflow: hidden;
   display: flex;
@@ -5431,10 +5443,10 @@ button {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: var(--bg-panel);
+  background: transparent;
   border: none;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 0;
+  padding: 20px 0;
   box-shadow: none;
 }
 
@@ -5688,10 +5700,16 @@ button {
 }
 
 .detailed-body-vertical-scroll {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   padding-right: 8px;
+}
+
+@media (max-width: 900px) {
+  .detailed-body-vertical-scroll {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Normal scrollbar for bottom details */
@@ -5715,8 +5733,11 @@ button {
 
 /* Stack Cards */
 .problem-section-card-stack {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: rgba(48, 56, 65, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   border-radius: 12px;
   padding: 20px;
   transition:
@@ -5775,18 +5796,20 @@ button {
   background: rgba(0, 0, 0, 0.1);
   padding: 16px;
   border-radius: 8px;
+  background: transparent;
+  padding: 0;
   border: none;
 }
 
 .example-text {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--color-text-muted);
+  color: #F3F3F3;
   line-height: 1.5;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   font-family: 'Courier New', Courier, monospace;
 }
 
@@ -6096,17 +6119,17 @@ button {
 /* Make daily questions and heatmap cards glassmorphic using #3A4750, #303841, and #F3F3F3 */
 .streak-grid-wrapper,
 .challenge-card {
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
+  background: rgba(48, 56, 65, 0.6) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(243, 243, 243, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   opacity: 1 !important;
 }
 
 .streak-grid-wrapper:hover,
 .challenge-card:hover {
-  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
+  background: rgba(48, 56, 65, 0.6) !important;
 }
 
 /* Replace specific cream/muted elements with #2185D5 */
