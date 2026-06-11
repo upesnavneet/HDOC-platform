@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
-import './MagicButton.css';
+
 
 const DEFAULT_GLOW_COLOR = '66, 165, 252';
 

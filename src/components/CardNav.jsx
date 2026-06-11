@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import './CardNav.css';
+
 
 const CardNav = ({
   logo,
