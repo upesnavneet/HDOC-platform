@@ -386,17 +386,17 @@ h1 {
 }
 
 .gallery-day-card {
-  background: #3A4750 !important;
+  background: transparent !important;
 }
 
 .gallery-day-card.active {
-  background: #3A4750 !important;
-  border-color: #2185D5 !important;
-  box-shadow: 0 0 20px rgba(33, 133, 213, 0.6) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .gallery-day-card:hover {
-  background: #3A4750 !important;
+  background: transparent !important;
 }
 
 .archive-top-gallery-panel,
