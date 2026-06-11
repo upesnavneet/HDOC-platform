@@ -1,26 +1,17 @@
 import GradientBlinds from '../../components/GradientBlinds';
 import BorderGlow from '../../components/BorderGlow';
 import Shuffle from '../../components/Shuffle';
+import LetterGlitch from '../../components/LetterGlitch';
 
 export default function AuthLayout({ children, alerts }) {
   return (
     <div className="auth-view-container" style={{ position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-        <GradientBlinds
-          gradientColors={['#03346E', '#0a0b10', '#6EACDA']}
-          angle={47}
-          noise={0.13}
-          blindCount={9}
-          blindMinWidth={60}
-          spotlightRadius={0.35}
-          spotlightSoftness={1}
-          spotlightOpacity={1}
-          mouseDampening={0.21}
-          distortAmount={0}
-          shineDirection="left"
-          mixBlendMode="lighten"
-          color1="#03346E"
-          color2="#0a0b10"
+        <LetterGlitch
+          glitchSpeed={50}
+          centerVignette={true}
+          outerVignette={false}
+          smooth={true}
         />
       </div>
 
