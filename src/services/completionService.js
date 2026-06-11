@@ -163,7 +163,7 @@ export const updateSystemConfig = async (configData) => {
   }
 };
 
-// Auto-advance day after 24 hours
+// Auto-advance day at midnight (new day)
 export const checkAndAutoAdvanceDay = async () => {
   try {
     const config = await getSystemConfig();
@@ -171,17 +171,20 @@ export const checkAndAutoAdvanceDay = async () => {
 
     const now = new Date();
     const lastAdvance = config.lastDayAdvanceTime?.toDate?.() || new Date(config.lastDayAdvanceTime);
-    const hoursSinceLastAdvance = (now - lastAdvance) / (1000 * 60 * 60);
 
-    // If 24 hours have passed, advance the day
-    if (hoursSinceLastAdvance >= 24) {
+    // Get start of today and start of last advance day
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfLastAdvance = new Date(lastAdvance.getFullYear(), lastAdvance.getMonth(), lastAdvance.getDate());
+
+    // If we're on a new day (midnight passed), advance
+    if (startOfToday > startOfLastAdvance) {
       const newDay = (config.currentDay || 1) + 1;
       await updateSystemConfig({
         currentDay: newDay,
         lastDayAdvanceTime: now,
         completedWeeks: config.completedWeeks,
       });
-      console.log(`Auto-advanced to Day ${newDay}`);
+      console.log(`Auto-advanced to Day ${newDay} (midnight reset)`);
       return newDay;
     }
 
