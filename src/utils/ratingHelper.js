@@ -9,7 +9,7 @@
 export const formatRating = (q) => {
   if (!q) return '800';
   if (q.rating && !isNaN(q.rating)) return String(q.rating);
-  
+
   if (q.difficulty) {
     const diff = q.difficulty.toLowerCase();
     // Offset based on day to make rating vary slightly (e.g. 800, 840, 880)

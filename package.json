@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\" \"*.{js,ts,json}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css}\""
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@studio-freight/lenis": "^1.0.42",
     "firebase": "^12.14.0",
     "framer-motion": "^12.40.0",
     "gsap": "^3.15.0",
@@ -32,6 +33,6 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
     "vite": "^8.0.12",
-    "vite-plugin-css-injected-by-js": "^5.0.1"
+    "prettier": "^3.5.3"
   }
 }

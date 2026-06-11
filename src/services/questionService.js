@@ -1,23 +1,9 @@
 // @ts-check
 import { db } from '../firebaseConfig';
-import { doc, setDoc, deleteDoc, collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, collection, onSnapshot } from 'firebase/firestore';
 import { error as logError } from '../utils/logger';
 
 const QUESTIONS_COLLECTION = 'questions';
-
-export const getQuestions = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, QUESTIONS_COLLECTION));
-    const questions = [];
-    querySnapshot.forEach((doc) => {
-      questions.push({ id: doc.id, ...doc.data() });
-    });
-    return questions.sort((a, b) => a.day - b.day);
-  } catch (error) {
-    logError('Error fetching questions:', error);
-    throw error;
-  }
-};
 
 export const addOrUpdateQuestion = async (dayNum, questionData) => {
   try {
@@ -48,14 +34,18 @@ export const deleteQuestion = async (dayNum) => {
 
 export const subscribeToQuestions = (callback) => {
   const colRef = collection(db, QUESTIONS_COLLECTION);
-  return onSnapshot(colRef, (querySnapshot) => {
-    const questions = [];
-    querySnapshot.forEach((doc) => {
-      questions.push({ id: doc.id, ...doc.data() });
-    });
-    questions.sort((a, b) => a.day - b.day);
-    callback(questions);
-  }, (error) => {
-    logError('Error subscribing to questions:', error);
-  });
+  return onSnapshot(
+    colRef,
+    (querySnapshot) => {
+      const questions = [];
+      querySnapshot.forEach((doc) => {
+        questions.push({ id: doc.id, ...doc.data() });
+      });
+      questions.sort((a, b) => a.day - b.day);
+      callback(questions);
+    },
+    (error) => {
+      logError('Error subscribing to questions:', error);
+    }
+  );
 };

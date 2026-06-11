@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /questions
+Disallow: /debugging
+Disallow: /leaderboards
+
+Sitemap: https://hdoc.netlify.app/sitemap.xml

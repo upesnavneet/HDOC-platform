@@ -39,7 +39,8 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         Next →
       </button>
       <span className="pagination-info">
-        {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, totalPages * PAGE_SIZE)} of entries
+        {(currentPage - 1) * PAGE_SIZE + 1}–
+        {Math.min(currentPage * PAGE_SIZE, totalPages * PAGE_SIZE)} of entries
       </span>
     </div>
   );
@@ -59,9 +60,18 @@ export default function Leaderboards() {
   const codingTotalPages = Math.max(1, Math.ceil(codingBoard.length / PAGE_SIZE));
   const debugTotalPages = Math.max(1, Math.ceil(debuggingBoard.length / PAGE_SIZE));
 
-  const pagedOverall = useMemo(() => combinedBoard.slice((overallPage - 1) * PAGE_SIZE, overallPage * PAGE_SIZE), [combinedBoard, overallPage]);
-  const pagedCoding = useMemo(() => codingBoard.slice((codingPage - 1) * PAGE_SIZE, codingPage * PAGE_SIZE), [codingBoard, codingPage]);
-  const pagedDebug = useMemo(() => debuggingBoard.slice((debugPage - 1) * PAGE_SIZE, debugPage * PAGE_SIZE), [debuggingBoard, debugPage]);
+  const pagedOverall = useMemo(
+    () => combinedBoard.slice((overallPage - 1) * PAGE_SIZE, overallPage * PAGE_SIZE),
+    [combinedBoard, overallPage]
+  );
+  const pagedCoding = useMemo(
+    () => codingBoard.slice((codingPage - 1) * PAGE_SIZE, codingPage * PAGE_SIZE),
+    [codingBoard, codingPage]
+  );
+  const pagedDebug = useMemo(
+    () => debuggingBoard.slice((debugPage - 1) * PAGE_SIZE, debugPage * PAGE_SIZE),
+    [debuggingBoard, debugPage]
+  );
 
   return (
     <div className="leaderboards-container">
@@ -69,7 +79,12 @@ export default function Leaderboards() {
         <h1>ACM 100 Days of Code Standings</h1>
       </div>
 
-      <Tabs value={activeTab} onChange={setActiveTab} listClassName="leaderboard-tabs-bar" aria-label="Leaderboard views">
+      <Tabs
+        value={activeTab}
+        onChange={setActiveTab}
+        listClassName="leaderboard-tabs-bar"
+        aria-label="Leaderboard views"
+      >
         <Tabs.List>
           <Tabs.Trigger value="overall" className="tab-btn" activeClassName="active">
             Overall Standings (100 Days)
@@ -94,48 +109,65 @@ export default function Leaderboards() {
                   <th scope="col">Coding Pts</th>
                   <th scope="col">Debugging Pts</th>
                   <th scope="col">Combined Streaks</th>
-                  <th scope="col" className="align-right">Total Score</th>
+                  <th scope="col" className="align-right">
+                    Total Score
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {combinedBoard.length === 0 ? (
                   <tr>
-                    <td colSpan={7}>No rankings yet - scores will appear once challenges are graded.</td>
+                    <td colSpan={7}>
+                      No rankings yet - scores will appear once challenges are graded.
+                    </td>
                   </tr>
-                ) : pagedOverall.map((row, idx) => {
-                  const rankNum = (overallPage - 1) * PAGE_SIZE + idx + 1;
-                  const isTop10 = rankNum <= 10;
-                  return (
-                    <tr key={row.id} className={`${isTop10 ? 'top10-highlight' : ''} ${rankNum === 1 ? 'gold-medalist' : ''}`}>
-                      <td className="rank-col">
-                        <span className={`rank-badge rank-${rankNum}`}>#{rankNum}</span>
-                      </td>
-                      <td className="participant-col">
-                        <div className="details">
-                          <span className="name">{row.name}</span>
-                        </div>
-                      </td>
-                      <td className="handle-col">
-                        <div className="handles-subrow">
-                          <span className="h-tag git">gh: {row.gitHubId}</span>
-                          <span className="h-tag lc">lc: {row.leetCodeId}</span>
-                        </div>
-                      </td>
-                      <td>{row.codingScore} pts</td>
-                      <td>{row.debugScore} pts</td>
-                      <td className="streaks-col">
-                        <div className="streaks-subrow">
-                          <span className="streak-badge lc" title="LeetCode Streak">LC: {row.leetCodeStreak}d</span>
-                          <span className="streak-badge git" title="GitHub Streak">Git: {row.gitHubStreak}d</span>
-                        </div>
-                      </td>
-                      <td className="score-col align-right">{row.totalScore} pts</td>
-                    </tr>
-                  );
-                })}
+                ) : (
+                  pagedOverall.map((row, idx) => {
+                    const rankNum = (overallPage - 1) * PAGE_SIZE + idx + 1;
+                    const isTop10 = rankNum <= 10;
+                    return (
+                      <tr
+                        key={row.id}
+                        className={`${isTop10 ? 'top10-highlight' : ''} ${rankNum === 1 ? 'gold-medalist' : ''}`}
+                      >
+                        <td className="rank-col">
+                          <span className={`rank-badge rank-${rankNum}`}>#{rankNum}</span>
+                        </td>
+                        <td className="participant-col">
+                          <div className="details">
+                            <span className="name">{row.name}</span>
+                          </div>
+                        </td>
+                        <td className="handle-col">
+                          <div className="handles-subrow">
+                            <span className="h-tag git">gh: {row.gitHubId}</span>
+                            <span className="h-tag lc">lc: {row.leetCodeId}</span>
+                          </div>
+                        </td>
+                        <td>{row.codingScore} pts</td>
+                        <td>{row.debugScore} pts</td>
+                        <td className="streaks-col">
+                          <div className="streaks-subrow">
+                            <span className="streak-badge lc" title="LeetCode Streak">
+                              LC: {row.leetCodeStreak}d
+                            </span>
+                            <span className="streak-badge git" title="GitHub Streak">
+                              Git: {row.gitHubStreak}d
+                            </span>
+                          </div>
+                        </td>
+                        <td className="score-col align-right">{row.totalScore} pts</td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
-            <Pagination currentPage={overallPage} totalPages={overallTotalPages} onPageChange={setOverallPage} />
+            <Pagination
+              currentPage={overallPage}
+              totalPages={overallTotalPages}
+              onPageChange={setOverallPage}
+            />
           </Tabs.Panel>
 
           <Tabs.Panel value="coding">
@@ -147,7 +179,9 @@ export default function Leaderboards() {
                   <th scope="col">Participant</th>
                   <th scope="col">GitHub Handle</th>
                   <th scope="col">Solved Submissions</th>
-                  <th scope="col" className="align-right">Weekly Points</th>
+                  <th scope="col" className="align-right">
+                    Weekly Points
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -158,8 +192,12 @@ export default function Leaderboards() {
                       <td className="rank-col">
                         <span className={`rank-badge rank-${rankNum}`}>#{rankNum}</span>
                       </td>
-                      <td><span className="name">{row.name}</span></td>
-                      <td><span className="h-tag git">@{row.gitHubId}</span></td>
+                      <td>
+                        <span className="name">{row.name}</span>
+                      </td>
+                      <td>
+                        <span className="h-tag git">@{row.gitHubId}</span>
+                      </td>
                       <td>{row.solvedCount} / 14 questions</td>
                       <td className="score-col align-right">{row.score} pts</td>
                     </tr>
@@ -167,7 +205,11 @@ export default function Leaderboards() {
                 })}
               </tbody>
             </table>
-            <Pagination currentPage={codingPage} totalPages={codingTotalPages} onPageChange={setCodingPage} />
+            <Pagination
+              currentPage={codingPage}
+              totalPages={codingTotalPages}
+              onPageChange={setCodingPage}
+            />
           </Tabs.Panel>
 
           <Tabs.Panel value="debugging">
@@ -179,7 +221,9 @@ export default function Leaderboards() {
                   <th scope="col">Participant</th>
                   <th scope="col">GitHub Link</th>
                   <th scope="col">Challenge Status</th>
-                  <th scope="col" className="align-right">Debugging Score</th>
+                  <th scope="col" className="align-right">
+                    Debugging Score
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -190,10 +234,16 @@ export default function Leaderboards() {
                       <td className="rank-col">
                         <span className={`rank-badge rank-${rankNum}`}>#{rankNum}</span>
                       </td>
-                      <td><span className="name">{row.name}</span></td>
-                      <td><span className="h-tag git">@{row.gitHubId}</span></td>
                       <td>
-                        <span className={`badge-status ${row.status.toLowerCase()}`}>{row.status}</span>
+                        <span className="name">{row.name}</span>
+                      </td>
+                      <td>
+                        <span className="h-tag git">@{row.gitHubId}</span>
+                      </td>
+                      <td>
+                        <span className={`badge-status ${row.status.toLowerCase()}`}>
+                          {row.status}
+                        </span>
                       </td>
                       <td className="score-col align-right">{row.score} pts</td>
                     </tr>
@@ -201,7 +251,11 @@ export default function Leaderboards() {
                 })}
               </tbody>
             </table>
-            <Pagination currentPage={debugPage} totalPages={debugTotalPages} onPageChange={setDebugPage} />
+            <Pagination
+              currentPage={debugPage}
+              totalPages={debugTotalPages}
+              onPageChange={setDebugPage}
+            />
           </Tabs.Panel>
         </div>
       </Tabs>

@@ -1,6 +1,17 @@
 // @ts-check
 import { db } from '../firebaseConfig';
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs, onSnapshot, query, where, limit } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+  limit,
+} from 'firebase/firestore';
 import { error as logError } from '../utils/logger';
 
 /**
@@ -99,13 +110,17 @@ export const checkStudentIdExists = async (studentId) => {
 
 export const subscribeToUsers = (callback) => {
   const colRef = collection(db, USERS_COLLECTION);
-  return onSnapshot(colRef, (querySnapshot) => {
-    const users = [];
-    querySnapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() });
-    });
-    callback(users);
-  }, (error) => {
-    logError('Error subscribing to users:', error);
-  });
+  return onSnapshot(
+    colRef,
+    (querySnapshot) => {
+      const users = [];
+      querySnapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      callback(users);
+    },
+    (error) => {
+      logError('Error subscribing to users:', error);
+    }
+  );
 };

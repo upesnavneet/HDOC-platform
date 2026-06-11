@@ -24,9 +24,10 @@ export default function SubmissionsTab() {
     });
   }, [db.submissions, db.users]);
 
-  const filteredSubmissions = filterDay === 'all'
-    ? submissions
-    : submissions.filter((s) => s.dayNumber === parseInt(filterDay));
+  const filteredSubmissions =
+    filterDay === 'all'
+      ? submissions
+      : submissions.filter((s) => s.dayNumber === parseInt(filterDay));
 
   const uniqueDays = [...new Set(submissions.map((s) => s.dayNumber))].sort((a, b) => a - b);
 
@@ -43,7 +44,9 @@ export default function SubmissionsTab() {
           >
             <option value="all">All Days</option>
             {uniqueDays.map((day) => (
-              <option key={day} value={day}>Day {day}</option>
+              <option key={day} value={day}>
+                Day {day}
+              </option>
             ))}
           </select>
         </div>
@@ -79,7 +82,9 @@ export default function SubmissionsTab() {
           <tbody>
             {filteredSubmissions.length === 0 ? (
               <tr>
-                <td colSpan="6" className="no-data">No submissions found</td>
+                <td colSpan="6" className="no-data">
+                  No submissions found
+                </td>
               </tr>
             ) : (
               filteredSubmissions.map((sub) => (
@@ -98,11 +103,16 @@ export default function SubmissionsTab() {
                       >
                         View →
                       </a>
-                    ) : '—'}
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td className="submit-time">
                     {sub.submittedAt?.toLocaleDateString()}{' '}
-                    {sub.submittedAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {sub.submittedAt?.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </td>
                 </tr>
               ))

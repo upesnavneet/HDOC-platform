@@ -10,9 +10,9 @@ export default function ScrambledText({ text, speed = 30, delay = 0, triggerOnHo
     if (isScrambling.current) return;
     isScrambling.current = true;
     let iteration = 0;
-    
+
     clearInterval(intervalRef.current);
-    
+
     intervalRef.current = setInterval(() => {
       setDisplayText(
         text
@@ -26,12 +26,12 @@ export default function ScrambledText({ text, speed = 30, delay = 0, triggerOnHo
           })
           .join('')
       );
-      
+
       if (iteration >= text.length) {
         clearInterval(intervalRef.current);
         isScrambling.current = false;
       }
-      
+
       iteration += 1 / 3;
     }, speed);
   };

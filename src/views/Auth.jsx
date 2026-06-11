@@ -64,7 +64,14 @@ export default function Auth() {
     }
 
     setIsSubmitting(true);
-    const res = await register(regName, regEmail, regPass, regStudentId, regGithubId, regLeetcodeId);
+    const res = await register(
+      regName,
+      regEmail,
+      regPass,
+      regStudentId,
+      regGithubId,
+      regLeetcodeId
+    );
     setIsSubmitting(false);
 
     if (res.success) {

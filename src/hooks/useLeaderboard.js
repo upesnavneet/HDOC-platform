@@ -6,10 +6,7 @@ export function useLeaderboardData(db) {
   const startDayOfWeek = (currentWeek - 1) * 7 + 1;
   const endDayOfWeek = currentWeek * 7;
 
-  const participants = useMemo(
-    () => db.users.filter((u) => u.role !== 'admin'),
-    [db.users]
-  );
+  const participants = useMemo(() => db.users.filter((u) => u.role !== 'admin'), [db.users]);
 
   const codingBoard = useMemo(() => {
     const data = participants.map((p) => {
