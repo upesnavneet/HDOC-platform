@@ -5,16 +5,14 @@ import Navbar from './components/Navbar';
 import IntroSplash from './components/IntroSplash';
 import AppFooter from './components/AppFooter';
 import AppRoutes from './routes/AppRoutes';
-import { motion } from 'framer-motion';
+import { AppErrorBoundary } from './components/ErrorBoundary';
+
+// H11: Removed framer-motion import from root bundle (~50KB).
+// The fade-in is now a CSS animation — same visual, zero JS cost.
 
 function MainAppContent() {
   return (
-    <motion.div
-      className="app-wrapper"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1, ease: 'easeOut' }}
-    >
+    <div className="app-wrapper app-fade-in">
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
@@ -23,7 +21,7 @@ function MainAppContent() {
         <AppRoutes />
       </main>
       <AppFooter />
-    </motion.div>
+    </div>
   );
 }
 
@@ -31,14 +29,16 @@ export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
   return (
-    <AuthProvider>
-      <AppProvider>
-        {showIntro ? (
-          <IntroSplash onComplete={() => setShowIntro(false)} />
-        ) : (
-          <MainAppContent />
-        )}
-      </AppProvider>
-    </AuthProvider>
+    <AppErrorBoundary>
+      <AuthProvider>
+        <AppProvider>
+          {showIntro ? (
+            <IntroSplash onComplete={() => setShowIntro(false)} />
+          ) : (
+            <MainAppContent />
+          )}
+        </AppProvider>
+      </AuthProvider>
+    </AppErrorBoundary>
   );
 }

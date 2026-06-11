@@ -87,6 +87,50 @@ export function AppActionsProvider({ children }) {
     [currentUser, db]
   );
 
+  // H12: Commit URL submission — writes Schema B (same as submitQuestionCode)
+  const submitCommitUrl = useCallback(
+    async (dayNum, commitUrl) => {
+      if (!currentUser) return { success: false, message: 'Not logged in.' };
+
+      const myUid = currentUser.uid || currentUser.id;
+      const eventTime = new Date(db.simulatedTime);
+      const eventStartDate = new Date('2026-05-25T00:00:00+05:30');
+      const publishTime = new Date(eventStartDate.getTime() + (dayNum - 1) * 24 * 60 * 60 * 1000);
+      const deadlineTime = new Date(publishTime.getTime() + 24 * 60 * 60 * 1000);
+
+      let status = 'Submitted';
+      if (eventTime > deadlineTime) status = 'Late';
+
+      const existing = db.submissions.find(
+        (s) => s.userId === myUid && s.day === dayNum && s.type === 'commit'
+      );
+
+      const subDetails = {
+        userId: myUid,
+        questionId: '',
+        day: dayNum,
+        type: 'commit',
+        code: commitUrl,
+        language: '',
+        link: commitUrl,
+        timestamp: eventTime.toISOString(),
+        status,
+        marks: existing ? existing.marks : null,
+        gradedBy: existing ? existing.gradedBy : '',
+        comments: existing ? existing.comments : '',
+      };
+
+      const subId = existing ? existing.id : `sub-${myUid}-${dayNum}-commit`;
+      try {
+        await addOrUpdateSubmission(subId, subDetails);
+        return { success: true, message: 'Commit submitted successfully.' };
+      } catch {
+        return { success: false, message: 'Failed to submit commit.' };
+      }
+    },
+    [currentUser, db]
+  );
+
   const submitDebuggingChallenge = useCallback(
     async (challengeId, link) => {
       if (!currentUser) return { success: false, message: 'Not logged in.' };
@@ -325,6 +369,7 @@ export function AppActionsProvider({ children }) {
   const value = useMemo(
     () => ({
       submitQuestionCode,
+      submitCommitUrl,
       submitDebuggingChallenge,
       gradeSubmission,
       gradeDebuggingSubmission,
@@ -342,6 +387,7 @@ export function AppActionsProvider({ children }) {
     }),
     [
       submitQuestionCode,
+      submitCommitUrl,
       submitDebuggingChallenge,
       gradeSubmission,
       gradeDebuggingSubmission,
