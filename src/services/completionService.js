@@ -163,6 +163,35 @@ export const updateSystemConfig = async (configData) => {
   }
 };
 
+// Auto-advance day after 24 hours
+export const checkAndAutoAdvanceDay = async () => {
+  try {
+    const config = await getSystemConfig();
+    if (!config) return null;
+
+    const now = new Date();
+    const lastAdvance = config.lastDayAdvanceTime?.toDate?.() || new Date(config.lastDayAdvanceTime);
+    const hoursSinceLastAdvance = (now - lastAdvance) / (1000 * 60 * 60);
+
+    // If 24 hours have passed, advance the day
+    if (hoursSinceLastAdvance >= 24) {
+      const newDay = (config.currentDay || 1) + 1;
+      await updateSystemConfig({
+        currentDay: newDay,
+        lastDayAdvanceTime: now,
+        completedWeeks: config.completedWeeks,
+      });
+      console.log(`Auto-advanced to Day ${newDay}`);
+      return newDay;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error checking auto-advance:', error);
+    return null;
+  }
+};
+
 export const subscribeToSystemConfig = (callback) => {
   const docRef = doc(db, SYSTEM_COLLECTION, CONFIG_DOC);
   return onSnapshot(docRef, (docSnap) => {

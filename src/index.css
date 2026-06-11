@@ -5409,6 +5409,37 @@ button {
   to { transform: rotate(360deg); }
 }
 
+/* Advance Day Button */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.advance-day-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #e53935, #c62828);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.advance-day-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f44336, #e53935);
+  transform: translateY(-1px);
+}
+
+.advance-day-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 
 
