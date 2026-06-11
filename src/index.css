@@ -1454,6 +1454,7 @@ button {
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 2rem;
+  justify-content: flex-end;
 }
 
 .hero-btn {
@@ -3883,6 +3884,14 @@ button {
   padding: 1.5rem;
 }
 
+.panel-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .coord-panel h3 {
   margin-bottom: 1rem;
   font-size: 1.1rem;
@@ -5010,6 +5019,70 @@ button {
   cursor: not-allowed;
 }
 
+/* Commit Submission Form */
+.commit-submit-form {
+  margin-top: 1rem;
+}
+
+.commit-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.commit-url-input {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-white);
+  font-size: 0.85rem;
+}
+
+.commit-url-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.commit-url-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(66, 165, 252, 0.2);
+}
+
+.commit-submit-btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  background: #1a5fb4;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.commit-submit-btn:hover:not(:disabled) {
+  background: #2458c4;
+}
+
+.commit-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-msg {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.submit-msg.success {
+  color: #4ade80;
+}
+
+.submit-msg.error {
+  color: #f87171;
+}
+
 /* Floating Navbar style - Full screen width */
 .floating-navbar {
   position: fixed;
@@ -5157,6 +5230,176 @@ button {
 .previous-day-section,
 .previous-day-section * {
   color: #F3F3F3 !important;
+}
+
+/* Submissions Tab */
+.submissions-tab {
+  padding: 1rem;
+}
+
+.submissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.submissions-header h3 {
+  margin: 0;
+  color: var(--color-white);
+}
+
+.submissions-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.submissions-filter label {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.day-filter-select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-white);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.day-filter-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.submissions-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+
+.submissions-table-wrapper {
+  overflow-x: auto;
+}
+
+.submissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.submissions-table th,
+.submissions-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.submissions-table th {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+}
+
+.submissions-table td {
+  color: var(--color-white);
+}
+
+.submissions-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.student-name {
+  font-weight: 500;
+}
+
+.student-email {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.day-badge {
+  background: rgba(66, 165, 252, 0.2);
+  color: #42a5fc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.commit-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.commit-link:hover {
+  text-decoration: underline;
+}
+
+.submit-time {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.no-data {
+  text-align: center;
+  color: var(--color-muted);
+  padding: 2rem !important;
+}
+
+.submissions-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--color-muted);
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 
