@@ -44,6 +44,7 @@ export default function CoordinatorDashboard() {
         currentDay: currentDay + 1,
         simulatedTime: db.simulatedTime,
         completedWeeks: db.completedWeeks,
+        lastDayAdvanceTime: new Date(),
       });
     } catch (error) {
       console.error('Failed to advance day:', error);

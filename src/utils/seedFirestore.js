@@ -219,6 +219,7 @@ export async function seedFirestoreIfEmpty() {
       currentDay: 8,
       simulatedTime: '2026-06-01T09:00:00+05:30',
       completedWeeks: [1],
+      lastDayAdvanceTime: new Date(),
     });
     console.log('[Seed] ✓ System config created');
 

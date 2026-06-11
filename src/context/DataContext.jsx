@@ -7,6 +7,7 @@ import {
   subscribeToDebuggingSubmissions,
   subscribeToSystemConfig,
   updateSystemConfig,
+  checkAndAutoAdvanceDay,
 } from '../services/completionService';
 import { seedFirestoreIfEmpty } from '../utils/seedFirestore';
 import { getDefaultSystemConfig, normalizeSystemConfig } from '../utils/eventConfig';
@@ -30,6 +31,13 @@ export function DataProvider({ children }) {
     const unsubs = [];
 
     seedFirestoreIfEmpty().catch((err) => console.warn('[Seed] Seeding skipped:', err));
+
+    // Check and auto-advance day after 24 hours
+    checkAndAutoAdvanceDay().then((newDay) => {
+      if (newDay) {
+        console.log(`[Auto-Advance] Day advanced to ${newDay}`);
+      }
+    });
 
     try {
       unsubs.push(
