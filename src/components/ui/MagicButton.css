@@ -1,0 +1,104 @@
+.magic-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.magic-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Primary variant */
+.magic-button--primary {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #42a5fc;
+  border: 1px solid rgba(66, 165, 252, 0.3);
+  box-shadow: 0 4px 15px rgba(66, 165, 252, 0.1);
+}
+
+.magic-button--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1f1f3a 0%, #1a2744 100%);
+  box-shadow: 0 6px 20px rgba(66, 165, 252, 0.2);
+  border-color: rgba(66, 165, 252, 0.5);
+}
+
+/* Secondary variant */
+.magic-button--secondary {
+  background: linear-gradient(135deg, #2d2d44 0%, #1e1e32 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.magic-button--secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3d3d54 0%, #2e2e42 100%);
+}
+
+/* Accent variant */
+.magic-button--accent {
+  background: linear-gradient(135deg, #42a5fc 0%, #2196f3 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(66, 165, 252, 0.3);
+}
+
+.magic-button--accent:hover:not(:disabled) {
+  box-shadow: 0 6px 25px rgba(66, 165, 252, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Glow border effect */
+.magic-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(66, 165, 252, 0.5), transparent 50%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.magic-button:hover::before {
+  opacity: 1;
+}
+
+/* Spotlight effect */
+.magic-button::after {
+  content: '';
+  position: absolute;
+  top: var(--mouse-y, 50%);
+  left: var(--mouse-x, 50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(66, 165, 252, 0.15) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.magic-button:hover::after {
+  opacity: 1;
+}
+
+.magic-button > * {
+  position: relative;
+  z-index: 1;
+}
