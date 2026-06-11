@@ -102,18 +102,26 @@ export default function Navbar() {
         to={defaultPath}
         aria-label="Home"
         className="navbar-logo-link"
+        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
       >
         <img
-          src="/logo.png"
+          src="/acm-acmw-white.png"
+          alt="ACM & ACM-W Logo"
+          className="navbar-logo-img"
+          style={{ height: '38px', width: 'auto', objectFit: 'contain' }}
+        />
+        <img
+          src="/logo-1.png"
           alt="HDOC Logo"
           className="navbar-logo-img"
+          style={{ height: '38px', width: 'auto', objectFit: 'contain' }}
         />
       </Link>
 
       {/* Pill Nav - on the right */}
       <div className="navbar-pill-wrapper">
         <PillNav
-          logo="/logo.png"
+          logo="/logo-1.png"
           logoAlt="HDOC Logo"
           items={navItems}
           activeHref={getActiveHref()}

@@ -94,8 +94,9 @@ export default function IntroSplash({ onComplete }) {
           <div className="intro-logo-glow-layer-1" aria-hidden="true" />
           <div className="intro-logo-glow-layer-2" aria-hidden="true" />
 
-          <div className="intro-logos-row">
-            <img src="/logo.png" alt="Logo" className="intro-logo-image responsive-logo" />
+          <div className="intro-logos-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
+            <img src="/acm-acmw-white.png" alt="ACM & ACM-W Logo" className="intro-logo-image responsive-logo" style={{ maxHeight: '100px', width: 'auto', objectFit: 'contain' }} />
+            <img src="/logo-1.png" alt="HDOC Logo" className="intro-logo-image responsive-logo" style={{ maxHeight: '100px', width: 'auto', objectFit: 'contain' }} />
           </div>
         </div>
 
