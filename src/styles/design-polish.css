@@ -36,8 +36,9 @@ h1 {
 }
 
 .problem-text,
-.challenge-desc {
-  max-width: var(--content-max-prose);
+.challenge-desc,
+.challenge-desc-new {
+  max-width: 100% !important;
   line-height: 1.65;
 }
 
@@ -382,7 +383,11 @@ h1 {
 }
 
 .archive-top-gallery-panel {
-  background: #303841 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .gallery-day-card {
@@ -813,6 +818,42 @@ body {
   height: 1px;
   background-color: rgba(243, 243, 243, 0.08);
   margin: 0.5rem 0;
+}
+
+/* ── Unified Question Details Card (Archive/Questions) ── */
+.question-detailed-view-vertical-unified {
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
+  border: 1px solid rgba(243, 243, 243, 0.12) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+  color: #F3F3F3 !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  padding: 1.75rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+}
+
+.archive-question-block-new {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.6), rgba(48, 56, 65, 0.4)) !important;
+  border: 1px solid rgba(243, 243, 243, 0.12) !important;
+  border-radius: 6px !important;
+  padding: 1.25rem !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+.problem-section-body-new {
+  padding: 0.5rem 0;
+}
+
+.section-card-footer-new {
+  margin-top: 0.5rem;
 }
 
 
@@ -1276,4 +1317,41 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+/* ── Section Subtitle (Explanation / Example Headings) Color ── */
+.section-subtitle {
+  color: #2185D5 !important;
+}
+
+/* ── Example Text Color Override ── */
+.example-text,
+.challenge-example {
+  color: #F3F3F3 !important;
+}
+
+/* ── Two-Column Side-by-Side Questions Layout in Archive ── */
+@media (min-width: 768px) {
+  .detailed-body-vertical-scroll {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+  }
+  .question-detailed-view-vertical-unified .challenge-divider-horizontal {
+    display: none !important;
+  }
+}
+
+/* ── Hover Zoom Effects on Challenge / Question Cards ── */
+.redesigned-challenge-card-unified,
+.question-detailed-view-vertical-unified,
+.archive-question-block-new {
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease !important;
+}
+
+.redesigned-challenge-card-unified:hover,
+.question-detailed-view-vertical-unified:hover,
+.archive-question-block-new:hover {
+  transform: translateY(-4px) scale(1.01) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
 }
