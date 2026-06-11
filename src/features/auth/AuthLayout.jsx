@@ -57,6 +57,7 @@ export default function AuthLayout({ children, alerts, mode }) {
         colors={['#6EACDA', '#03346E', '#E2E2B6']}
         fillOpacity={0.15}
         style={{ position: 'relative', zIndex: 1 }}
+        disableHover={true}
       >
         <div className="auth-header-logo">
           <h1 style={{ fontSize: '1.75rem', fontFamily: 'inherit', fontWeight: 700 }}>

@@ -836,6 +836,16 @@ button {
   transform-style: preserve-3d;
 }
 
+.auth-card-wrapper .border-glow-inner {
+  padding: 2.5rem 2.25rem;
+}
+
+@media (max-width: 768px) {
+  .auth-card-wrapper .border-glow-inner {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
 .auth-header-logo {
   text-align: center;
   margin-bottom: 0.25rem;

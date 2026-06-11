@@ -63,6 +63,7 @@ const BorderGlow = forwardRef(({
   fillOpacity = 0.5,
   style = {},
   as: Component = 'div',
+  disableHover = false,
 }, ref) => {
   const cardRef = useRef(null);
   useImperativeHandle(ref, () => cardRef.current);
@@ -135,8 +136,8 @@ const BorderGlow = forwardRef(({
   return (
     <Component
       ref={cardRef}
-      onPointerMove={handlePointerMove}
-      className={`border-glow-card ${className}`}
+      onPointerMove={disableHover ? undefined : handlePointerMove}
+      className={`border-glow-card ${className} ${disableHover ? 'disable-hover' : ''}`}
       style={{
         '--card-bg': backgroundColor,
         '--edge-sensitivity': edgeSensitivity,

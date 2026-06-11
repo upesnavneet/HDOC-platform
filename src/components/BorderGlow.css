@@ -42,6 +42,12 @@
   transition: opacity 0.75s ease-in-out;
 }
 
+.border-glow-card.disable-hover::before,
+.border-glow-card.disable-hover::after,
+.border-glow-card.disable-hover > .edge-light {
+  opacity: 0 !important;
+}
+
 /* colored mesh-gradient border */
 .border-glow-card::before {
   border: 1px solid transparent;
