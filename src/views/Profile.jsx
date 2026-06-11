@@ -1,35 +1,28 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatDate } from '../utils/dateFormat';
 import { updateUserProfile } from '../services/userService';
-import { error as logError } from '../utils/logger';
-import { useAsyncAction } from '../hooks/useAsyncAction';
 import StreakGrid from '../components/StreakGrid';
 import './Profile.css';
 
 export default function Profile() {
   const { db, currentUser } = useApp();
   const [gitHubInput, setGitHubInput] = useState(currentUser?.gitHubId || '');
+  const [isUpdatingGitHub, setIsUpdatingGitHub] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
-  const [gitHubError, setGitHubError] = useState('');
-
-  const _updateGitHub = useCallback(
-    async (userId, gitHubId) => { await updateUserProfile(userId, { gitHubId }); },
-    []
-  );
-  const { execute: saveGitHub, isLoading: isUpdatingGitHub } = useAsyncAction(_updateGitHub);
 
   const handleGitHubUpdate = async (e) => {
     e.preventDefault();
     if (!gitHubInput.trim() || !currentUser?.id) return;
-    setGitHubError('');
+
+    setIsUpdatingGitHub(true);
     try {
-      await saveGitHub(currentUser.id, gitHubInput.trim());
+      await updateUserProfile(currentUser.id, { gitHubId: gitHubInput.trim() });
     } catch (error) {
-      logError('Failed to update GitHub ID:', error);
-      setGitHubError('Failed to update GitHub ID. Please try again.');
+      console.error('Failed to update GitHub ID:', error);
     }
+    setIsUpdatingGitHub(false);
   };
 
   if (!currentUser) {
@@ -129,7 +122,7 @@ export default function Profile() {
               <h1>{currentUser?.name || 'Unknown User'}</h1>
               <div className="np-user-meta">
                 <span>SAP ID: {currentUser?.studentId || 'N/A'}</span>
-                <span className="np-meta-dot">ΓÇó</span>
+                <span className="np-meta-dot">•</span>
                 <span>@{currentUser?.gitHubId || currentUser?.studentId || 'user'}</span>
               </div>
             </div>
