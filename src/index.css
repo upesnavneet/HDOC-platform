@@ -934,6 +934,40 @@ button {
   font-size: 0.75rem;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  padding-right: 3rem;
+  width: 100%;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #9a9a7a;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+  color: var(--color-primary);
+}
+
+.password-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
 .auth-action-btn {
   position: relative;
   overflow: hidden;
