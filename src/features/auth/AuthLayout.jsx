@@ -3,7 +3,7 @@ import GradientBlinds from '../../components/GradientBlinds';
 import BorderGlow from '../../components/BorderGlow';
 import LetterGlitch from '../../components/LetterGlitch';
 
-export default function AuthLayout({ children, alerts }) {
+export default function AuthLayout({ children, alerts, mode }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -22,12 +22,26 @@ export default function AuthLayout({ children, alerts }) {
         background: 'rgba(0, 0, 0, 0.7)',
       }} />
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-        <LetterGlitch
-          glitchSpeed={50}
-          centerVignette={true}
-          outerVignette={false}
-          smooth={true}
-        />
+        {mode === 'login' ? (
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={false}
+            smooth
+            speed={10}
+            glitchColors={["#2185D5", "#3a4750", "#f3f3f3"]}
+            colors={["#2185D5", "#3a4750", "#f3f3f3"]}
+            showCenterVignette
+            showOuterVignette={false}
+          />
+        ) : (
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={false}
+            smooth={true}
+          />
+        )}
       </div>
 
       <BorderGlow

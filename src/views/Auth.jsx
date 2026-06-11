@@ -118,7 +118,7 @@ export default function Auth() {
   );
 
   return (
-    <AuthLayout alerts={alerts}>
+    <AuthLayout mode={mode} alerts={alerts}>
       {mode === 'reset' && (
         <ResetForm
           resetEmail={resetEmail}
