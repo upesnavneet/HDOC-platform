@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
-const isCoordinator = (user) => user?.role === 'admin' || user?.role === 'coordinator';
+const isAdmin = (user) => user?.role === 'admin';
 
 export function ProtectedRoute({ children }) {
   const { currentUser } = useApp();
@@ -11,7 +11,7 @@ export function ProtectedRoute({ children }) {
     return <Navigate to="/auth/login" replace state={{ from: location }} />;
   }
 
-  if (isCoordinator(currentUser)) {
+  if (isAdmin(currentUser)) {
     return <Navigate to="/coordinator" replace />;
   }
 
@@ -26,7 +26,7 @@ export function AdminRoute({ children }) {
     return <Navigate to="/auth/login" replace state={{ from: location }} />;
   }
 
-  if (!isCoordinator(currentUser)) {
+  if (!isAdmin(currentUser)) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -37,7 +37,7 @@ export function GuestRoute({ children }) {
   const { currentUser } = useApp();
 
   if (currentUser) {
-    const dest = isCoordinator(currentUser) ? '/coordinator' : '/dashboard';
+    const dest = isAdmin(currentUser) ? '/coordinator' : '/dashboard';
     return <Navigate to={dest} replace />;
   }
 
@@ -48,6 +48,6 @@ export function HomeRedirect() {
   const { currentUser } = useApp();
 
   if (!currentUser) return <Navigate to="/auth/login" replace />;
-  if (isCoordinator(currentUser)) return <Navigate to="/coordinator" replace />;
+  if (isAdmin(currentUser)) return <Navigate to="/coordinator" replace />;
   return <Navigate to="/dashboard" replace />;
 }
