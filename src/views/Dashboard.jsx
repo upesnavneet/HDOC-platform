@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import StreakGrid from '../components/StreakGrid';
@@ -85,8 +85,8 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container" ref={dashboardFocusRef}>
-      {/* Hero + Journey — shown first so content stays visible */}
-      <section className="dashboard-hero-split dashboard-focus-section" data-dashboard-focus>
+      {/* Hero - From Bugs to Brilliance */}
+      <section className="dashboard-hero-section dashboard-focus-section" data-dashboard-focus>
         <TiltCard className="dashboard-hero-left press-card hero-panel-deep" maxTilt={6}>
           <span className="hero-batch-badge">BATCH 2026</span>
           <h1 className="hero-headline">
@@ -96,7 +96,7 @@ export default function Dashboard() {
             <span className="hero-orange"><ScrambledText text="Brilliance." triggerOnHover={false} /></span>
           </h1>
           <p className="hero-desc">
-            One commit. Every day. 100 days straight — UPES ACM&apos;s flagship coding challenge.
+            One commit. Every day. 100 days straight - UPES ACM&apos;s flagship coding challenge.
             Build your streak, sharpen your skills, and rise through the ranks with fellow coders.
           </p>
           <div className="hero-actions">
@@ -115,77 +115,12 @@ export default function Dashboard() {
             </div>
           </div>
         </TiltCard>
-
-        <div className="dashboard-hero-right">
-          <StreakGrid
-            currentDay={currentDay}
-            submissions={userSubs}
-            questions={questions}
-            tiltProps={{
-              ref: streakTilt.ref,
-              style: streakTilt.style,
-              onMouseMove: streakTilt.onMouseMove,
-              onMouseLeave: streakTilt.onMouseLeave,
-            }}
-          />
-        </div>
       </section>
 
-      <section className="overview-stats-section dashboard-focus-section" data-dashboard-focus>
-        <TiltCard className="stat-card press-card" maxTilt={7}>
-          <div className="stat-label">Event Progress</div>
-          <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
-          <div className="stat-progress-bar-wrapper">
-            <div className="stat-progress-bar progress-animate" style={{ width: `${currentDay}%` }}></div>
-          </div>
-        </TiltCard>
-
-        <TiltCard className="stat-card press-card" maxTilt={7}>
-          <div className="stat-label">LeetCode Streak</div>
-          <div className="stat-value-row">
-            <span className="stat-value">{currentUser.leetCodeStreak}</span>
-            <span className="stat-icon-flame">Days</span>
-          </div>
-          {currentUser.leetCodeStreak === 0 && (
-            <span className="stat-status-alert error">Streak broken — solve today&apos;s LeetCode to restart it.</span>
-          )}
-          {currentUser.leetCodeStreak > 0 && (
-            <span className="stat-status-alert success">Streak is live — keep it going!</span>
-          )}
-        </TiltCard>
-
-        <TiltCard className="stat-card press-card" maxTilt={7}>
-          <div className="stat-label">GitHub Push Streak</div>
-          <div className="stat-value-row">
-            <span className="stat-value">{currentUser.gitHubStreak}</span>
-            <span className="stat-icon-github">Days</span>
-          </div>
-          {currentUser.gitHubStreak === 0 && (
-            <span className="stat-status-alert error">No pushes yet — commit today&apos;s solution to GitHub.</span>
-          )}
-          {currentUser.gitHubStreak > 0 && (
-            <span className="stat-status-alert success">Daily pushes on track!</span>
-          )}
-        </TiltCard>
-
-        <TiltCard className="stat-card press-card ranking" maxTilt={7}>
-          <div className="stat-label">Overall Standing</div>
-          <div className="stat-value">#{overallRank}</div>
-          <div className="ranks-sub-row">
-            <span>Coding: #{codingRank}</span>
-            <span>•</span>
-            <span>Debug: #{debugRank}</span>
-          </div>
-          <button type="button" className="stat-link" onClick={() => navigate('/leaderboards')}>
-            View Leaderboards &rarr;
-          </button>
-        </TiltCard>
-      </section>
-
-      {/* Today's Coding Challenges Section */}
+      {/* Today's Coding Challenges Section - Daily Questions */}
       <section id="todays-challenges" className="todays-challenges-section dashboard-focus-section" data-dashboard-focus>
         <div className="section-header-row">
-          <h2>Today's Challenges — Day {currentDay}</h2>
+          <h2>Today's Challenges - Day {currentDay}</h2>
           <div className={`countdown-timer ${timeLeft === 'Deadline Passed' ? 'expired' : ''}`}>
             {timeLeft === 'Deadline Passed' ? 'Submission window has closed.' : <>Window closes in <strong>{timeLeft}</strong></>}
           </div>
@@ -275,6 +210,75 @@ export default function Dashboard() {
           </TiltCard>
           </div>
         </div>
+      </section>
+
+      {/* Heatmap and Streak Section */}
+      <section className="dashboard-streak-section dashboard-focus-section" data-dashboard-focus>
+        <div className="dashboard-hero-right">
+          <StreakGrid
+            currentDay={currentDay}
+            submissions={userSubs}
+            questions={questions}
+            tiltProps={{
+              ref: streakTilt.ref,
+              style: streakTilt.style,
+              onMouseMove: streakTilt.onMouseMove,
+              onMouseLeave: streakTilt.onMouseLeave,
+            }}
+          />
+        </div>
+      </section>
+
+      {/* Overview Stats Section */}
+      <section className="overview-stats-section dashboard-focus-section" data-dashboard-focus>
+        <TiltCard className="stat-card press-card" maxTilt={7}>
+          <div className="stat-label">Event Progress</div>
+          <div className="stat-value">Day {currentDay} <span className="stat-total">/ 100</span></div>
+          <div className="stat-progress-bar-wrapper">
+            <div className="stat-progress-bar progress-animate" style={{ width: `${currentDay}%` }}></div>
+          </div>
+        </TiltCard>
+
+        <TiltCard className="stat-card press-card" maxTilt={7}>
+          <div className="stat-label">LeetCode Streak</div>
+          <div className="stat-value-row">
+            <span className="stat-value">{currentUser.leetCodeStreak}</span>
+            <span className="stat-icon-flame">Days</span>
+          </div>
+          {currentUser.leetCodeStreak === 0 && (
+            <span className="stat-status-alert error">Streak broken - solve today&apos;s LeetCode to restart it.</span>
+          )}
+          {currentUser.leetCodeStreak > 0 && (
+            <span className="stat-status-alert success">Streak is live - keep it going!</span>
+          )}
+        </TiltCard>
+
+        <TiltCard className="stat-card press-card" maxTilt={7}>
+          <div className="stat-label">GitHub Push Streak</div>
+          <div className="stat-value-row">
+            <span className="stat-value">{currentUser.gitHubStreak}</span>
+            <span className="stat-icon-github">Days</span>
+          </div>
+          {currentUser.gitHubStreak === 0 && (
+            <span className="stat-status-alert error">No pushes yet - commit today&apos;s solution to GitHub.</span>
+          )}
+          {currentUser.gitHubStreak > 0 && (
+            <span className="stat-status-alert success">Daily pushes on track!</span>
+          )}
+        </TiltCard>
+
+        <TiltCard className="stat-card press-card ranking" maxTilt={7}>
+          <div className="stat-label">Overall Standing</div>
+          <div className="stat-value">#{overallRank}</div>
+          <div className="ranks-sub-row">
+            <span>Coding: #{codingRank}</span>
+            <span>•</span>
+            <span>Debug: #{debugRank}</span>
+          </div>
+          <button type="button" className="stat-link" onClick={() => navigate('/leaderboards')}>
+            View Leaderboards &rarr;
+          </button>
+        </TiltCard>
       </section>
     </div>
   );

@@ -98,10 +98,10 @@ export default function DistortionBackground() {
         float s2 = fbm(uv * 1.8 + vec2(r, q1) + t * 0.5);
 
         // ── palette ───────────────────────────────────────────────────
-        vec3 col1 = vec3(0.051, 0.051, 0.051);   // #0D0D0D — primary 95% black
-        vec3 col2 = vec3(0.070, 0.078, 0.141);   // #121424 — very dark slate-navy
-        vec3 col3 = vec3(0.078, 0.090, 0.141);   // #141724 — very dark action steel-blue
-        vec3 col4 = vec3(0.090, 0.090, 0.090);   // #171717 — dark charcoal grey
+        vec3 col1 = vec3(0.051, 0.051, 0.051);   // #0D0D0D - primary 95% black
+        vec3 col2 = vec3(0.070, 0.078, 0.141);   // #121424 - very dark slate-navy
+        vec3 col3 = vec3(0.078, 0.090, 0.141);   // #141724 - very dark action steel-blue
+        vec3 col4 = vec3(0.090, 0.090, 0.090);   // #171717 - dark charcoal grey
 
         float mix1 = smoothstep(-0.4, 0.4, r);
         float mix2 = smoothstep(-0.3, 0.5, s2);

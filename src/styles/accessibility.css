@@ -1,4 +1,4 @@
-/* Skip link — Web Interface Guidelines: main content bypass */
+/* Skip link - Web Interface Guidelines: main content bypass */
 .skip-link {
   position: absolute;
   top: -100%;
@@ -35,7 +35,7 @@
   padding-right: 2rem;
 }
 
-/* Navbar hidden — remove from tab order */
+/* Navbar hidden - remove from tab order */
 .navbar-container.navbar-hidden {
   visibility: hidden;
   pointer-events: none;

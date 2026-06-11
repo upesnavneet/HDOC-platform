@@ -88,24 +88,30 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
 
       <div className="previous-day-section" aria-live="polite">
         {activeDayInfo ? (
-          <div className="grid-tooltip-container grid-tooltip-compact grid-tooltip-static">
-            <div className="tooltip-header">
-              <span className="tooltip-day-title">Day {activeDayInfo.day}</span>
-              <span className={`tooltip-status-badge ${activeDayInfo.status.class}`}>
-                {activeDayInfo.status.text}
-              </span>
+          (activeDayInfo.day === currentDay || activeDayInfo.day === currentDay - 1) ? (
+            <div className="grid-tooltip-compact grid-tooltip-static">
+              <div className="tooltip-header">
+                <span className="tooltip-day-title">Day {activeDayInfo.day}</span>
+                <span className={`tooltip-status-badge ${activeDayInfo.status.class}`}>
+                  {activeDayInfo.status.text}
+                </span>
+              </div>
+              <div className="tooltip-body">
+                {activeDayInfo.q ? (
+                  <>
+                    <p className="tooltip-q-item"><strong>LeetCode:</strong> {activeDayInfo.q.titleLc}</p>
+                    <p className="tooltip-q-item"><strong>Custom:</strong> {activeDayInfo.q.titleCustom}</p>
+                  </>
+                ) : (
+                  <p className="tooltip-q-item">Questions scheduled for this day.</p>
+                )}
+              </div>
             </div>
-            <div className="tooltip-body">
-              {activeDayInfo.q ? (
-                <>
-                  <p className="tooltip-q-item"><strong>LeetCode:</strong> {activeDayInfo.q.titleLc}</p>
-                  <p className="tooltip-q-item"><strong>Custom:</strong> {activeDayInfo.q.titleCustom}</p>
-                </>
-              ) : (
-                <p className="tooltip-q-item">Questions scheduled for this day.</p>
-              )}
+          ) : (
+            <div className="previous-day-empty">
+              <p>Locked - No questions available.</p>
             </div>
-          </div>
+          )
         ) : prevDay >= 1 && prevQuestion ? (
           <>
             <div className="previous-day-header">

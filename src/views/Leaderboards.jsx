@@ -20,10 +20,10 @@ export default function Leaderboards() {
             Overall Standings (100 Days)
           </Tabs.Trigger>
           <Tabs.Trigger value="coding" className="tab-btn" activeClassName="active">
-            Coding — Week {currentWeek}
+            Coding - Week {currentWeek}
           </Tabs.Trigger>
           <Tabs.Trigger value="debugging" className="tab-btn" activeClassName="active">
-            Debugging — Week {currentWeek}
+            Debugging - Week {currentWeek}
           </Tabs.Trigger>
         </Tabs.List>
 
@@ -45,7 +45,7 @@ export default function Leaderboards() {
               <tbody>
                 {combinedBoard.length === 0 ? (
                   <tr>
-                    <td colSpan={7}>No rankings yet — scores will appear once challenges are graded.</td>
+                    <td colSpan={7}>No rankings yet - scores will appear once challenges are graded.</td>
                   </tr>
                 ) : combinedBoard.map((row, idx) => {
                   const rankNum = idx + 1;

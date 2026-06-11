@@ -64,7 +64,7 @@ export default function Questions() {
             />
           </div>
 
-          <div 
+          <div
             className="days-horizontal-gallery"
             onWheel={(e) => {
               if (archivedQuestions.length === 0) return;
@@ -89,7 +89,7 @@ export default function Questions() {
                     const activeIndex = archivedQuestions.findIndex(item => item.id === selectedQuestion?.id);
                     const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex;
                     const offset = index - safeActiveIndex;
-                    
+
                     return (
                       <button
                         type="button"
@@ -157,7 +157,7 @@ export default function Questions() {
               <div className="detailed-header">
                 <div className="header-meta">
                   <span className="day-large">DAY {selectedQuestion.day}</span>
-                  <span className="rating-tag">Rating {formatRating(selectedQuestion)}</span>
+                  <span className="rating-tag">RATING {formatRating(selectedQuestion)}</span>
                   {selectedQuestion.isMaster && (
                     <span className="master-challenge-tag">Master Challenge</span>
                   )}

@@ -1,4 +1,4 @@
-// One-time Firestore seeder — populates empty collections on first launch.
+// One-time Firestore seeder - populates empty collections on first launch.
 // Imports the same data shape used by the mock db.js to keep parity.
 
 import { db as firestoreDb } from '../firebaseConfig';
@@ -212,7 +212,7 @@ export async function seedFirestoreIfEmpty() {
       return false;
     }
 
-    console.log('[Seed] Empty Firestore detected — seeding initial data...');
+    console.log('[Seed] Empty Firestore detected - seeding initial data...');
 
     // 1. Seed system config at Day 8 so past debugging challenges are visible
     await setDoc(doc(firestoreDb, 'system', 'config'), {

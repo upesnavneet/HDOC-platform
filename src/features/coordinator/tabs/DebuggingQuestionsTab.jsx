@@ -134,7 +134,7 @@ export default function DebuggingQuestionsTab() {
             ) : (
               existingChallenges.map((c) => (
                 <option key={c.id} value={c.week}>
-                  Week {c.week} — {c.theme}
+                  Week {c.week} - {c.theme}
                 </option>
               ))
             )}

@@ -1,5 +1,5 @@
 /**
- * Visual polish — Impeccable anti-patterns + UI/UX Pro Max (gamified edu-tech dashboard)
+ * Visual polish - Impeccable anti-patterns + UI/UX Pro Max (gamified edu-tech dashboard)
  * Product: competitive coding challenge platform · dark tech · ACM orange/blue identity
  */
 
@@ -42,8 +42,7 @@ h1 {
 }
 
 /* ── Global interaction quality (UI/UX Pro Max checklist) ── */
-:where(
-  a,
+:where(a,
   button,
   [role='button'],
   .nav-item,
@@ -53,26 +52,22 @@ h1 {
   .gallery-day-card,
   .user-avatar-text,
   .user-name-text,
-  .navbar-brand-block
-) {
+  .navbar-brand-block) {
   cursor: pointer;
 }
 
-:where(
-  a,
+:where(a,
   button,
   input,
   select,
   textarea,
   .nav-item,
   .tab-btn,
-  .coord-tab
-):focus {
+  .coord-tab):focus {
   outline: none;
 }
 
-:where(
-  a,
+:where(a,
   button,
   input,
   select,
@@ -83,8 +78,7 @@ h1 {
   .hero-btn,
   .auth-action-btn,
   .small-action-btn,
-  .navbar-hamburger
-):focus-visible {
+  .navbar-hamburger):focus-visible {
   box-shadow: var(--focus-ring);
   outline: none;
 }
@@ -123,7 +117,7 @@ h1 {
   justify-content: center;
 }
 
-/* ── Navigation — remove side-tab border slop (Impeccable) ── */
+/* ── Navigation - remove side-tab border slop (Impeccable) ── */
 .nav-item {
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
@@ -154,7 +148,7 @@ h1 {
   border-color: rgba(110, 172, 218, 0.3);
 }
 
-/* ── Cards — soften harsh zero-radius without card nesting slop ── */
+/* ── Cards - soften harsh zero-radius without card nesting slop ── */
 .press-card,
 .stat-card,
 .streak-grid-wrapper,
@@ -170,7 +164,7 @@ h1 {
   border-radius: var(--radius-md);
 }
 
-/* ── Primary CTA — ACM orange accent, not generic purple gradient ── */
+/* ── Primary CTA - ACM orange accent, not generic purple gradient ── */
 .auth-action-btn {
   background: rgba(226, 226, 182, 0.12);
   border-color: rgba(226, 226, 182, 0.45);
@@ -199,7 +193,7 @@ h1 {
   color: var(--color-white);
 }
 
-/* ── Tabs — clearer active state, adequate spacing ── */
+/* ── Tabs - clearer active state, adequate spacing ── */
 .leaderboard-tabs-bar {
   gap: var(--space-2);
   padding: var(--space-2);
@@ -227,7 +221,7 @@ h1 {
   color: var(--color-light-blue);
 }
 
-/* ── Forms — readable inputs, visible focus ── */
+/* ── Forms - readable inputs, visible focus ── */
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -251,7 +245,7 @@ h1 {
   border-radius: var(--radius-sm);
 }
 
-/* ── Tables — row hover + readable density ── */
+/* ── Tables - row hover + readable density ── */
 .leaderboard-table tbody tr,
 .admin-table tbody tr {
   transition: background var(--transition-fast);
@@ -265,6 +259,7 @@ h1 {
 
 /* ── Accessibility: respect motion preferences ── */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -348,15 +343,266 @@ h1 {
   min-height: var(--touch-min);
 }
 
-/* Tinted overlay — not pure black (Impeccable) */
+/* Tinted overlay - not pure black (Impeccable) */
 .coord-profile-modal {
   background: rgba(9, 12, 40, 0.82);
   backdrop-filter: blur(4px);
 }
 
-/* Flatter problem sections — avoid nested card-in-card */
-.problem-section-body {
-  background: transparent;
-  border: 1px solid var(--border-subtle);
+/* ─── Challenges/Daily Questions Section Overrides ─── */
+.problem-section-card-stack {
+  background: #303841 !important;
+}
+
+.problem-section-card-stack:hover {
+  background: #303841 !important;
+}
+
+.problem-section-card-stack .problem-section-body {
+  background: #3A4750 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   padding: var(--space-4);
 }
+
+.problem-section-card-stack,
+.problem-section-card-stack .section-card-title,
+.problem-section-card-stack .section-subtitle,
+.problem-section-card-stack .problem-text,
+.problem-section-card-stack .example-text,
+.problem-section-card-stack .section-header-tag,
+.problem-section-card-stack .open-problem-btn {
+  color: #F3F3F3 !important;
+}
+
+.archive-bottom-details-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.archive-top-gallery-panel {
+  background: #303841 !important;
+}
+
+.gallery-day-card {
+  background: #3A4750 !important;
+}
+
+.gallery-day-card.active {
+  background: #3A4750 !important;
+  border-color: #2185D5 !important;
+  box-shadow: 0 0 20px rgba(33, 133, 213, 0.6) !important;
+}
+
+.gallery-day-card:hover {
+  background: #3A4750 !important;
+}
+
+.archive-top-gallery-panel,
+.archive-top-gallery-panel *,
+.gallery-day-card,
+.gallery-day-card * {
+  color: #F3F3F3 !important;
+}
+
+.filter-controls-card-compact {
+  background: #3A4750 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Day and Rating badge backgrounds & unified styles */
+.day-large,
+.rating-tag {
+  background: #2185D5 !important;
+  color: #F3F3F3 !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  padding: 0.2rem 0.6rem !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.05em !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  display: inline-block !important;
+}
+
+.day-card-rating {
+  background: #2185D5 !important;
+  color: #F3F3F3 !important;
+}
+
+.day-card-today-badge {
+  background: #2185D5 !important;
+  color: #FFFFFF !important;
+}
+
+/* Scroller elements styling */
+.gallery-custom-scrollbar::-webkit-slider-thumb {
+  background: #2185D5 !important;
+}
+
+.gallery-custom-scrollbar {
+  background: rgba(33, 133, 213, 0.2) !important;
+}
+
+/* Ensure Poppins font on the entire challenge page */
+.questions-container,
+.questions-container * {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+/* ─── Debug Section Overrides ─── */
+.active-debug-card {
+  background: #303841 !important;
+}
+.active-debug-card:hover {
+  background: #303841 !important;
+}
+
+.rule-card,
+.past-challenge-row,
+.active-debug-card .editor-block,
+.active-debug-card .editor-tab,
+.active-debug-card .grading-feedback-box,
+.active-debug-card .alert-notice,
+.active-debug-card .week-tag {
+  background: #3A4750 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.active-debug-card input {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #F3F3F3 !important;
+}
+
+.active-debug-card,
+.active-debug-card *,
+.past-challenges-list,
+.past-challenges-list * {
+  color: #F3F3F3 !important;
+}
+
+.active-debug-card .card-top-tag {
+  background: #2185D5 !important;
+  color: #F3F3F3 !important;
+}
+
+.lock-illustration {
+  background: #2185D5 !important;
+  color: #F3F3F3 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.week-tag {
+  background: #2185D5 !important;
+  color: #F3F3F3 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.past-challenge-row .outcome-missed {
+  color: #ff8a80 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* ─── Profile Section Overrides ─── */
+.profile-hero-card,
+.profile-container .table-responsive-container {
+  background: #303841 !important;
+}
+
+.profile-container .metric-box,
+.profile-container .highlight-metric,
+.profile-container .github-heatmap-section,
+.profile-container .handle-tag,
+.profile-container .editor-block,
+.profile-container .challenge-type-tag {
+  background: #3A4750 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.profile-container input {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #F3F3F3 !important;
+}
+
+.profile-container,
+.profile-container * {
+  color: #F3F3F3 !important;
+}
+
+.profile-container .history-table thead,
+.profile-container .history-table th {
+  background-color: #2185D5 !important;
+  color: #F3F3F3 !important;
+}
+
+.profile-avatar {
+  background-color: #2185D5 !important;
+}
+
+/* ─── Leaderboards Section Overrides ─── */
+.leaderboards-container .table-responsive-container,
+.leaderboards-container .leaderboard-tabs-bar {
+  background: #303841 !important;
+}
+
+.leaderboards-container .leaderboard-table thead,
+.leaderboards-container .leaderboard-table th {
+  background-color: #2185D5 !important;
+  color: #F3F3F3 !important;
+}
+
+.leaderboards-container,
+.leaderboards-container * {
+  color: #F3F3F3 !important;
+}
+
+.leaderboard-tabs-bar .tab-btn {
+  background: #3A4750 !important;
+  color: #F3F3F3 !important;
+  margin: 0 4px !important;
+}
+
+.leaderboard-tabs-bar .tab-btn.active {
+  background: #2185D5 !important;
+  color: #F3F3F3 !important;
+  box-shadow: none !important;
+}
+
+.h-tag {
+  background-color: #2185D5 !important;
+  border-color: #2185D5 !important;
+  color: #F3F3F3 !important;
+}
+
+.rank-badge {
+  background-color: #3A4750 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #F3F3F3 !important;
+}
+
+.streak-badge {
+  background-color: #3A4750 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #F3F3F3 !important;
+}
+
+.badge-status.missed {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #F3F3F3 !important;
+  border: none !important;
+}
+
+/* ─── Dashboard Heatmap Padding ─── */
+.streak-grid-compact {
+  padding: 4px !important;
+}
+
+.streak-grid-compact .grid-container-compact {
+  margin: 0 auto 1.25rem auto !important;
+  padding: 0 !important;
+}

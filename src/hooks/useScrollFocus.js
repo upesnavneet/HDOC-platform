@@ -7,7 +7,7 @@ function prefersReducedMotion() {
 }
 
 /**
- * Highlights the dashboard section nearest the viewport — opacity only, no blur (a11y).
+ * Highlights the dashboard section nearest the viewport - opacity only, no blur (a11y).
  */
 export function useVerticalSectionFocus() {
   const ref = useRef(null);

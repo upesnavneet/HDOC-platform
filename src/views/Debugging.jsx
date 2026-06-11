@@ -125,7 +125,7 @@ export default function Debugging() {
             <div className="workspace-header">
               <div className="theme-info">
                 <span className="week-label">Week {activeChallenge.week} Sunday Special</span>
-                <h2>Week {activeChallenge.week} — {activeChallenge.theme}</h2>
+                <h2>Week {activeChallenge.week} - {activeChallenge.theme}</h2>
               </div>
               <div className="timer-badge">{countdown}</div>
             </div>
@@ -218,7 +218,7 @@ export default function Debugging() {
         <h2>Past Challenges</h2>
         <div className="past-challenges-list">
           {pastChallenges.length === 0 ? (
-            <div className="no-past-challenges">No past challenges yet — completed ones will appear here.</div>
+            <div className="no-past-challenges">No past challenges yet - completed ones will appear here.</div>
           ) : (
             pastChallenges.map((c) => {
               const mySub = c.submissions?.find((s) => s.userId === userId);
