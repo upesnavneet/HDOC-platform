@@ -1935,10 +1935,11 @@ button {
 }
 
 .challenge-card {
-  background: rgba(48, 56, 65, 0.95);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(243, 243, 243, 0.15) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3;
   border-radius: 0;
   overflow: hidden;
@@ -5363,10 +5364,11 @@ button {
 
 /* Stack Cards */
 .problem-section-card-stack {
-  background: rgba(10, 10, 10, 0.75);
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(243, 243, 243, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   border-radius: 12px;
   padding: 20px;
   transition: border-color 0.3s ease, background 0.3s ease;

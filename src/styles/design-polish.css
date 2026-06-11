@@ -669,13 +669,13 @@ body {
 /* Global rule overrides for cards (sitting on page or inside panels) */
 .metric-card,
 .redesigned-challenge-card {
-  background: rgba(48, 56, 65, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
+  border: 1px solid rgba(243, 243, 243, 0.15) !important;
   border-radius: 6px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
 }
 
 .previous-day-section {
@@ -785,13 +785,13 @@ body {
 }
 
 .redesigned-challenge-card-unified {
-  background: rgba(48, 56, 65, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  background: linear-gradient(135deg, rgba(58, 71, 80, 0.55), rgba(48, 56, 65, 0.55)) !important;
+  border: 1px solid rgba(243, 243, 243, 0.15) !important;
   border-radius: 8px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   padding: 1.5rem !important;
   margin-bottom: 1.5rem;
 }
