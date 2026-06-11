@@ -10,11 +10,13 @@ import DebuggingQuestionsTab from './tabs/DebuggingQuestionsTab';
 import WeeksTab from './tabs/WeeksTab';
 import SubmissionsTab from './tabs/SubmissionsTab';
 import MagicBento from '../../components/MagicBento';
+import { updateSystemConfig } from '../../services/completionService';
 
 export default function CoordinatorDashboard() {
   const { db } = useApp();
   const [activeTab, setActiveTab] = useState('overview');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAdvancing, setIsAdvancing] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +33,25 @@ export default function CoordinatorDashboard() {
   );
 
   const currentDay = db.currentDay;
+
+  const handleAdvanceDay = async () => {
+    if (!window.confirm(`Advance day from Day ${currentDay} to Day ${currentDay + 1}?`)) {
+      return;
+    }
+    setIsAdvancing(true);
+    try {
+      await updateSystemConfig({
+        currentDay: currentDay + 1,
+        simulatedTime: db.simulatedTime,
+        completedWeeks: db.completedWeeks,
+      });
+    } catch (error) {
+      console.error('Failed to advance day:', error);
+      alert('Failed to advance day. Please try again.');
+    } finally {
+      setIsAdvancing(false);
+    }
+  };
 
   const stats = useMemo(() => {
     const todaySubs = db.submissions.filter(
@@ -140,7 +161,16 @@ return (
 
       <div className="coordinator-dashboard-container">
         <div className="page-header">
-          <h1>Coordinator Dashboard</h1>
+          <div className="header-top">
+            <h1>Coordinator Dashboard</h1>
+            <button
+              className="advance-day-btn"
+              onClick={handleAdvanceDay}
+              disabled={isAdvancing}
+            >
+              {isAdvancing ? 'Advancing...' : `Advance to Day ${currentDay + 1}`}
+            </button>
+          </div>
           <p className="subtitle">Manage participants, schedule challenges, and track weekly completion.</p>
         </div>
 
