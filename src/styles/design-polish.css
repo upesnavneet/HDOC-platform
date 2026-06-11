@@ -501,7 +501,7 @@ h1 {
 }
 
 .past-challenge-row .outcome-missed {
-  color: #ff8a80 !important;
+  color: #F3F3F3 !important;
   text-shadow: none !important;
   box-shadow: none !important;
   filter: none !important;
@@ -599,10 +599,44 @@ h1 {
 
 /* ─── Dashboard Heatmap Padding ─── */
 .streak-grid-compact {
-  padding: 4px !important;
+  padding: 20px !important;
+  max-width: 820px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .streak-grid-compact .grid-container-compact {
   margin: 0 auto 1.25rem auto !important;
-  padding: 0 !important;
-}
+  padding: 6px !important;
+  grid-template-columns: repeat(20, 1fr) !important;
+  grid-auto-rows: auto !important;
+  width: 100% !important;
+}
+
+.streak-grid-compact .grid-cell-compact {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  min-height: 0 !important;
+}
+
+/* Glass morphism match with navbar (.nav-pill) */
+.hero-panel-deep {
+  background: rgba(48, 56, 65, 0.6) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(243, 243, 243, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.hero-panel-deep:hover {
+  background: rgba(48, 56, 65, 0.6) !important;
+}
+
+/* Style Solve on LeetCode button */
+.problem-section-card-stack .open-problem-btn {
+  background-color: #3A4750 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+
