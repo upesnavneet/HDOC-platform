@@ -82,7 +82,7 @@ export default function Questions() {
 
       <div className="archive-vertical-layout">
         <div className="archive-top-gallery-panel">
-          <div className="filter-controls-card-compact">
+          <div className="filter-controls-card-compact" style={{ marginBottom: '2rem' }}>
             <label htmlFor="day-search" className="sr-only">Search by day number</label>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="search-icon-svg" aria-hidden="true" focusable="false">
               <circle cx="11" cy="11" r="8"></circle>
@@ -98,92 +98,6 @@ export default function Questions() {
               className="search-input-compact"
             />
           </div>
-
-          <div
-            className="days-horizontal-gallery"
-            onWheel={(e) => {
-              if (archivedQuestions.length === 0) return;
-              const currentIndex = archivedQuestions.findIndex(q => q.id === selectedQuestion?.id);
-              if (currentIndex === -1) return;
-              if (e.deltaY > 0) {
-                if (currentIndex < archivedQuestions.length - 1) setManualSelection(archivedQuestions[currentIndex + 1]);
-              } else {
-                if (currentIndex > 0) setManualSelection(archivedQuestions[currentIndex - 1]);
-              }
-            }}
-          >
-            {archivedQuestions.length === 0 ? (
-              <div className="no-results-compact">No days match your filter criteria.</div>
-            ) : (
-              <div className="circular-gallery-wrapper">
-                <div className="circular-gallery-container">
-                  {archivedQuestions.map((q, index) => {
-                    const isToday = q.day === currentDay;
-                    const isMaster = q.isMaster || q.day >= 99;
-                    const isSelected = selectedQuestion?.id === q.id;
-                    const activeIndex = archivedQuestions.findIndex(item => item.id === selectedQuestion?.id);
-                    const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex;
-                    const offset = index - safeActiveIndex;
-
-                    return (
-                      <button
-                        type="button"
-                        key={q.id}
-                        className={`gallery-day-card circular-item ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
-                        onClick={() => setManualSelection(q)}
-                        aria-pressed={isSelected}
-                        aria-label={`Day ${q.day}, ${q.titleLc}, ${q.titleCustom}${isToday ? ', today' : ''}`}
-                        style={{
-                          transform: `translateX(${offset * 115}%) translateZ(${Math.abs(offset) * -100}px) rotateY(${offset * -18}deg)`,
-                          zIndex: 100 - Math.abs(offset),
-                          opacity: Math.abs(offset) > 4 ? 0 : 1,
-                          pointerEvents: Math.abs(offset) > 2 ? 'none' : 'auto',
-                          visibility: Math.abs(offset) > 4 ? 'hidden' : 'visible'
-                        }}
-                      >
-                        <div className="day-card-header">
-                          <span className="day-card-number">Day {q.day}</span>
-                          {isToday && <span className="day-card-today-badge">TODAY</span>}
-                          {isMaster && <span className="day-card-master-badge">★</span>}
-                        </div>
-                        <div className="day-card-body">
-                          <div className="day-card-titles">
-                            <span className="day-card-title-lc">{q.titleLc}</span>
-                            <span className="day-card-title-custom">{q.titleCustom}</span>
-                          </div>
-                          <div className="day-card-footer">
-                            <span className="day-card-rating">Rating {formatRating(q)}</span>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {archivedQuestions.length > 0 && (
-            <div className="gallery-scrollbar-container">
-              <input
-                type="range"
-                className="gallery-custom-scrollbar"
-                min="0"
-                max={archivedQuestions.length - 1}
-                step="0.01"
-                value={smoothScrollValue}
-                onChange={(e) => {
-                  const rawVal = parseFloat(e.target.value);
-                  setSmoothScrollValue(rawVal);
-                  const newIndex = Math.round(rawVal);
-                  if (newIndex >= 0 && newIndex < archivedQuestions.length) {
-                    setManualSelection(archivedQuestions[newIndex]);
-                  }
-                }}
-                aria-label="Scroll through daily challenges"
-              />
-            </div>
-          )}
         </div>
 
         <div className="archive-bottom-details-panel">
@@ -248,7 +162,7 @@ export default function Questions() {
                 </div>
 
                 {/* GitHub Submission Form */}
-                <div className="github-submission-section" style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(243, 243, 243, 0.08)' }}>
+                <div className="github-submission-section" style={{ gridColumn: '1 / -1', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(243, 243, 243, 0.08)' }}>
                   <h4 className="section-card-title" style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Submit Your Code</h4>
                   <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                     <input

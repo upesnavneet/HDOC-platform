@@ -5330,10 +5330,16 @@ button {
 }
 
 .detailed-body-vertical-scroll {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   padding-right: 8px;
+}
+
+@media (max-width: 900px) {
+  .detailed-body-vertical-scroll {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Normal scrollbar for bottom details */
@@ -5357,8 +5363,10 @@ button {
 
 /* Stack Cards */
 .problem-section-card-stack {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 20px;
   transition: border-color 0.3s ease, background 0.3s ease;
