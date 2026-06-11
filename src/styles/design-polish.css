@@ -344,19 +344,7 @@ h1 {
 }
 
 /* ─── Challenges/Daily Questions Section Overrides ─── */
-.problem-section-card-stack {
-  background: #303841 !important;
-}
-
-.problem-section-card-stack:hover {
-  background: #303841 !important;
-}
-
-.problem-section-card-stack .problem-section-body {
-  background: #3A4750 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  padding: var(--space-4);
-}
+/* Removed solid background overrides so glassmorphism from index.css works */
 
 .problem-section-card-stack,
 .problem-section-card-stack .section-card-title,
@@ -376,7 +364,7 @@ h1 {
 }
 
 .archive-top-gallery-panel {
-  background: #303841 !important;
+  background: transparent !important;
 }
 
 .gallery-day-card {
@@ -610,14 +598,15 @@ body {
 
 /* Global rule overrides for cards (sitting on page or inside panels) */
 .metric-card,
-.redesigned-challenge-card {
+.redesigned-challenge-card,
+.redesigned-challenge-card-unified {
   background: rgba(48, 56, 65, 0.6) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   border-radius: 6px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
 }
 
 .previous-day-section {
@@ -732,8 +721,8 @@ body {
   border-radius: 8px !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
   color: #F3F3F3 !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
   padding: 1.5rem !important;
   margin-bottom: 1.5rem;
 }
@@ -831,6 +820,7 @@ body {
   cursor: pointer;
   font-size: 0.875rem;
   font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
 .solve-button-new:hover {

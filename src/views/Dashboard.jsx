@@ -15,9 +15,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { db, currentUser, submitCommitUrl } = useApp();
   const [timeLeft, setTimeLeft] = useState('');
-  const [commitUrl, setCommitUrl] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMsg, setSubmitMsg] = useState('');
+
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -84,38 +82,7 @@ export default function Dashboard() {
 
   const finishRate = calculateFinishRate(userSubs, currentDay);
 
-  // Handle GitHub commit submission
-  const handleCommitSubmit = async (e) => {
-    e.preventDefault();
-    if (!commitUrl.trim()) {
-      setSubmitMsg('Please enter a GitHub commit URL');
-      return;
-    }
-    // Validate GitHub commit URL format: github.com/user/repo/commit/abc123
-    const commitUrlPattern = /^https?:\/\/github\.com\/[\w-]+\/[\w-]+\/commit\/[a-f0-9]{7,40}(\?.*)?$/i;
-    if (!commitUrlPattern.test(commitUrl.trim())) {
-      setSubmitMsg('Please enter a valid GitHub commit URL (github.com/user/repo/commit/abc123)');
-      return;
-    }
 
-    setIsSubmitting(true);
-    setSubmitMsg('');
-
-    try {
-      const result = await submitCommitUrl(currentDay, commitUrl.trim());
-      if (result.success) {
-        setCommitUrl('');
-        setSubmitMsg('Submitted successfully!');
-      } else {
-        setSubmitMsg(result.message || 'Failed to submit. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error submitting commit:', error);
-      setSubmitMsg('Failed to submit. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const streakTilt = useTiltCard(5);
   const dashboardFocusRef = useVerticalSectionFocus();
@@ -308,28 +275,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* GitHub Submission Form */}
-              <div className="github-submission-section" style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(243, 243, 243, 0.08)' }}>
-                <h4 className="challenge-title-new" style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Submit Your Code</h4>
-                <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <input
-                    type="url"
-                    placeholder="https://github.com/user/repo/commit/..."
-                    value={commitUrl}
-                    onChange={(e) => setCommitUrl(e.target.value)}
-                    required
-                    style={{ flex: 1, minWidth: '200px', padding: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(0, 0, 0, 0.2)', color: '#F3F3F3', fontFamily: 'inherit' }}
-                  />
-                  <button type="submit" disabled={isSubmitting} className="solve-button-new" style={{ width: 'auto', minWidth: '150px' }}>
-                    {isSubmitting ? 'Submitting...' : 'Submit Commit'}
-                  </button>
-                </form>
-                {submitMsg && (
-                  <p style={{ marginTop: '0.75rem', color: submitMsg.includes('successfully') ? '#4caf50' : '#f44336', fontSize: '0.875rem', fontWeight: '500' }}>
-                    {submitMsg}
-                  </p>
-                )}
-              </div>
+
             </section>
 
             {/* Heatmap Section */}
