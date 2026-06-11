@@ -338,12 +338,9 @@ export default function Dashboard() {
               submissions={userSubs}
               questions={questions}
             />
-          </div>
 
-          {/* Right Column (Side Area) */}
-          <div className="dashboard-side-col">
             {/* Recent Activity Timeline Widget */}
-            <div className="redesigned-timeline-panel">
+            <div className="redesigned-timeline-panel" style={{ marginTop: '1.5rem' }}>
               <h3 className="redesigned-section-header">
                 <span className="section-heading-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h4l3 8l4 -16l3 8h4" /></svg>
@@ -392,7 +389,10 @@ export default function Dashboard() {
                 })}
               </div>
             </div>
+          </div>
 
+          {/* Right Column (Side Area) */}
+          <div className="dashboard-side-col">
             {/* Leaderboard Widget */}
             <div className="redesigned-leaderboard-panel">
               <h3 className="redesigned-section-header">
