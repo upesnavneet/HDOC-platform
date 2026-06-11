@@ -552,8 +552,8 @@ h1 {
 
 .leaderboards-container .leaderboard-table thead,
 .leaderboards-container .leaderboard-table th {
-  background-color: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background-color: #F3F3F3 !important;
+  color: #303841 !important;
 }
 
 .leaderboards-container,
@@ -568,15 +568,15 @@ h1 {
 }
 
 .leaderboard-tabs-bar .tab-btn.active {
-  background: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background: #F3F3F3 !important;
+  color: #303841 !important;
   box-shadow: none !important;
 }
 
 .h-tag {
-  background-color: #2185D5 !important;
-  border-color: #2185D5 !important;
-  color: #F3F3F3 !important;
+  background-color: #F3F3F3 !important;
+  border-color: #F3F3F3 !important;
+  color: #303841 !important;
 }
 
 .rank-badge {
@@ -1102,8 +1102,8 @@ body {
 }
 
 .leaderboard-row.current-user {
-  border-left: 2px solid #2185D5 !important;
-  background: rgba(33, 133, 213, 0.07) !important;
+  border-left: 2px solid #F3F3F3 !important;
+  background: rgba(243, 243, 243, 0.07) !important;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -1122,8 +1122,8 @@ body {
   height: 32px;
   border-radius: 50%;
   background: #3A4750 !important;
-  color: #2185D5 !important;
-  border: 1px solid rgba(33, 133, 213, 0.4) !important;
+  color: #F3F3F3 !important;
+  border: 1px solid rgba(243, 243, 243, 0.4) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1160,14 +1160,14 @@ body {
 
 .leaderboard-bar {
   height: 100%;
-  background: #2185D5 !important;
+  background: #F3F3F3 !important;
   border-radius: 2px;
 }
 
 .leaderboard-score {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #2185D5 !important;
+  color: #F3F3F3 !important;
   font-family: 'JetBrains Mono', monospace;
   text-align: right;
   flex-shrink: 0;
@@ -1177,7 +1177,7 @@ body {
   display: inline-block;
   margin-top: 1rem;
   font-size: 0.85rem;
-  color: #2185D5 !important;
+  color: #F3F3F3 !important;
   text-decoration: none;
   font-weight: 600;
 }
