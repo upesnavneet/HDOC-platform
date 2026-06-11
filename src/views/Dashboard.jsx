@@ -83,10 +83,10 @@ export default function Dashboard() {
       setSubmitMsg('Please enter a GitHub commit URL');
       return;
     }
-    // Validate GitHub commit URL format: github.com/user/repo/commit/abc123
-    const commitUrlPattern = /^https?:\/\/github\.com\/[\w-]+\/[\w-]+\/commit\/[a-f0-9]{7,40}(\?.*)?$/i;
+    // Validate GitHub commit URL for specific repo: upesacm/100DaysOfCode-2026
+    const commitUrlPattern = /^https?:\/\/github\.com\/upesacm\/100DaysOfCode-2026\/commit\/[a-f0-9]{7,40}(\?.*)?$/i;
     if (!commitUrlPattern.test(commitUrl.trim())) {
-      setSubmitMsg('Please enter a valid GitHub commit URL (github.com/user/repo/commit/abc123)');
+      setSubmitMsg('Please enter a valid commit URL from upesacm/100DaysOfCode-2026 repository');
       return;
     }
 
@@ -235,7 +235,7 @@ export default function Dashboard() {
                           type="text"
                           value={commitUrl}
                           onChange={(e) => setCommitUrl(e.target.value)}
-                          placeholder="Paste your GitHub commit URL here..."
+                          placeholder="Paste commit URL from upesacm/100DaysOfCode-2026..."
                           className="commit-url-input"
                         />
                         <button
