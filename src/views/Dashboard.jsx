@@ -254,56 +254,61 @@ export default function Dashboard() {
           {/* Left Column (Main Area) */}
           <div className="dashboard-main-col">
             {/* ── Today's Coding Challenges ── */}
-            <div className="dashboard-challenges-stack">
-              {/* Challenge 1: LeetCode */}
-              <div className="dashboard-challenge-card">
-                <div className="challenge-card-header">
-                  <span className="challenge-type-tag">LeetCode Challenge · Day {currentDay}</span>
-                  <span className="xp-badge">
-                    {todayLcQ?.difficulty === 'Easy' ? '100 XP' : todayLcQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
-                  </span>
+            <div className="redesigned-challenge-card-unified" id="todays-challenges">
+              <h3 className="redesigned-section-header">Today's Challenges - Day {currentDay}</h3>
+              <div className="unified-challenge-content">
+                {/* Challenge 1: LeetCode */}
+                <div className="challenge-question-block">
+                  <div className="challenge-card-header">
+                    <span className="challenge-type-tag">LEETCODE CHALLENGE</span>
+                    <span className="xp-badge">
+                      {todayLcQ?.difficulty === 'Easy' ? '100 XP' : todayLcQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
+                    </span>
+                  </div>
+                  {todayLcQ ? (
+                    <>
+                      <h4 className="challenge-title-new">{todayLcQ.titleLc}</h4>
+                      <p className="challenge-desc-new">{todayLcQ.descLc}</p>
+                    </>
+                  ) : (
+                    <p className="challenge-desc-new">Today's LeetCode challenge hasn't been posted yet. Check back soon.</p>
+                  )}
+                  {todayLcQ && (
+                    <a href={todayLcQ.linkLc} target="_blank" rel="noopener noreferrer" className="solve-button-new">
+                      Solve on LeetCode &rarr;
+                    </a>
+                  )}
                 </div>
-                {todayLcQ ? (
-                  <>
-                    <h4 className="challenge-title-new">{todayLcQ.titleLc}</h4>
-                    <p className="challenge-desc-new">{todayLcQ.descLc}</p>
-                  </>
-                ) : (
-                  <p className="challenge-desc-new">Today's LeetCode challenge hasn't been posted yet. Check back soon.</p>
-                )}
-                {todayLcQ && (
-                  <a href={todayLcQ.linkLc} target="_blank" rel="noopener noreferrer" className="solve-button-new">
-                    Solve on LeetCode &rarr;
-                  </a>
-                )}
-              </div>
 
-              {/* Challenge 2: Custom DSA */}
-              <div className="dashboard-challenge-card">
-                <div className="challenge-card-header">
-                  <span className="challenge-type-tag">Custom DSA Challenge · Day {currentDay}</span>
-                  <span className="xp-badge">
-                    {todayCustomQ?.difficulty === 'Easy' ? '100 XP' : todayCustomQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
-                  </span>
+                <div className="challenge-divider-horizontal"></div>
+
+                {/* Challenge 2: Custom DSA */}
+                <div className="challenge-question-block">
+                  <div className="challenge-card-header">
+                    <span className="challenge-type-tag">CUSTOM DSA CHALLENGE</span>
+                    <span className="xp-badge">
+                      {todayCustomQ?.difficulty === 'Easy' ? '100 XP' : todayCustomQ?.difficulty === 'Medium' ? '250 XP' : '500 XP'}
+                    </span>
+                  </div>
+                  {todayCustomQ ? (
+                    (() => {
+                      const { explanation } = parseChallengeContent(todayCustomQ.descCustom);
+                      return (
+                        <>
+                          <h4 className="challenge-title-new">{todayCustomQ.titleCustom}</h4>
+                          <p className="challenge-desc-new">{explanation}</p>
+                        </>
+                      );
+                    })()
+                  ) : (
+                    <p className="challenge-desc-new">Today's custom DSA challenge hasn't been posted yet. Check back soon.</p>
+                  )}
+                  {todayCustomQ && (
+                    <button type="button" onClick={() => navigate('/questions')} className="solve-button-new">
+                      Solve Challenge &rarr;
+                    </button>
+                  )}
                 </div>
-                {todayCustomQ ? (
-                  (() => {
-                    const { explanation } = parseChallengeContent(todayCustomQ.descCustom);
-                    return (
-                      <>
-                        <h4 className="challenge-title-new">{todayCustomQ.titleCustom}</h4>
-                        <p className="challenge-desc-new">{explanation}</p>
-                      </>
-                    );
-                  })()
-                ) : (
-                  <p className="challenge-desc-new">Today's custom DSA challenge hasn't been posted yet. Check back soon.</p>
-                )}
-                {todayCustomQ && (
-                  <button type="button" onClick={() => navigate('/questions')} className="solve-button-new">
-                    Solve Challenge &rarr;
-                  </button>
-                )}
               </div>
             </div>
 
