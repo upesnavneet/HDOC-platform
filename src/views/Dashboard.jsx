@@ -227,11 +227,11 @@ export default function Dashboard() {
               <span className="hero-stat-num">
                 {db.users.filter((u) => u.role !== 'admin').length}
               </span>
-              <span className="hero-stat-label">Active Now</span>
+              <span className="hero-stat-label">Total participants</span>
             </div>
             <div className="hero-stat">
-              <span className="hero-stat-num">{finishRate}%</span>
-              <span className="hero-stat-label">Finish Rate</span>
+              <span className="hero-stat-num">{Math.min(currentDay, 100)}/100</span>
+              <span className="hero-stat-label">Day Counter</span>
             </div>
           </div>
         </div>
@@ -272,7 +272,7 @@ export default function Dashboard() {
               </svg>
             </div>
             <div className="metric-card-content">
-              <span className="metric-card-label">Global Standing</span>
+              <span className="metric-card-label">Leaderboard Rank</span>
               <span className="metric-card-value">#{overallRank}</span>
             </div>
           </div>
@@ -347,13 +347,6 @@ export default function Dashboard() {
                 <div className="challenge-question-block">
                   <div className="challenge-card-header">
                     <span className="challenge-type-tag">LeetCode Challenge</span>
-                    <span className="xp-badge">
-                      {todayLcQ?.difficulty === 'Easy'
-                        ? '100 XP'
-                        : todayLcQ?.difficulty === 'Medium'
-                          ? '250 XP'
-                          : '500 XP'}
-                    </span>
                   </div>
                   {todayLcQ ? (
                     <>
@@ -382,13 +375,6 @@ export default function Dashboard() {
                 <div className="challenge-question-block">
                   <div className="challenge-card-header">
                     <span className="challenge-type-tag">Custom DSA Challenge</span>
-                    <span className="xp-badge">
-                      {todayCustomQ?.difficulty === 'Easy'
-                        ? '100 XP'
-                        : todayCustomQ?.difficulty === 'Medium'
-                          ? '250 XP'
-                          : '500 XP'}
-                    </span>
                   </div>
                   {todayCustomQ ? (
                     (() => {
@@ -567,7 +553,6 @@ export default function Dashboard() {
                             />
                           </div>
                         </div>
-                        <span className="leaderboard-score">{user.totalCodingScore} XP</span>
                       </div>
                     );
                   });
