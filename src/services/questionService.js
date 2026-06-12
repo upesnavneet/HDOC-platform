@@ -7,7 +7,7 @@ const QUESTIONS_COLLECTION = 'questions';
 
 export const addOrUpdateQuestion = async (dayNum, questionData) => {
   try {
-    const docId = `q-${dayNum}`;
+    const docId = `day-${dayNum}`;
     const docRef = doc(db, QUESTIONS_COLLECTION, docId);
     const fullData = {
       id: docId,
@@ -24,7 +24,7 @@ export const addOrUpdateQuestion = async (dayNum, questionData) => {
 
 export const deleteQuestion = async (dayNum) => {
   try {
-    const docRef = doc(db, QUESTIONS_COLLECTION, `q-${dayNum}`);
+    const docRef = doc(db, QUESTIONS_COLLECTION, `day-${dayNum}`);
     await deleteDoc(docRef);
   } catch (error) {
     logError(`Error deleting question for Day ${dayNum}:`, error);
