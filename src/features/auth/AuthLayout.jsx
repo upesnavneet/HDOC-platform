@@ -30,7 +30,10 @@ export default function AuthLayout({ children, alerts, mode }) {
       <div
         style={{
           position: 'fixed',
-          inset: 0,
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
           zIndex: 0,
           pointerEvents: 'none',
           overflow: 'hidden',

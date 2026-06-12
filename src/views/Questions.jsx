@@ -276,31 +276,31 @@ export default function Questions() {
                       );
                     })()}
                   </div>
-                </div>
-
-                {/* GitHub Submission Form */}
-                <div className="github-submission-section" style={{ gridColumn: '1 / -1', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(243, 243, 243, 0.08)' }}>
-                  <h4 className="section-card-title" style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>Submit Your Code</h4>
-                  <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <input
-                      type="url"
-                      placeholder="https://github.com/user/repo/commit/..."
-                      value={commitUrl}
-                      onChange={(e) => setCommitUrl(e.target.value)}
-                      required
-                      style={{ flex: 1, minWidth: '200px', padding: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(0, 0, 0, 0.2)', color: '#F3F3F3', fontFamily: 'inherit', boxSizing: 'border-box' }}
-                    />
-                    <div style={{ flex: '0 0 auto', width: '200px' }}>
-                      <button type="submit" disabled={isSubmitting} className="solve-button-new">
-                        {isSubmitting ? 'Submitting...' : 'Submit Commit →'}
-                      </button>
-                    </div>
-                  </form>
-                  {submitMsg && (
-                    <p style={{ marginTop: '0.75rem', color: submitMsg.includes('successfully') ? '#4caf50' : '#f44336', fontSize: '0.875rem', fontWeight: '500' }}>
-                      {submitMsg}
-                    </p>
-                  )}
+                  
+                  {/* GitHub Submission Form inside the second card */}
+                  <div className="section-card-footer github-submission-section" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                    <h4 className="section-subtitle" style={{ marginBottom: '1rem' }}>Submit Your Code</h4>
+                    <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <input
+                        type="url"
+                        placeholder="https://github.com/user/repo/commit/..."
+                        value={commitUrl}
+                        onChange={(e) => setCommitUrl(e.target.value)}
+                        required
+                        style={{ flex: 1, minWidth: '200px', padding: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(0, 0, 0, 0.2)', color: '#F3F3F3', fontFamily: 'inherit', boxSizing: 'border-box' }}
+                      />
+                      <div style={{ flex: '0 0 auto', width: '200px' }}>
+                        <button type="submit" disabled={isSubmitting} className="solve-button-new">
+                          {isSubmitting ? 'Submitting...' : 'Submit Commit →'}
+                        </button>
+                      </div>
+                    </form>
+                    {submitMsg && (
+                      <p style={{ marginTop: '0.75rem', color: submitMsg.includes('successfully') ? '#4caf50' : '#f44336', fontSize: '0.875rem', fontWeight: '500' }}>
+                        {submitMsg}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
