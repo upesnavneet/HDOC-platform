@@ -108,6 +108,26 @@ export const checkStudentIdExists = async (studentId) => {
   }
 };
 
+/**
+ * Check if a specific field value already exists in the users collection.
+ * Uses a targeted query (reads at most 1 document).
+ */
+export const checkDuplicateField = async (fieldName, value) => {
+  if (!value) return false;
+  try {
+    const q = query(
+      collection(db, USERS_COLLECTION),
+      where(fieldName, '==', value),
+      limit(1)
+    );
+    const snap = await getDocs(q);
+    return !snap.empty;
+  } catch (error) {
+    logError(`Error checking duplicate ${fieldName}:`, error);
+    throw error;
+  }
+};
+
 export const subscribeToUsers = (callback, onError) => {
   const colRef = collection(db, USERS_COLLECTION);
   return onSnapshot(

@@ -14,6 +14,8 @@ export default function RegisterForm({
   setRegGithubId,
   regLeetcodeId,
   setRegLeetcodeId,
+  regHackerrankId,
+  setRegHackerrankId,
   isSubmitting,
   onSubmit,
 }) {
@@ -149,6 +151,20 @@ export default function RegisterForm({
             required
           />
         </div>
+      </div>
+      <div className="form-group">
+        <label htmlFor="reg-hackerrank">HackerRank Username</label>
+        <input
+          id="reg-hackerrank"
+          name="hackerrank"
+          type="text"
+          autoComplete="off"
+          spellCheck={false}
+          placeholder="e.g. hackerrank-username…"
+          value={regHackerrankId}
+          onChange={(e) => setRegHackerrankId(e.target.value)}
+          required
+        />
       </div>
       <button type="submit" className="auth-action-btn" disabled={isSubmitting}>
         {isSubmitting ? 'Registering…' : 'Register'}

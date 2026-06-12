@@ -8,7 +8,7 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getUserProfile, createUserProfile, checkStudentIdExists } from '../services/userService';
+import { getUserProfile, createUserProfile, checkStudentIdExists, checkDuplicateField } from '../services/userService';
 
 const AuthContext = createContext();
 
@@ -153,7 +153,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password, studentId, gitHubId, leetCodeId) => {
+  const register = async (name, email, password, studentId, gitHubId, leetCodeId, hackerRankId) => {
     dispatch({ type: 'AUTH_START' });
 
     if (!validatePassword(password)) {
@@ -164,18 +164,44 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      // C7: Check studentId uniqueness with a targeted query (reads at most 1 doc)
+      // Email uniqueness is enforced by Firebase Auth — no manual check needed
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      // Check studentId uniqueness
       const normalizedStudentId = studentId.trim().toUpperCase();
       const studentIdTaken = await checkStudentIdExists(normalizedStudentId);
       if (studentIdTaken) {
+        await userCredential.user.delete();
         const errMsg = 'Student ID already registered.';
         dispatch({ type: 'AUTH_FAIL', payload: errMsg });
         return { success: false, message: errMsg };
       }
 
-      // Email uniqueness is enforced by Firebase Auth — no manual check needed
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
+      // Check duplicate usernames
+      const gitHubTaken = await checkDuplicateField('gitHubId', gitHubId.trim());
+      if (gitHubTaken) {
+        await userCredential.user.delete();
+        const errMsg = 'GitHub username already registered.';
+        dispatch({ type: 'AUTH_FAIL', payload: errMsg });
+        return { success: false, message: errMsg };
+      }
+
+      const leetCodeTaken = await checkDuplicateField('leetCodeId', leetCodeId.trim());
+      if (leetCodeTaken) {
+        await userCredential.user.delete();
+        const errMsg = 'LeetCode username already registered.';
+        dispatch({ type: 'AUTH_FAIL', payload: errMsg });
+        return { success: false, message: errMsg };
+      }
+
+      const hackerRankTaken = await checkDuplicateField('hackerRankId', hackerRankId?.trim());
+      if (hackerRankTaken) {
+        await userCredential.user.delete();
+        const errMsg = 'HackerRank username already registered.';
+        dispatch({ type: 'AUTH_FAIL', payload: errMsg });
+        return { success: false, message: errMsg };
+      }
 
       // C5: No role or overallRank — these are system-controlled fields.
       // Absence of role means participant. Admin is via Custom Claims only.
@@ -185,8 +211,9 @@ export const AuthProvider = ({ children }) => {
         name,
         email,
         studentId: normalizedStudentId,
-        gitHubId,
-        leetCodeId,
+        gitHubId: gitHubId.trim(),
+        leetCodeId: leetCodeId.trim(),
+        hackerRankId: hackerRankId ? hackerRankId.trim() : '',
         gitHubStreak: 0,
         leetCodeStreak: 0,
         totalCodingScore: 0,
