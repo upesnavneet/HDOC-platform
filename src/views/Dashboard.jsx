@@ -395,11 +395,6 @@ export default function Dashboard() {
 
             {/* Heatmap Section */}
             <StreakGrid currentDay={currentDay} submissions={userSubs} questions={questions} />
-            <StreakGrid
-              currentDay={currentDay}
-              submissions={userSubs}
-              questions={questions}
-            />
 
             {/* GitHub Activity Graph */}
             {currentUser?.gitHubId && (

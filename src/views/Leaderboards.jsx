@@ -67,6 +67,8 @@ const COLUMNS = {
 };
 
 
+
+
 /* ── Sort helpers ── */
 function getSortValue(row, key) {
   if (key === 'participant') return row.name?.toLowerCase() || '';
@@ -142,6 +144,8 @@ export default function Leaderboards() {
   };
 
   const columns = COLUMNS[activeTab] || COLUMNS.combined;
+
+
 
 
   return (
@@ -243,6 +247,7 @@ export default function Leaderboards() {
         />
         <span className="lb-result-count">{filteredBoard.length} participants</span>
       </div>
+
 
 
       {/* ═══ Table ═══ */}
