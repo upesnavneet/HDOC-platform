@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ProtectedRoute, AdminRoute, GuestRoute, HomeRedirect } from './guards';
 import { RouteErrorBoundary } from '../components/ErrorBoundary';
 
@@ -14,6 +15,26 @@ const CoordinatorDashboard = lazy(() => import('../features/coordinator/Coordina
 const LiquidChrome = lazy(() => import('../components/LiquidChrome'));
 // M9: Lazy-loaded 404 page
 const NotFound = lazy(() => import('../views/NotFound'));
+
+const pageVariants = {
+  initial: { opacity: 0, y: 15 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  exit: { opacity: 0, y: -15, transition: { duration: 0.3, ease: 'easeIn' } },
+};
+
+function PageTransition({ children }) {
+  return (
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageVariants}
+      style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', flex: 1 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function PageLoader() {
   return (
@@ -43,93 +64,95 @@ export default function AppRoutes() {
       </Suspense>
 
       <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<HomeRedirect />} />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<PageTransition><HomeRedirect /></PageTransition>} />
 
-          <Route path="/auth" element={<HomeRedirect />} />
-          <Route
-            path="/auth/:mode"
-            element={
-              <GuestRoute>
-                <RouteErrorBoundary>
-                  <Auth />
-                </RouteErrorBoundary>
-              </GuestRoute>
-            }
-          />
+            <Route path="/auth" element={<PageTransition><HomeRedirect /></PageTransition>} />
+            <Route
+              path="/auth/:mode"
+              element={
+                <GuestRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><Auth /></PageTransition>
+                  </RouteErrorBoundary>
+                </GuestRoute>
+              }
+            />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Dashboard />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/questions"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Questions />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/debugging"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Debugging />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Profile />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          {/* M16: Leaderboard now requires authentication */}
-          <Route
-            path="/leaderboards"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Leaderboards />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/coordinator"
-            element={
-              <AdminRoute>
-                <RouteErrorBoundary>
-                  <CoordinatorDashboard />
-                </RouteErrorBoundary>
-              </AdminRoute>
-            }
-          />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><Dashboard /></PageTransition>
+                  </RouteErrorBoundary>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/questions"
+              element={
+                <ProtectedRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><Questions /></PageTransition>
+                  </RouteErrorBoundary>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/debugging"
+              element={
+                <ProtectedRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><Debugging /></PageTransition>
+                  </RouteErrorBoundary>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><Profile /></PageTransition>
+                  </RouteErrorBoundary>
+                </ProtectedRoute>
+              }
+            />
+            {/* M16: Leaderboard now requires authentication */}
+            <Route
+              path="/leaderboards"
+              element={
+                <ProtectedRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><Leaderboards /></PageTransition>
+                  </RouteErrorBoundary>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/coordinator"
+              element={
+                <AdminRoute>
+                  <RouteErrorBoundary>
+                    <PageTransition><CoordinatorDashboard /></PageTransition>
+                  </RouteErrorBoundary>
+                </AdminRoute>
+              }
+            />
 
-          {/* M9: Styled 404 page instead of silent redirect */}
-          <Route
-            path="*"
-            element={
-              <RouteErrorBoundary>
-                <NotFound />
-              </RouteErrorBoundary>
-            }
-          />
-        </Routes>
+            {/* M9: Styled 404 page instead of silent redirect */}
+            <Route
+              path="*"
+              element={
+                <RouteErrorBoundary>
+                  <PageTransition><NotFound /></PageTransition>
+                </RouteErrorBoundary>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
       </Suspense>
     </>
   );
