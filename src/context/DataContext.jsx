@@ -76,8 +76,8 @@ export function DataProvider({ children }) {
               currentDay: normalized.currentDay,
               simulatedTime: normalized.simulatedTime,
               completedWeeks: normalized.completedWeeks,
-              // B1: pass event start date through directly; no normalization needed
-              eventStartDate: config?.eventStartDate || prev.eventStartDate,
+              // B1: pass event start date through directly; default to EVENT_START_ISO if missing
+              eventStartDate: config?.eventStartDate || prev.eventStartDate || getDefaultSystemConfig().simulatedTime || '2026-05-25T09:00:00+05:30',
               // D1: coordinator-configurable max scores; fallback to safe defaults
               maxCodingScore: config?.maxCodingScore ?? prev.maxCodingScore,
               maxDebugScore: config?.maxDebugScore ?? prev.maxDebugScore,

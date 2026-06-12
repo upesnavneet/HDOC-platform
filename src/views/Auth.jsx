@@ -20,6 +20,7 @@ export default function Auth() {
   const [regStudentId, setRegStudentId] = useState('');
   const [regGithubId, setRegGithubId] = useState('');
   const [regLeetcodeId, setRegLeetcodeId] = useState('');
+  const [regHackerrankId, setRegHackerrankId] = useState('');
   const [resetEmail, setResetEmail] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -58,7 +59,7 @@ export default function Auth() {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!regName || !regEmail || !regPass || !regStudentId || !regGithubId || !regLeetcodeId) {
+    if (!regName || !regEmail || !regPass || !regStudentId || !regGithubId || !regLeetcodeId || !regHackerrankId) {
       setErrorMsg('Please fill in all fields.');
       return;
     }
@@ -70,7 +71,8 @@ export default function Auth() {
       regPass,
       regStudentId,
       regGithubId,
-      regLeetcodeId
+      regLeetcodeId,
+      regHackerrankId
     );
     setIsSubmitting(false);
 
@@ -158,6 +160,8 @@ export default function Auth() {
           setRegGithubId={setRegGithubId}
           regLeetcodeId={regLeetcodeId}
           setRegLeetcodeId={setRegLeetcodeId}
+          regHackerrankId={regHackerrankId}
+          setRegHackerrankId={setRegHackerrankId}
           isSubmitting={isSubmitting}
           onSubmit={handleRegisterSubmit}
         />

@@ -15,6 +15,7 @@ import { normalizeSystemConfig } from '../utils/eventConfig';
 import {
   computeCodingScoreWithOverride,
   computeDebugScoreWithOverride,
+  computeCodingStreak,
 } from './scoreSync';
 
 const AppActionsContext = createContext(null);
@@ -77,6 +78,9 @@ export function AppActionsProvider({ children }) {
       const subId = existing ? existing.id : `sub-${myUid}-${dayNum}-${type}`;
       try {
         await addOrUpdateSubmission(subId, subDetails);
+        const updatedSubs = [...db.submissions.filter(s => s.id !== subId), { id: subId, ...subDetails }];
+        const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay);
+        await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
         // B3: score sync removed — scores are coordinator-managed only
         return {
           success: true,
@@ -87,7 +91,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit solution.' };
       }
     },
-    [currentUser, db.questions, db.submissions, db.simulatedTime, db.eventStartDate]
+    [currentUser, db.questions, db.submissions, db.simulatedTime, db.eventStartDate, db.currentDay]
   );
 
   // H12: Commit URL submission — writes Schema B (same as submitQuestionCode)
@@ -98,6 +102,11 @@ export function AppActionsProvider({ children }) {
       // B1: use dynamic event start date from Firestore system/config
       if (!db.eventStartDate) {
         return { success: false, message: 'Event configuration is still loading. Please try again.' };
+      }
+
+      // Github link validation
+      if (!commitUrl.trim().startsWith('https://github.com/upesacm/100DaysOfCode-2026/commit/')) {
+        return { success: false, message: 'Invalid commit URL. Must be a commit link from the official repository (upesacm/100DaysOfCode-2026).' };
       }
 
       const myUid = currentUser.uid || currentUser.id;
@@ -139,12 +148,15 @@ export function AppActionsProvider({ children }) {
       const subId = existing ? existing.id : `sub-${myUid}-${dayNum}-commit`;
       try {
         await addOrUpdateSubmission(subId, subDetails);
+        const updatedSubs = [...db.submissions.filter(s => s.id !== subId), { id: subId, ...subDetails }];
+        const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay);
+        await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
         return { success: true, message: 'Commit submitted successfully.' };
       } catch {
         return { success: false, message: 'Failed to submit commit.' };
       }
     },
-    [currentUser, db.submissions, db.simulatedTime, db.eventStartDate]
+    [currentUser, db.submissions, db.simulatedTime, db.eventStartDate, db.currentDay]
   );
 
   const submitDebuggingChallenge = useCallback(
