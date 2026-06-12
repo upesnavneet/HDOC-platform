@@ -166,20 +166,44 @@ export default function Dashboard() {
         }}
       >
         <div className="dashboard-hero-left hero-panel-deep">
-          <h1 className="hero-headline">
-            <span className="hero-orange">
+          <h1 
+            className="hero-main-title" 
+            style={{ 
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)', 
+              textTransform: 'uppercase', 
+              letterSpacing: '-0.02em', 
+              color: 'var(--color-white)', 
+              marginBottom: '0.5rem', 
+              fontWeight: 800,
+              lineHeight: 1.1,
+              textShadow: '0 0 40px rgba(255,255,255,0.2)'
+            }}
+          >
+            100 Days of Code
+          </h1>
+          <h2 
+            className="hero-headline" 
+            style={{ 
+              fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)', 
+              fontWeight: 500,
+              letterSpacing: '0.02em',
+              marginTop: 0,
+              opacity: 0.95
+            }}
+          >
+            <span className="hero-white">
               <ScrambledText text="From" triggerOnHover={false} />
             </span>{' '}
-            <span className="hero-green">
+            <span className="hero-blue">
               <ScrambledText text="Bugs" triggerOnHover={false} />
             </span>{' '}
             <span className="hero-accent">
               <ScrambledText text="to" triggerOnHover={false} />
             </span>{' '}
-            <span className="hero-orange">
+            <span className="hero-blue">
               <ScrambledText text="Brilliance." triggerOnHover={false} />
             </span>
-          </h1>
+          </h2>
           <p className="hero-desc">
             One commit. Every day. 100 days straight - UPES ACM&apos;s flagship coding challenge.
             Build your streak, sharpen your skills, and rise through the ranks with fellow coders.
