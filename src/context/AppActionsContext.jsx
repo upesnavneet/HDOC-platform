@@ -98,6 +98,8 @@ export function AppActionsProvider({ children }) {
   const submitCommitUrl = useCallback(
     async (providedDayNum, commitUrl) => {
       const dayNum = db.currentDay; // strictly enforce active website day
+      if (dayNum % 7 === 0) return { success: false, message: 'Challenges are locked on Sundays. Please use the Debugging tab.' };
+
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
       // B1: use dynamic event start date from Firestore system/config
@@ -161,7 +163,10 @@ export function AppActionsProvider({ children }) {
   );
 
   const submitDebuggingChallenge = useCallback(
-    async (challengeId, link) => {
+    async (providedChallengeId, link) => {
+      const dayNum = db.currentDay;
+      if (dayNum % 7 !== 0) return { success: false, message: 'Debugging Challenges are only available on Sundays.' };
+
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
       // Github link validation
@@ -170,9 +175,11 @@ export function AppActionsProvider({ children }) {
       }
 
       const myUid = currentUser.uid || currentUser.id;
-      const challenge = db.debuggingChallenges.find((c) => c.id === challengeId);
-      if (!challenge) return { success: false, message: 'Challenge not found.' };
+      const currentWeek = Math.ceil(dayNum / 7);
+      const challenge = db.debuggingChallenges.find((c) => c.week === currentWeek);
+      if (!challenge) return { success: false, message: 'Challenge not found for this week.' };
 
+      const challengeId = challenge.id;
       const eventTime = new Date(db.simulatedTime);
       const publishedTime = new Date(challenge.publishedDate);
       if (eventTime < publishedTime) {

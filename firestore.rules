@@ -77,12 +77,14 @@ service cloud.firestore {
            ])
         && request.resource.data.day is int
         && request.resource.data.type is string
+        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 != 0
         && request.resource.data.day == get(/databases/$(database)/documents/system/config).data.currentDay;
 
       // Self-update: can update own submission but NOT marks/gradedBy/comments/gradedAt.
       // And can only update submissions for the current active day!
       allow update: if isAuthenticated()
         && resource.data.userId == request.auth.uid
+        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 != 0
         && resource.data.day == get(/databases/$(database)/documents/system/config).data.currentDay
         && request.resource.data.day == resource.data.day
         && !request.resource.data.diff(resource.data).affectedKeys()
@@ -110,11 +112,13 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
              'id', 'challengeId', 'userId', 'link', 'timestamp', 'score'
            ])
+        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 == 0
         && request.resource.data.score == null;
 
       // Self-update: cannot change score.
       allow update: if isAuthenticated()
         && resource.data.userId == request.auth.uid
+        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 == 0
         && !request.resource.data.diff(resource.data).affectedKeys()
               .hasAny(['score']);
 
