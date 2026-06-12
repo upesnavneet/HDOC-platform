@@ -36,6 +36,7 @@ export function DataProvider({ children }) {
   const [dbError, setDbError] = useState(null);
 
   useEffect(() => {
+    setDbError(null);
     const unsubs = [];
 
     // M11: Only seed in development — prevents unnecessary production Firestore reads.
@@ -50,6 +51,10 @@ export function DataProvider({ children }) {
       logError(`[${label}] Subscription error:`, err);
       setDbError('Connection issue — data may be out of date. Please refresh.');
     };
+
+    if (!currentUser) {
+      return () => unsubs.forEach((unsub) => unsub());
+    }
 
     try {
       unsubs.push(

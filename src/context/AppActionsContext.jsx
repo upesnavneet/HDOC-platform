@@ -291,8 +291,9 @@ export function AppActionsProvider({ children }) {
         success: true,
         message: `Question for Day ${questionData.day} uploaded successfully.`,
       };
-    } catch {
-      return { success: false, message: 'Failed to upload question.' };
+    } catch (err) {
+      console.error('uploadQuestion failed:', err);
+      return { success: false, message: `Upload failed: ${err.message}` };
     }
   }, []);
 
