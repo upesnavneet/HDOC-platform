@@ -73,7 +73,15 @@ export default function AuthLayout({ children, alerts, mode }) {
         animated={false}
         colors={['#6EACDA', '#03346E', '#E2E2B6']}
         fillOpacity={0.15}
-        style={{ position: 'relative', zIndex: 1 }}
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          background: 'transparent',
+          backdropFilter: 'blur(24px) saturate(1.4)',
+          WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
+          border: 'none',
+          boxShadow: 'none',
+        }}
         disableHover={true}
       >
         <div className="auth-header-logo">
