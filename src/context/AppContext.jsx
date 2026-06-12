@@ -6,8 +6,9 @@ import { AppActionsProvider, useAppActions } from './AppActionsContext';
 const AppContext = createContext(null);
 
 function getOverallRank(userId, allUsers) {
+  // B6: exclude admin accounts from rank computation
   const participants = allUsers
-    .filter((u) => u.role !== 'admin')
+    .filter((u) => !u.isAdminAccount)
     .sort((a, b) => {
       const scoreA = (a.totalCodingScore || 0) + (a.totalDebuggingScore || 0);
       const scoreB = (b.totalCodingScore || 0) + (b.totalDebuggingScore || 0);

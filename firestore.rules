@@ -12,32 +12,45 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // B6/A1: admin = JWT Custom Claim OR isAdminAccount flag in the user document.
+    // We check the stored document (resource.data) for the Firestore-side check,
+    // so the request token alone can still grant admin via the JWT path.
     function isAdmin() {
-      return request.auth != null && request.auth.token.admin == true;
+      return request.auth != null && (
+        request.auth.token.admin == true ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdminAccount == true)
+      );
     }
 
     // ── Users ───────────────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if isAuthenticated();
 
-      // H4: Closed field list for user creation.
+      // H4/A1: Closed field list for user creation.
+      // isAdminAccount cannot be set by participants on create — only by admins.
       allow create: if isAuthenticated()
         && request.auth.uid == userId
-        && !request.resource.data.keys().hasAny(['role', 'overallRank'])
+        && !request.resource.data.keys().hasAny(['role', 'overallRank', 'isAdminAccount'])
         && request.resource.data.isActive == true
         && request.resource.data.keys().hasOnly([
              'uid', 'id', 'name', 'email', 'studentId',
              'gitHubId', 'leetCodeId',
              'gitHubStreak', 'leetCodeStreak',
              'totalCodingScore', 'totalDebuggingScore',
-             'isActive', 'completedDays', 'createdAt'
+             'isActive', 'completedDays', 'createdAt',
+             // F1: HackerRank contest fields (optional at registration, set later by coordinator)
+             'hackerRankId'
            ]);
 
-      // Self-update: cannot touch privileged fields (C2).
+      // B6/C2: Self-update: cannot touch privileged fields.
+      // isAdminAccount is now explicitly blocked from self-modification.
       allow update: if isAuthenticated()
         && request.auth.uid == userId
         && !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['role', 'isActive', 'overallRank']);
+              .hasAny(['role', 'isActive', 'overallRank', 'isAdminAccount',
+                       'totalCodingScore', 'totalDebuggingScore',
+                       'contestScore', 'contestsPlayed', 'bestContestRank']);
 
       // Admin: full write access via Custom Claims.
       allow update, delete: if isAdmin();
@@ -54,22 +67,22 @@ service cloud.firestore {
       allow read: if isAuthenticated();
 
       // H4: Validate submission schema on create.
-      // Users cannot set marks, gradedBy, comments, or status — those are admin fields.
+      // Users cannot set marks, gradedBy, comments, gradedAt, or status — those are admin fields.
       allow create: if isAuthenticated()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.keys().hasOnly([
              'id', 'userId', 'questionId', 'day', 'type',
              'code', 'language', 'timestamp', 'status',
-             'marks', 'gradedBy', 'comments', 'link'
+             'marks', 'gradedBy', 'comments', 'gradedAt', 'link'
            ])
         && request.resource.data.day is int
         && request.resource.data.type is string;
 
-      // Self-update: can update own submission but NOT marks/gradedBy/comments.
+      // Self-update: can update own submission but NOT marks/gradedBy/comments/gradedAt.
       allow update: if isAuthenticated()
         && resource.data.userId == request.auth.uid
         && !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['marks', 'gradedBy', 'comments']);
+              .hasAny(['marks', 'gradedBy', 'comments', 'gradedAt']);
 
       // Admin: full write access.
       allow update: if isAdmin();

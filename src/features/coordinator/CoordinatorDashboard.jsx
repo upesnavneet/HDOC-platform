@@ -28,11 +28,25 @@ export default function CoordinatorDashboard() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const participants = useMemo(() => db.users.filter((u) => u.role !== 'admin'), [db.users]);
+  // B6: exclude admin accounts; B4: exclude inactive from stats counts but keep them in table
+  const participants = useMemo(
+    () => db.users.filter((u) => !u.isAdminAccount),
+    [db.users]
+  );
+
+  // B4: active-only slice used in stats
+  const activeParticipants = useMemo(
+    () => participants.filter((p) => p.isActive !== false),
+    [participants]
+  );
 
   const currentDay = db.currentDay;
 
+  // F4: disable Advance Day button once Day 100 is reached
+  const challengeEnded = currentDay >= 100;
+
   const handleAdvanceDay = async () => {
+    if (challengeEnded) return;
     if (!window.confirm(`Advance day from Day ${currentDay} to Day ${currentDay + 1}?`)) {
       return;
     }
@@ -58,7 +72,7 @@ export default function CoordinatorDashboard() {
     );
     const uniqueTodaySubmitters = new Set(todaySubs.map((s) => s.userId)).size;
 
-    const activeToday = participants.filter((p) => {
+    const activeToday = activeParticipants.filter((p) => {
       const subs = db.submissions.filter((s) => s.userId === p.id && s.day === currentDay);
       return subs.some((s) => s.status === 'Submitted' || s.status === 'Late');
     }).length;
@@ -78,7 +92,7 @@ export default function CoordinatorDashboard() {
         }).length
       : 0;
 
-    const topPerformer = [...participants].sort(
+    const topPerformer = [...activeParticipants].sort(
       (a, b) =>
         b.totalCodingScore + b.totalDebuggingScore - (a.totalCodingScore + a.totalDebuggingScore)
     )[0];
@@ -94,7 +108,7 @@ export default function CoordinatorDashboard() {
       topPerformer,
       pendingGradeCount,
     };
-  }, [db, currentDay, participants]);
+  }, [db, currentDay, activeParticipants]);
 
   const bentoCardData = [
     {
@@ -162,9 +176,19 @@ export default function CoordinatorDashboard() {
         <div className="page-header">
           <div className="header-top">
             <h1>Coordinator Dashboard</h1>
-            <button className="advance-day-btn" onClick={handleAdvanceDay} disabled={isAdvancing}>
-              {isAdvancing ? 'Advancing...' : `Advance to Day ${currentDay + 1}`}
-            </button>
+            {challengeEnded ? (
+              <span className="advance-day-btn" style={{ opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }}>
+                Challenge Complete (Day 100)
+              </span>
+            ) : (
+              <button
+                className="advance-day-btn"
+                onClick={handleAdvanceDay}
+                disabled={isAdvancing}
+              >
+                {isAdvancing ? 'Advancing...' : `Advance to Day ${currentDay + 1}`}
+              </button>
+            )}
           </div>
           <p className="subtitle">
             Manage participants, schedule challenges, and track weekly completion.

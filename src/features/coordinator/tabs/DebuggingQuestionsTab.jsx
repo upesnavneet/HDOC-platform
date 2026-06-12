@@ -11,6 +11,9 @@ export default function DebuggingQuestionsTab() {
   const [description, setDescription] = useState('');
   const [starterCode, setStarterCode] = useState('');
   const [publishedDate, setPublishedDate] = useState('');
+  // F2: symptoms (what they see) and hints (optional guidance)
+  const [symptomsText, setSymptomsText] = useState('');
+  const [hintsText, setHintsText] = useState('');
   const [formMsg, setFormMsg] = useState('');
 
   const existingChallenges = db.debuggingChallenges || [];
@@ -25,6 +28,9 @@ export default function DebuggingQuestionsTab() {
     setTheme(challenge.theme || '');
     setDescription(challenge.description || '');
     setStarterCode(challenge.starterCode || '');
+    // F2: join array back to newline text for editing
+    setSymptomsText((challenge.symptoms || []).join('\n'));
+    setHintsText((challenge.hints || []).join('\n'));
     // Convert ISO date to datetime-local format
     if (challenge.publishedDate) {
       const d = new Date(challenge.publishedDate);
@@ -44,6 +50,8 @@ export default function DebuggingQuestionsTab() {
     setDescription('');
     setStarterCode('');
     setPublishedDate('');
+    setSymptomsText(''); // F2
+    setHintsText('');    // F2
     setFormMsg('');
   };
 
@@ -79,6 +87,9 @@ export default function DebuggingQuestionsTab() {
       description,
       starterCode,
       publishedDate: pubDate.toISOString(),
+      // F2: split newline-separated text into arrays, filter blank lines
+      symptoms: symptomsText.split('\n').map((s) => s.trim()).filter(Boolean),
+      hints: hintsText.split('\n').map((h) => h.trim()).filter(Boolean),
     });
 
     setFormMsg(res.message);
@@ -219,6 +230,34 @@ export default function DebuggingQuestionsTab() {
             required
             autoComplete="off"
             placeholder="Paste the buggy starter code here..."
+          />
+        </div>
+
+        {/* F2: Symptoms — what participants observe as incorrect behaviour */}
+        <div className="form-group">
+          <label htmlFor="debug-symptoms">Observed Symptoms (one per line)</label>
+          <textarea
+            id="debug-symptoms"
+            name="symptoms"
+            value={symptomsText}
+            onChange={(e) => setSymptomsText(e.target.value)}
+            rows="3"
+            autoComplete="off"
+            placeholder="e.g. Output is always 0&#10;Program crashes on large input"
+          />
+        </div>
+
+        {/* F2: Hints — optional guidance to help participants */}
+        <div className="form-group">
+          <label htmlFor="debug-hints">Hints (one per line, optional)</label>
+          <textarea
+            id="debug-hints"
+            name="hints"
+            value={hintsText}
+            onChange={(e) => setHintsText(e.target.value)}
+            rows="2"
+            autoComplete="off"
+            placeholder="e.g. Check the loop termination condition"
           />
         </div>
 
