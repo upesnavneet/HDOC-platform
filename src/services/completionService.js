@@ -66,7 +66,7 @@ export const addOrUpdateSubmission = async (subId, subData) => {
   }
 };
 
-export const subscribeToSubmissions = (callback) => {
+export const subscribeToSubmissions = (callback, onError) => {
   const colRef = collection(db, SUBMISSIONS_COLLECTION);
   return onSnapshot(
     colRef,
@@ -79,12 +79,13 @@ export const subscribeToSubmissions = (callback) => {
     },
     (error) => {
       logError('Error subscribing to submissions:', error);
+      onError?.(error);
     }
   );
 };
 
 // H3: User-scoped subscription — reads only this user's submissions.
-export const subscribeToUserSubmissions = (userId, callback) => {
+export const subscribeToUserSubmissions = (userId, callback, onError) => {
   const q = query(collection(db, SUBMISSIONS_COLLECTION), where('userId', '==', userId));
   return onSnapshot(
     q,
@@ -97,6 +98,7 @@ export const subscribeToUserSubmissions = (userId, callback) => {
     },
     (error) => {
       logError('Error subscribing to user submissions:', error);
+      onError?.(error);
     }
   );
 };
@@ -133,7 +135,7 @@ export const addOrUpdateDebuggingChallenge = async (weekNum, challengeData) => {
   }
 };
 
-export const subscribeToDebuggingChallenges = (callback) => {
+export const subscribeToDebuggingChallenges = (callback, onError) => {
   const colRef = collection(db, DEBUGGING_CHALLENGES_COLLECTION);
   return onSnapshot(
     colRef,
@@ -147,6 +149,7 @@ export const subscribeToDebuggingChallenges = (callback) => {
     },
     (error) => {
       logError('Error subscribing to debugging challenges:', error);
+      onError?.(error);
     }
   );
 };
@@ -172,18 +175,21 @@ export const submitDebuggingSolution = async (challengeId, userId, link, timesta
   }
 };
 
-export const gradeDebuggingSolution = async (challengeId, userId, score) => {
+export const gradeDebuggingSolution = async (challengeId, userId, score, gradedAt) => {
   try {
     const docId = `debug-sub-${challengeId}-${userId}`;
     const docRef = doc(db, DEBUGGING_SUBMISSIONS_COLLECTION, docId);
-    await updateDoc(docRef, { score: Number(score) });
+    await updateDoc(docRef, {
+      score: Number(score),
+      gradedAt: gradedAt || new Date().toISOString(),
+    });
   } catch (error) {
     logError('Error grading debugging solution:', error);
     throw error;
   }
 };
 
-export const subscribeToDebuggingSubmissions = (callback) => {
+export const subscribeToDebuggingSubmissions = (callback, onError) => {
   const colRef = collection(db, DEBUGGING_SUBMISSIONS_COLLECTION);
   return onSnapshot(
     colRef,
@@ -196,6 +202,7 @@ export const subscribeToDebuggingSubmissions = (callback) => {
     },
     (error) => {
       logError('Error subscribing to debugging submissions:', error);
+      onError?.(error);
     }
   );
 };
@@ -244,6 +251,11 @@ export const checkAndAutoAdvanceDay = async () => {
       lastAdvanceUTC.getDate()
     );
 
+    // F4: Stop auto-advancing beyond Day 100 (challenge duration)
+    if ((config.currentDay || 1) >= 100) {
+      return null;
+    }
+
     // If we're on a new day (midnight UTC passed), advance
     if (startOfTodayUTC > startOfLastAdvanceUTC) {
       const newDay = (config.currentDay || 1) + 1;
@@ -263,7 +275,7 @@ export const checkAndAutoAdvanceDay = async () => {
   }
 };
 
-export const subscribeToSystemConfig = (callback) => {
+export const subscribeToSystemConfig = (callback, onError) => {
   const docRef = doc(db, SYSTEM_COLLECTION, CONFIG_DOC);
   return onSnapshot(
     docRef,
@@ -276,6 +288,7 @@ export const subscribeToSystemConfig = (callback) => {
     },
     (error) => {
       logError('Error subscribing to system config:', error);
+      onError?.(error);
     }
   );
 };

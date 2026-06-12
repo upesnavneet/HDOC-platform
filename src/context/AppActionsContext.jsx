@@ -13,7 +13,6 @@ import {
 } from '../services/completionService';
 import { normalizeSystemConfig } from '../utils/eventConfig';
 import {
-  syncParticipantProfile,
   computeCodingScoreWithOverride,
   computeDebugScoreWithOverride,
 } from './scoreSync';
@@ -40,12 +39,17 @@ export function AppActionsProvider({ children }) {
     async (dayNum, type, code, language) => {
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
+      // B1: use dynamic event start date from Firestore system/config
+      if (!db.eventStartDate) {
+        return { success: false, message: 'Event configuration is still loading. Please try again.' };
+      }
+
       const myUid = currentUser.uid || currentUser.id;
       const q = db.questions.find((question) => question.day === dayNum);
       if (!q) return { success: false, message: 'Question not found.' };
 
       const eventTime = new Date(db.simulatedTime);
-      const eventStartDate = new Date('2026-05-25T00:00:00+05:30');
+      const eventStartDate = new Date(db.eventStartDate);
       const publishTime = new Date(eventStartDate.getTime() + (dayNum - 1) * 24 * 60 * 60 * 1000);
       const deadlineTime = new Date(publishTime.getTime() + 24 * 60 * 60 * 1000);
 
@@ -73,9 +77,7 @@ export function AppActionsProvider({ children }) {
       const subId = existing ? existing.id : `sub-${myUid}-${dayNum}-${type}`;
       try {
         await addOrUpdateSubmission(subId, subDetails);
-        await syncParticipantProfile(db, myUid).catch((err) =>
-          logError('Failed to sync scores/streaks after submit:', err)
-        );
+        // B3: score sync removed — scores are coordinator-managed only
         return {
           success: true,
           status,
@@ -85,7 +87,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit solution.' };
       }
     },
-    [currentUser, db.questions, db.submissions, db.simulatedTime]
+    [currentUser, db.questions, db.submissions, db.simulatedTime, db.eventStartDate]
   );
 
   // H12: Commit URL submission — writes Schema B (same as submitQuestionCode)
@@ -93,14 +95,27 @@ export function AppActionsProvider({ children }) {
     async (dayNum, commitUrl) => {
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
+      // B1: use dynamic event start date from Firestore system/config
+      if (!db.eventStartDate) {
+        return { success: false, message: 'Event configuration is still loading. Please try again.' };
+      }
+
       const myUid = currentUser.uid || currentUser.id;
       const eventTime = new Date(db.simulatedTime);
-      const eventStartDate = new Date('2026-05-25T00:00:00+05:30');
+      const eventStartDate = new Date(db.eventStartDate);
       const publishTime = new Date(eventStartDate.getTime() + (dayNum - 1) * 24 * 60 * 60 * 1000);
       const deadlineTime = new Date(publishTime.getTime() + 24 * 60 * 60 * 1000);
 
       let status = 'Submitted';
       if (eventTime > deadlineTime) status = 'Late';
+
+      // F5: prevent using the same commit URL for a different day
+      const isDuplicate = db.submissions.some(
+        (s) => s.userId === myUid && s.link === commitUrl.trim() && s.day !== dayNum
+      );
+      if (isDuplicate) {
+        return { success: false, message: 'This commit URL has already been submitted for another day.' };
+      }
 
       const existing = db.submissions.find(
         (s) => s.userId === myUid && s.day === dayNum && s.type === 'commit'
@@ -129,7 +144,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit commit.' };
       }
     },
-    [currentUser, db.submissions, db.simulatedTime]
+    [currentUser, db.submissions, db.simulatedTime, db.eventStartDate]
   );
 
   const submitDebuggingChallenge = useCallback(
@@ -182,10 +197,12 @@ export function AppActionsProvider({ children }) {
     async (subId, marks, comments, adminId) => {
       try {
         const sub = db.submissions.find((s) => s.id === subId);
+        const gradedAt = new Date().toISOString();
         await addOrUpdateSubmission(subId, {
           marks: Number(marks),
           comments,
           gradedBy: adminId,
+          gradedAt, // F7: record when grading happened
         });
         if (sub?.userId) {
           await syncParticipantScores(sub.userId, { codingSubId: subId, codingMarks: marks });
@@ -201,7 +218,8 @@ export function AppActionsProvider({ children }) {
   const gradeDebuggingSubmission = useCallback(
     async (challengeId, userId, score) => {
       try {
-        await gradeDebuggingSolution(challengeId, userId, score);
+        const gradedAt = new Date().toISOString();
+        await gradeDebuggingSolution(challengeId, userId, score, gradedAt);
         await syncParticipantScores(userId, { debugChallengeId: challengeId, debugScore: score });
         return { success: true, message: 'Debugging challenge graded.' };
       } catch {
@@ -247,7 +265,8 @@ export function AppActionsProvider({ children }) {
         descCustom: questionData.descCustom,
         rating: questionData.rating || questionData.difficulty || '800',
         difficulty: questionData.difficulty || questionData.rating || 'Medium',
-        isMaster: Number(questionData.day) >= 99,
+        // F3: isMaster is now an explicit coordinator choice, not derived from day number
+        isMaster: Boolean(questionData.isMaster),
         handout: questionData.handout || '',
         solutionCode: questionData.solutionCode || '',
       });
@@ -280,6 +299,40 @@ export function AppActionsProvider({ children }) {
       return { success: false, message: 'Failed to update progress.' };
     }
   }, []);
+
+  // B6: Toggle coordinator/admin account flag on a user document
+  const toggleAdminAccount = useCallback(
+    async (userId) => {
+      const user = db.users.find((u) => (u.uid || u.id) === userId);
+      if (!user) return { success: false, message: 'User not found.' };
+      try {
+        await updateUserProfile(userId, { isAdminAccount: !user.isAdminAccount });
+        return { success: true, message: 'Admin account status toggled.' };
+      } catch {
+        return { success: false, message: 'Failed to toggle admin status.' };
+      }
+    },
+    [db.users]
+  );
+
+  // F1: Allow coordinator to update HackerRank contest data for a participant
+  const editParticipantContestData = useCallback(
+    async (userId, contestScore, contestsPlayed, bestContestRank) => {
+      try {
+        await updateUserProfile(userId, {
+          contestScore: Number(contestScore),
+          contestsPlayed: Number(contestsPlayed),
+          bestContestRank: bestContestRank === '' || bestContestRank == null
+            ? null
+            : Number(bestContestRank),
+        });
+        return { success: true, message: 'Contest data updated.' };
+      } catch {
+        return { success: false, message: 'Failed to update contest data.' };
+      }
+    },
+    []
+  );
 
   const resetParticipantStreak = useCallback(async (userId) => {
     try {
@@ -363,6 +416,11 @@ export function AppActionsProvider({ children }) {
         description: challengeData.description,
         starterCode: challengeData.starterCode,
         publishedDate: challengeData.publishedDate,
+        difficulty: challengeData.difficulty || 'Medium',
+        fileName: challengeData.fileName || '',
+        // F2: symptoms and hints are coordinator-managed per challenge
+        symptoms: challengeData.symptoms || [],
+        hints: challengeData.hints || [],
       });
       return {
         success: true,
@@ -382,9 +440,11 @@ export function AppActionsProvider({ children }) {
       gradeDebuggingSubmission,
       updateParticipantStreaks,
       toggleUserStatus,
+      toggleAdminAccount,
       uploadQuestion,
       deleteQuestion,
       editParticipantProgress,
+      editParticipantContestData,
       resetParticipantStreak,
       completeWeek,
       revertWeek,
@@ -400,9 +460,11 @@ export function AppActionsProvider({ children }) {
       gradeDebuggingSubmission,
       updateParticipantStreaks,
       toggleUserStatus,
+      toggleAdminAccount,
       uploadQuestion,
       deleteQuestion,
       editParticipantProgress,
+      editParticipantContestData,
       resetParticipantStreak,
       completeWeek,
       revertWeek,

@@ -28,41 +28,26 @@ const TABS = [
   { id: 'combined', label: 'Combined' },
 ];
 
-/* ── Column config per tab ── */
+/* ── Column config per tab — F8: rank + participant only in table ── */
 const COLUMNS = {
   daily: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'score', label: 'Daily Score', align: 'right' },
-    { key: 'completedDays', label: 'Completed', align: 'center' },
-    { key: 'streak', label: 'Streak', align: 'center' },
-    { key: 'trend', label: 'Trend', align: 'center', width: '70px' },
   ],
   debugging: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'score', label: 'Debug Score', align: 'right' },
-    { key: 'bugsFixed', label: 'Bugs Fixed', align: 'center' },
-    { key: 'debugStreak', label: 'Debug Streak', align: 'center' },
-    { key: 'trend', label: 'Trend', align: 'center', width: '70px' },
   ],
   contest: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'score', label: 'Contest Points', align: 'right' },
     { key: 'contestsPlayed', label: 'Played', align: 'center' },
-    { key: 'bestRank', label: 'Best Rank', align: 'center' },
-    { key: 'trend', label: 'Trend', align: 'center', width: '70px' },
+    { key: 'bestContestRank', label: 'Best Rank', align: 'center' },
   ],
   combined: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'dailyScore', label: 'Daily', align: 'right' },
-    { key: 'debugScore', label: 'Debug', align: 'right' },
-    { key: 'contestScore', label: 'Contest', align: 'right' },
-    { key: 'totalScore', label: 'Total', align: 'right' },
     { key: 'combinedStreak', label: 'Streak', align: 'center' },
-    { key: 'trend', label: 'Trend', align: 'center', width: '70px' },
   ],
 };
 
@@ -329,10 +314,10 @@ export default function Leaderboards() {
                       return (
                         <td key={col.key} className={col.align === 'right' ? 'align-right' : col.align === 'center' ? 'align-center' : ''}>
                           <span className="lb-cell-val">
-                            {col.key === 'streak' || col.key === 'debugStreak' || col.key === 'combinedStreak'
+                            {col.key === 'combinedStreak'
                               ? `${row[col.key] ?? 0}d`
-                              : col.key === 'completedDays'
-                                ? `${row[col.key] ?? 0} days`
+                              : col.key === 'bestContestRank'
+                                ? (row[col.key] ?? '—')
                                 : `${row[col.key] ?? 0}`
                             }
                           </span>

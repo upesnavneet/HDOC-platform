@@ -3,14 +3,15 @@ import { useApp } from '../../../context/AppContext';
 
 export default function DebuggingGradingTab() {
   const { db, gradeDebuggingSubmission } = useApp();
+  const maxDebugScore = db.maxDebugScore ?? 20; // D1: from Firestore system/config
   const [activeDebugGradeWeek, setActiveDebugGradeWeek] = useState(1);
   const [debugGradesInput, setDebugGradesInput] = useState({});
   const [debugGradeMsg, setDebugGradeMsg] = useState('');
 
   const handleDebugGradeSubmit = async (challengeId, userId) => {
     const score = debugGradesInput[userId];
-    if (score === undefined || score === '' || Number(score) < 0 || Number(score) > 20) {
-      setDebugGradeMsg('Please enter a valid score between 0 and 20.');
+    if (score === undefined || score === '' || Number(score) < 0 || Number(score) > maxDebugScore) {
+      setDebugGradeMsg(`Please enter a valid score between 0 and ${maxDebugScore}.`);
       return;
     }
     const res = await gradeDebuggingSubmission(challengeId, userId, score);
@@ -24,13 +25,22 @@ export default function DebuggingGradingTab() {
     }
   };
 
+  // B4: only show submissions from active participants
+  const activeUserIds = new Set(
+    db.users.filter((u) => u.isActive !== false && !u.isAdminAccount).map((u) => u.id)
+  );
+
   const selectedChallenge = db.debuggingChallenges.find((c) => c.week === activeDebugGradeWeek);
+  // B4: filter out inactive participant submissions
+  const visibleSubmissions = (selectedChallenge?.submissions || []).filter(
+    (s) => activeUserIds.has(s.userId)
+  );
 
   return (
     <div className="coord-panel admin-grading-panel">
       <h3>Sunday Debugging - Grade &amp; Edit Scores</h3>
       <p className="panel-desc">
-        Score debugging submissions out of 20. Changes sync to the leaderboard immediately.
+        Score debugging submissions out of {maxDebugScore}. Changes sync to the leaderboard immediately.
       </p>
       {debugGradeMsg && (
         <div className="feedback-alert info" role="status" aria-live="polite">
@@ -55,11 +65,11 @@ export default function DebuggingGradingTab() {
 
       {!selectedChallenge ? (
         <div className="no-items-alert">No debugging challenge found for this week.</div>
-      ) : (selectedChallenge.submissions || []).length === 0 ? (
-        <div className="no-items-alert">No submissions for Week {selectedChallenge.week} yet.</div>
+      ) : visibleSubmissions.length === 0 ? (
+        <div className="no-items-alert">No active participant submissions for Week {selectedChallenge.week} yet.</div>
       ) : (
         <div className="grading-queue-list">
-          {selectedChallenge.submissions.map((sub) => {
+          {visibleSubmissions.map((sub) => {
             const student = db.users.find((u) => u.id === sub.userId || u.uid === sub.userId);
             const hasScore = sub.score !== null && sub.score !== undefined;
             return (
@@ -87,21 +97,27 @@ export default function DebuggingGradingTab() {
                     >
                       View GitHub Submission
                     </a>
+                    {/* F7: show graded timestamp */}
+                    {sub.gradedAt && (
+                      <span className="sub-time" style={{ display: 'block', marginTop: '0.25rem', opacity: 0.7 }}>
+                        Graded: {new Date(sub.gradedAt).toLocaleString()}
+                      </span>
+                    )}
                     {hasScore && (
                       <div className="grade-result" style={{ marginTop: '0.5rem' }}>
-                        <strong>Current Score:</strong> {sub.score} / 20
+                        <strong>Current Score:</strong> {sub.score} / {maxDebugScore}
                       </div>
                     )}
                   </div>
                   <div className="grading-inputs-card">
                     <div className="form-group-inline">
-                      <label htmlFor={`score-${sub.userId}`}>Score (0-20):</label>
+                      <label htmlFor={`score-${sub.userId}`}>Score (0-{maxDebugScore}):</label>
                       <input
                         id={`score-${sub.userId}`}
                         name="score"
                         type="number"
                         min="0"
-                        max="20"
+                        max={maxDebugScore}
                         placeholder={hasScore ? String(sub.score) : 'Score'}
                         value={
                           debugGradesInput[sub.userId] !== undefined
