@@ -76,11 +76,15 @@ service cloud.firestore {
              'marks', 'gradedBy', 'comments', 'gradedAt', 'link'
            ])
         && request.resource.data.day is int
-        && request.resource.data.type is string;
+        && request.resource.data.type is string
+        && request.resource.data.day == get(/databases/$(database)/documents/system/config).data.currentDay;
 
       // Self-update: can update own submission but NOT marks/gradedBy/comments/gradedAt.
+      // And can only update submissions for the current active day!
       allow update: if isAuthenticated()
         && resource.data.userId == request.auth.uid
+        && resource.data.day == get(/databases/$(database)/documents/system/config).data.currentDay
+        && request.resource.data.day == resource.data.day
         && !request.resource.data.diff(resource.data).affectedKeys()
               .hasAny(['marks', 'gradedBy', 'comments', 'gradedAt']);
 

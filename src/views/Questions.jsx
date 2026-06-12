@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { formatRating } from '../utils/ratingHelper';
+
 import { parseChallengeContent } from '../utils/challengeContent';
 
 export default function Questions() {
@@ -87,7 +87,7 @@ export default function Questions() {
     setSubmitMsg('');
 
     try {
-      const result = await submitCommitUrl(selectedQuestion.day, commitUrl.trim());
+      const result = await submitCommitUrl(currentDay, commitUrl.trim());
       if (result.success) {
         setCommitUrl('');
         setSubmitMsg('Submitted successfully!');
@@ -210,9 +210,6 @@ export default function Questions() {
                             <span className="day-card-title-lc">{q.titleLc}</span>
                             <span className="day-card-title-custom">{q.titleCustom}</span>
                           </div>
-                          <div className="day-card-footer">
-                            <span className="day-card-rating">Rating {formatRating(q)}</span>
-                          </div>
                         </div>
                       </button>
                     );
@@ -253,7 +250,6 @@ export default function Questions() {
               <div className="detailed-header">
                 <div className="header-meta">
                   <span className="day-large">DAY {selectedQuestion.day}</span>
-                  <span className="rating-tag">RATING {formatRating(selectedQuestion)}</span>
                   {selectedQuestion.isMaster && (
                     <span className="master-challenge-tag">Master Challenge</span>
                   )}
@@ -378,8 +374,7 @@ export default function Questions() {
               </svg>
               <h3>Select a challenge from the archive</h3>
               <p>
-                Choose any day from Day 1 to Day {currentDay} to inspect problem statements and
-                ratings.
+                Choose any day from Day 1 to Day {currentDay} to inspect problem statements.
               </p>
             </div>
           )}

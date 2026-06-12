@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatRating } from '../utils/ratingHelper';
+
 import { useApp } from '../context/AppContext';
 
 function StreakCell({ dayNum, status, isCurrent, label, onFocus, onBlur }) {
