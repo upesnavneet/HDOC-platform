@@ -120,15 +120,12 @@ export default function AppRoutes() {
                 </ProtectedRoute>
               }
             />
-            {/* M16: Leaderboard now requires authentication */}
             <Route
               path="/leaderboards"
               element={
-                <ProtectedRoute>
-                  <RouteErrorBoundary>
-                    <PageTransition><Leaderboards /></PageTransition>
-                  </RouteErrorBoundary>
-                </ProtectedRoute>
+                <RouteErrorBoundary>
+                  <PageTransition><Leaderboards /></PageTransition>
+                </RouteErrorBoundary>
               }
             />
             <Route

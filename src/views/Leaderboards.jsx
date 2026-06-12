@@ -7,7 +7,7 @@ const PAGE_SIZE = 25;
 
 /* ── Tiny SVG icons ── */
 const SearchIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
 );
 
 const TrendIcon = ({ trend }) => {
@@ -17,7 +17,7 @@ const TrendIcon = ({ trend }) => {
 };
 
 const CrownIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z"/><path d="M5 19h14v2H5z" opacity=".5"/></svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z" /><path d="M5 19h14v2H5z" opacity=".5" /></svg>
 );
 
 /* ── Tab config ── */
@@ -153,7 +153,10 @@ export default function Leaderboards() {
       {/* ═══ Header ═══ */}
       <header className="lb-header">
         <h1 className="lb-title">Leaderboard</h1>
-        <p className="lb-subtitle">ACM 100 Days of Code — Week {currentWeek} Standings</p>
+        <p className="lb-subtitle">ACM 100 Days of Code Week {currentWeek} Standings</p>
+        <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--color-orange)', fontWeight: 500, opacity: 0.9 }}>
+          *Note: The leaderboard will be updated once in a week.
+        </div>
       </header>
 
       {/* ═══ Segmented Tabs ═══ */}

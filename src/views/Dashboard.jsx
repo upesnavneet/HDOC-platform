@@ -68,16 +68,16 @@ export default function Dashboard() {
   // Find rank preview
   const codingRank = userId
     ? db.users
-        .filter((u) => u.role !== 'admin')
-        .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
-        .findIndex((u) => u.id === userId) + 1
+      .filter((u) => u.role !== 'admin')
+      .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
+      .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const debugRank = userId
     ? db.users
-        .filter((u) => u.role !== 'admin')
-        .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
-        .findIndex((u) => u.id === userId) + 1
+      .filter((u) => u.role !== 'admin')
+      .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
+      .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const overallRank = currentUser?.overallRank ?? '-';
@@ -166,14 +166,14 @@ export default function Dashboard() {
         }}
       >
         <div className="dashboard-hero-left hero-panel-deep">
-          <h1 
-            className="hero-main-title" 
-            style={{ 
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)', 
-              textTransform: 'uppercase', 
-              letterSpacing: '-0.02em', 
-              color: 'var(--color-white)', 
-              marginBottom: '0.5rem', 
+          <h1
+            className="hero-main-title"
+            style={{
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+              textTransform: 'uppercase',
+              letterSpacing: '-0.02em',
+              color: 'var(--color-white)',
+              marginBottom: '0.5rem',
               fontWeight: 800,
               lineHeight: 1.1,
               textShadow: '0 0 40px rgba(255,255,255,0.2)'
@@ -181,10 +181,10 @@ export default function Dashboard() {
           >
             100 Days of Code
           </h1>
-          <h2 
-            className="hero-headline" 
-            style={{ 
-              fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)', 
+          <h2
+            className="hero-headline"
+            style={{
+              fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)',
               fontWeight: 500,
               letterSpacing: '0.02em',
               marginTop: 0,
@@ -204,8 +204,11 @@ export default function Dashboard() {
               <ScrambledText text="Brilliance." triggerOnHover={false} />
             </span>
           </h2>
-          <p className="hero-desc">
-            One commit. Every day. 100 days straight - UPES ACM&apos;s flagship coding challenge.
+          <p
+            className="hero-desc"
+            style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400 }}
+          >
+            One commit. Every day. 100 days straight. UPES ACM&apos;s flagship coding challenge.
             Build your streak, sharpen your skills, and rise through the ranks with fellow coders.
           </p>
           <div className="hero-actions">
@@ -430,10 +433,10 @@ export default function Dashboard() {
                   GitHub Activity
                 </h3>
                 <div className="github-graph-container" style={{ width: '100%', overflow: 'hidden', borderRadius: '4px' }}>
-                  <img 
-                    src={`https://github-readme-activity-graph.vercel.app/graph?username=${currentUser.gitHubId}&bg_color=303841&color=F3F3F3&line=2185D5&point=F3F3F3&area=true&hide_border=true&title_color=F3F3F3`} 
-                    alt={`${currentUser.gitHubId}'s GitHub Activity Graph`} 
-                    style={{ width: '100%', height: 'auto', display: 'block' }} 
+                  <img
+                    src={`https://github-readme-activity-graph.vercel.app/graph?username=${currentUser.gitHubId}&bg_color=303841&color=F3F3F3&line=2185D5&point=F3F3F3&area=true&hide_border=true&title_color=F3F3F3`}
+                    alt={`${currentUser.gitHubId}'s GitHub Activity Graph`}
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
                 </div>
               </div>
@@ -540,10 +543,10 @@ export default function Dashboard() {
                     const isSelf = user.id === userId;
                     const initials = user.name
                       ? user.name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')
-                          .slice(0, 2)
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .slice(0, 2)
                       : 'CD';
 
                     return (

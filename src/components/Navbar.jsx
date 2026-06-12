@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import './ModernNav.css';
 
@@ -15,6 +15,7 @@ const ROUTE_MAP = {
 export default function Navbar() {
   const { currentUser, logout } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -73,9 +74,11 @@ export default function Navbar() {
     return items;
   }, [currentUser]);
 
-  const handleNavClick = (item) => {
+  const handleNavClick = (e, item) => {
     if (item.action === 'logout' && logout) {
+      e.preventDefault();
       logout();
+      navigate('/auth/login', { replace: true });
     }
     setIsMobileMenuOpen(false);
   };
@@ -124,7 +127,7 @@ export default function Navbar() {
                     role="menuitem"
                     to={item.href}
                     className={`modern-nav-link ${activeHref === item.href ? 'is-active' : ''}`}
-                    onClick={() => handleNavClick(item)}
+                    onClick={(e) => handleNavClick(e, item)}
                   >
                     {item.label}
                   </Link>
@@ -133,7 +136,7 @@ export default function Navbar() {
                     role="menuitem"
                     href={item.href}
                     className={`modern-nav-link ${activeHref === item.href ? 'is-active' : ''}`}
-                    onClick={() => handleNavClick(item)}
+                    onClick={(e) => handleNavClick(e, item)}
                   >
                     {item.label}
                   </a>
@@ -191,7 +194,7 @@ export default function Navbar() {
                 <Link
                   to={item.href}
                   className={`modal-nav-link ${activeHref === item.href ? 'is-active' : ''}`}
-                  onClick={() => handleNavClick(item)}
+                  onClick={(e) => handleNavClick(e, item)}
                 >
                   {item.label}
                 </Link>
@@ -199,7 +202,7 @@ export default function Navbar() {
                 <a
                   href={item.href}
                   className={`modal-nav-link ${activeHref === item.href ? 'is-active' : ''}`}
-                  onClick={() => handleNavClick(item)}
+                  onClick={(e) => handleNavClick(e, item)}
                 >
                   {item.label}
                 </a>
