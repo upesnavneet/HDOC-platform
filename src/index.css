@@ -430,6 +430,9 @@ button {
 .auth-card-wrapper.border-glow-card {
   border: none;
   box-shadow: none;
+  background: transparent !important;
+  backdrop-filter: blur(24px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.4) !important;
 }
 
 /* Keep me logged in checkbox styles */
