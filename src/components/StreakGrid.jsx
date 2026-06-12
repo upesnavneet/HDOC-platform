@@ -20,42 +20,15 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
   const [focusedDay, setFocusedDay] = useState(null);
 
   const getDayStatus = (dayNum) => {
-    if (dayNum > currentDay) {
-      return { class: 'future', text: 'Locked (Future)' };
+    const daySubs = submissions.filter((s) => s.day === dayNum || s.dayNumber === dayNum);
+
+    // If the user has made the required submissions for the day (assuming 2 for LeetCode + Custom)
+    if (daySubs.length >= 2) {
+      return { class: 'level-4', text: 'Solved' };
     }
 
-    const daySubs = submissions.filter((s) => s.day === dayNum);
-
-    if (dayNum === currentDay) {
-      if (daySubs.length === 0) {
-        return { class: 'pending', text: 'Pending Submission' };
-      }
-      const hasLate = daySubs.some((s) => s.status === 'Late');
-      const allSubmitted = daySubs.length === 2;
-      if (allSubmitted) {
-        return hasLate
-          ? { class: 'late', text: 'Submitted (Late)' }
-          : { class: 'solved', text: 'Solved' };
-      }
-      return { class: 'partial', text: 'Partially Submitted' };
-    }
-
-    if (daySubs.length === 0) {
-      return { class: 'missed', text: 'Missed (No Submissions)' };
-    }
-
-    const hasMissed = daySubs.some((s) => s.status === 'Missed');
-    const hasLate = daySubs.some((s) => s.status === 'Late');
-
-    if (hasMissed || daySubs.length < 2) {
-      return { class: 'missed', text: 'Missed / Incomplete' };
-    }
-
-    if (hasLate) {
-      return { class: 'late', text: 'Solved (Late)' };
-    }
-
-    return { class: 'solved', text: 'Solved on Time' };
+    // Otherwise, box remains unlit
+    return { class: 'level-0', text: 'Unsolved' };
   };
 
   const buildDayLabel = (dayNum, status, q) => {
@@ -120,18 +93,6 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
             />
           );
         })}
-      </div>
-
-      <div className="heatmap-legend">
-        <span>Less</span>
-        <div className="legend-cells">
-          <div className="legend-cell lvl-0" title="Future / Empty" />
-          <div className="legend-cell lvl-1" title="Missed / Pending" />
-          <div className="legend-cell lvl-2" title="Partially Solved" />
-          <div className="legend-cell lvl-3" title="Solved Late" />
-          <div className="legend-cell lvl-4" title="Solved on Time" />
-        </div>
-        <span>More</span>
       </div>
     </div>
   );
