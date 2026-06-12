@@ -315,10 +315,23 @@ export default function Questions() {
                       );
                     })()}
                   </div>
-                  
-                  {/* GitHub Submission Form inside the second card */}
-                  <div className="section-card-footer github-submission-section" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                    <h4 className="section-subtitle" style={{ marginBottom: '1rem' }}>Submit Your Code</h4>
+                </div>
+
+                {/* Part C: Final Submission */}
+                <div className="problem-section-card-stack full-width-card">
+
+                  <h3 className="section-card-title">Submit Your Code</h3>
+
+                  <div className="problem-section-body" style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ background: 'rgba(242, 170, 76, 0.1)', borderLeft: '4px solid #f2aa4c', padding: '1rem', borderRadius: '4px' }}>
+                      <h4 className="section-subtitle" style={{ color: '#f2aa4c', marginTop: 0, marginBottom: '0.5rem' }}>Important Submission Instructions</h4>
+                      <p className="problem-text" style={{ marginBottom: 0 }}>
+                        Your GitHub commit <strong>must</strong> contain a folder named exactly after your own name and SapID (i.e. name_SapID). Inside this folder, you must include the solutions to <strong>BOTH</strong> the LeetCode problem (Part A) and the Custom Challenge (Part B). Marks will be given exclusively on the basis of both problem solutions being present in this single commit.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="section-card-footer github-submission-section" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '1.5rem' }}>
                     <form onSubmit={handleCommitSubmit} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                       <input
                         type="url"
@@ -330,7 +343,7 @@ export default function Questions() {
                       />
                       <div style={{ flex: '0 0 auto', width: '200px' }}>
                         <button type="submit" disabled={isSubmitting} className="solve-button-new">
-                          {isSubmitting ? 'Submitting...' : 'Submit Commit →'}
+                          {isSubmitting ? 'Submitting...' : 'Submit Commit ↗'}
                         </button>
                       </div>
                     </form>

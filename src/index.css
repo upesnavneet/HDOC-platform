@@ -6157,6 +6157,10 @@ button {
 }
 
 /* Stack Cards */
+.full-width-card {
+  grid-column: 1 / -1 !important;
+}
+
 .problem-section-card-stack {
   background: rgba(48, 56, 65, 0.6) !important;
   backdrop-filter: blur(12px) !important;
