@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatRating } from '../utils/ratingHelper';
+
 import { useApp } from '../context/AppContext';
 
 function StreakCell({ dayNum, status, isCurrent, label, onFocus, onBlur }) {
@@ -22,8 +22,8 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
   const getDayStatus = (dayNum) => {
     const daySubs = submissions.filter((s) => s.day === dayNum || s.dayNumber === dayNum);
 
-    // If the user has made the required submissions for the day (assuming 2 for LeetCode + Custom)
-    if (daySubs.length >= 2) {
+    // If the user has made the required submissions for the day (now just 1 commit)
+    if (daySubs.length >= 1) {
       return { class: 'level-4', text: 'Solved' };
     }
 

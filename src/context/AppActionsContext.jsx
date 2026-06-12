@@ -96,7 +96,8 @@ export function AppActionsProvider({ children }) {
 
   // H12: Commit URL submission — writes Schema B (same as submitQuestionCode)
   const submitCommitUrl = useCallback(
-    async (dayNum, commitUrl) => {
+    async (providedDayNum, commitUrl) => {
+      const dayNum = db.currentDay; // strictly enforce active website day
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
       // B1: use dynamic event start date from Firestore system/config

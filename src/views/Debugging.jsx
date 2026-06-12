@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
+import AdvanceTimer from '../components/AdvanceTimer';
 
 /* ── helpers ── */
 
@@ -267,7 +268,7 @@ export default function Debugging() {
     [db.simulatedTime, db.debuggingChallenges, currentWeek, tick]
   );
 
-  const { activeChallenge, timeStatus, isChallengeOpen, countdown } = windowState;
+  const { activeChallenge, timeStatus, isChallengeOpen } = windowState;
 
   useEffect(() => {
     if (timeStatus !== 'upcoming' && timeStatus !== 'open') return undefined;
@@ -354,7 +355,9 @@ export default function Debugging() {
               {/* Timer */}
               <div className="debug-timer-badge">
                 <span className="pulse-dot" aria-hidden="true" />
-                <span>{countdown}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <AdvanceTimer hideIcon={true} /> remaining
+                </span>
               </div>
 
               {/* Challenge Brief */}
@@ -518,12 +521,16 @@ export default function Debugging() {
               This week&apos;s debugging challenge goes live at 21:00 tonight. Come back then to
               start.
             </p>
-            <div className="debug-closed-timer">{countdown}</div>
+            <div className="debug-closed-timer" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+              <AdvanceTimer hideIcon={true} />
+            </div>
           </>
         ) : (
           <>
             <h2>No active challenge right now</h2>
-            <p className="upcoming-note">{countdown}</p>
+            <p className="upcoming-note" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+              <AdvanceTimer hideIcon={true} />
+            </p>
             <div className="debug-rules-grid">
               <div className="debug-rule-card">
                 <span className="number">01</span>
