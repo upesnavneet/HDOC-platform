@@ -81,6 +81,7 @@ export function DataProvider({ children }) {
               // D1: coordinator-configurable max scores; fallback to safe defaults
               maxCodingScore: config?.maxCodingScore ?? prev.maxCodingScore,
               maxDebugScore: config?.maxDebugScore ?? prev.maxDebugScore,
+              lastDayAdvanceTime: config?.lastDayAdvanceTime?.toDate?.() || (config?.lastDayAdvanceTime ? new Date(config.lastDayAdvanceTime) : null) || prev.lastDayAdvanceTime,
             }));
           },
           onSubError('SystemConfig')
