@@ -214,10 +214,6 @@ export default function Leaderboards() {
               <span className="lb-pos-val">{yourPosition.streak}d</span>
               <span className="lb-pos-lbl">Streak</span>
             </div>
-            <div className="lb-pos-item">
-              <span className="lb-pos-val">{yourPosition.completionPct}%</span>
-              <span className="lb-pos-lbl">Top %</span>
-            </div>
           </div>
         </section>
       )}

@@ -29,7 +29,6 @@ export function useLeaderboardData(db, currentUserId) {
     const completionPct = currentDay > 0 ? (userSubs.length / (currentDay * 2)) * 100 : 0;
     if (completionPct >= 80) badges.push({ emoji: '⚡', label: 'Fast Solver' });
 
-    if ((p.totalDebuggingScore || 0) > 0) badges.push({ emoji: '🐞', label: 'Debug Expert' });
     return badges;
   };
 
@@ -105,7 +104,7 @@ export function useLeaderboardData(db, currentUserId) {
         bugsFixed,
         debugStreak,
         trend: bugsFixed > 0 ? (debugStreak >= bugsFixed ? 'up' : 'neutral') : 'down',
-        badges: (p.totalDebuggingScore || 0) > 0 ? [{ emoji: '🐞', label: 'Debug Expert' }] : [],
+        badges: [],
       };
     });
     return data.sort((a, b) => b.score - a.score);
@@ -167,15 +166,11 @@ export function useLeaderboardData(db, currentUserId) {
     if (idx === -1) return null;
     const row = board[idx];
     const totalParticipants = board.length;
-    const completionPct = totalParticipants > 0
-      ? Math.round(((totalParticipants - idx) / totalParticipants) * 100)
-      : 0;
     return {
       rank: idx + 1,
       totalParticipants,
       score: row[scoreField] ?? row.score ?? 0,
       streak: row.streak ?? row.debugStreak ?? row.combinedStreak ?? 0,
-      completionPct,
       change: row.trend === 'up' ? '+' : row.trend === 'down' ? '-' : '→',
     };
   };

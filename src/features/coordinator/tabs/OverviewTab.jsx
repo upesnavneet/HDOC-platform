@@ -5,7 +5,6 @@ import Modal from '../../../components/ui/Modal';
 export default function OverviewTab({ participants }) {
   const {
     toggleUserStatus,
-    resetParticipantStreak,
     updateParticipantStreaks,
     editParticipantProgress,
   } = useApp();
@@ -105,13 +104,6 @@ export default function OverviewTab({ participants }) {
                       }}
                     >
                       Edit Progress
-                    </button>
-                    <button
-                      type="button"
-                      className="small-action-btn grey"
-                      onClick={() => resetParticipantStreak(p.id)}
-                    >
-                      Reset Streak
                     </button>
                     <button
                       type="button"

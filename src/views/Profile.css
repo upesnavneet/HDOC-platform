@@ -293,40 +293,46 @@
 }
 
 /* Insights */
-.np-insight-list {
+.np-insights-card {
   display: flex;
   flex-direction: column;
-  gap: 1.063rem;
+  justify-content: center;
+}
+
+.np-daily-quote-wrapper {
   margin-top: 1.275rem;
-}
-
-.np-insight-row {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 0.637rem;
 }
 
-.np-insight-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.np-insight-label {
-  font-size: 0.612rem;
-  color: #8b949e;
-}
-
-.np-insight-value {
-  font-size: 0.65rem;
-  font-family: 'JetBrains Mono', monospace;
+.np-daily-quote-text {
+  text-align: center;
+  padding: 1.5rem 1rem;
   color: #c9d1d9;
-  font-weight: 500;
+  font-style: italic;
+  font-size: 0.9rem;
+  border-left: 3px solid #58a6ff;
+  background: rgba(88, 166, 255, 0.05);
+  border-radius: 4px 8px 8px 4px;
+  width: 100%;
 }
 
-.np-insight-value.highlight {
-  color: #58a6ff;
+.np-daily-quote-text p {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #F3F3F3;
+}
+
+.np-daily-quote-text span {
+  color: #8b949e;
+  font-size: 0.8rem;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* ================= SUBMISSION HISTORY ================= */

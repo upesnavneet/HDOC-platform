@@ -275,12 +275,12 @@ export default function Dashboard() {
           {/* Left Column (Main Area) */}
           <div className="dashboard-main-col">
             {/* ── Today's Coding Challenges Section ── */}
-            <section id="todays-challenges" className="redesigned-challenge-card-unified">
-              <h3 className="redesigned-section-header">Today's Challenges - Day {currentDay}</h3>
+            <div id="todays-challenges">
+              <h3 className="redesigned-section-header" style={{ marginBottom: '1rem' }}>Today's Challenges - Day {currentDay}</h3>
 
               <div className="unified-challenge-content">
                 {/* Challenge 1: LeetCode */}
-                <div className="challenge-question-block">
+                <section className="redesigned-challenge-card-unified challenge-question-block" style={{ marginBottom: 0 }}>
                   <div className="challenge-card-header">
                     <span className="challenge-type-tag">LeetCode Challenge</span>
                   </div>
@@ -304,11 +304,10 @@ export default function Dashboard() {
                       Solve on LeetCode &rarr;
                     </a>
                   )}
-                </div>
-
+                </section>
 
                 {/* Challenge 2: Custom DSA */}
-                <div className="challenge-question-block">
+                <section className="redesigned-challenge-card-unified challenge-question-block" style={{ marginBottom: 0 }}>
                   <div className="challenge-card-header">
                     <span className="challenge-type-tag">Custom DSA Challenge</span>
                   </div>
@@ -336,11 +335,9 @@ export default function Dashboard() {
                       Solve Challenge &rarr;
                     </button>
                   )}
-                </div>
+                </section>
               </div>
-
-
-            </section>
+            </div>
 
             {/* Heatmap Section */}
             <StreakGrid currentDay={currentDay} submissions={userSubs} questions={questions} />

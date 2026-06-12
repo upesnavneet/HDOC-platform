@@ -103,24 +103,28 @@ export const AuthProvider = ({ children }) => {
 
   const mapFirebaseAuthError = (code) => {
     switch (code) {
-      case 'auth/invalid-credential':
-      case 'auth/wrong-password':
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
       case 'auth/user-not-found':
-        return 'Invalid email or password.';
+        return 'No account found with this username.';
+      case 'auth/wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'auth/invalid-credential':
+        return 'Invalid username and password combination.';
       case 'auth/too-many-requests':
-        return 'Too many failed attempts. Please try again later.';
+        return 'Too many failed login attempts. Please wait and try again.';
       case 'auth/user-disabled':
-        return 'This account has been disabled.';
+        return 'Your account has been temporarily disabled. Contact support.';
       case 'auth/network-request-failed':
-        return 'Network error. Check your connection.';
+        return 'Unable to connect to the server. Please check your internet connection.';
+      case 'auth/internal-error':
+        return 'Server error. Please try again later.';
       default:
         return 'Login failed. Please try again.';
     }
   };
 
   const login = async (email, password) => {
-    dispatch({ type: 'AUTH_START' });
-
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const tokenResult = await userCredential.user.getIdTokenResult();
@@ -154,8 +158,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, email, password, studentId, gitHubId, leetCodeId, hackerRankId) => {
-    dispatch({ type: 'AUTH_START' });
-
     if (!validatePassword(password)) {
       const errMsg =
         'Password must be at least 8 characters long, contain at least 1 number, and 1 special character.';

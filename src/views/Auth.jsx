@@ -36,8 +36,16 @@ export default function Auth() {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!loginEmail || !loginPass) {
-      setErrorMsg('Please fill in all fields.');
+    if (!loginEmail && !loginPass) {
+      setErrorMsg('Username and password are required.');
+      return;
+    }
+    if (!loginEmail) {
+      setErrorMsg('Please enter your username.');
+      return;
+    }
+    if (!loginPass) {
+      setErrorMsg('Please enter your password.');
       return;
     }
 

@@ -6822,6 +6822,11 @@ button {
     align-items: center;
     text-align: center;
   }
+  .lb-podium-card.champion {
+    width: 100%;
+    padding-top: 1.5rem;
+    margin-bottom: 0;
+  }
   .lb-search-wrap {
     justify-content: center;
   }

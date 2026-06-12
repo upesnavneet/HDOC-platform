@@ -5,12 +5,28 @@ import { updateUserProfile } from '../services/userService';
 import StreakGrid from '../components/StreakGrid';
 import './Profile.css';
 
+const DAILY_QUOTES = [
+  { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+  { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" },
+  { text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", author: "Martin Fowler" },
+  { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+  { text: "Experience is the name everyone gives to their mistakes.", author: "Oscar Wilde" },
+  { text: "Code is like humor. When you have to explain it, it’s bad.", author: "Cory House" },
+  { text: "Fix the cause, not the symptom.", author: "Steve Maguire" },
+  { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+  { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+  { text: "Clean code always looks like it was written by someone who cares.", author: "Robert C. Martin" }
+];
+
 export default function Profile() {
   const { db, currentUser } = useApp();
   const [gitHubInput, setGitHubInput] = useState(currentUser?.gitHubId || '');
   const [isUpdatingGitHub, setIsUpdatingGitHub] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
+
+  const currentDayIndex = (db.currentDay || 1) % DAILY_QUOTES.length;
+  const dailyQuote = DAILY_QUOTES[currentDayIndex];
 
   const handleGitHubUpdate = async (e) => {
     e.preventDefault();
@@ -87,10 +103,6 @@ export default function Profile() {
       favoriteType = type;
     }
   }
-
-  const globalPct = db.users?.length
-    ? `Top ${Math.max(1, Math.round((Number(currentUser?.overallRank || 1) / db.users.length) * 100))}%`
-    : `Rank #${currentUser?.overallRank || '-'}`;
 
   // Filtered Submissions for Table
   const filteredSubs = useMemo(() => {
@@ -217,19 +229,11 @@ export default function Profile() {
         </div>
 
         <div className="np-insights-card">
-          <h3>QUICK INSIGHTS</h3>
-          <div className="np-insight-list">
-            <div className="np-insight-row">
-              <span className="np-insight-label">Best Score</span>
-              <span className="np-insight-value">{bestScore}/10</span>
-            </div>
-            <div className="np-insight-row">
-              <span className="np-insight-label">Favorite Type</span>
-              <span className="np-insight-value">{favoriteType}</span>
-            </div>
-            <div className="np-insight-row">
-              <span className="np-insight-label">Global Pct.</span>
-              <span className="np-insight-value highlight">{globalPct}</span>
+          <h3>DAILY QUOTE</h3>
+          <div className="np-daily-quote-wrapper">
+            <div className="np-daily-quote-text">
+              <p>"{dailyQuote.text}"</p>
+              <span>— {dailyQuote.author}</span>
             </div>
           </div>
         </div>

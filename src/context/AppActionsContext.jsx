@@ -360,14 +360,7 @@ export function AppActionsProvider({ children }) {
     []
   );
 
-  const resetParticipantStreak = useCallback(async (userId) => {
-    try {
-      await updateUserProfile(userId, { gitHubStreak: 0, leetCodeStreak: 0 });
-      return { success: true, message: 'Participant streaks reset.' };
-    } catch {
-      return { success: false, message: 'Failed to reset streaks.' };
-    }
-  }, []);
+
 
   const completeWeek = useCallback(
     async (weekNum) => {
@@ -471,7 +464,6 @@ export function AppActionsProvider({ children }) {
       deleteQuestion,
       editParticipantProgress,
       editParticipantContestData,
-      resetParticipantStreak,
       completeWeek,
       revertWeek,
       uploadHandout,
@@ -491,7 +483,6 @@ export function AppActionsProvider({ children }) {
       deleteQuestion,
       editParticipantProgress,
       editParticipantContestData,
-      resetParticipantStreak,
       completeWeek,
       revertWeek,
       uploadHandout,
