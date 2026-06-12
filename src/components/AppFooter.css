@@ -36,6 +36,12 @@
   gap: 0.75rem;
 }
 
+.footer-logos {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .footer-small-logo {
   height: 20px;
   width: auto;
@@ -108,5 +114,10 @@
 
   .footer-copyright {
     margin-left: 0;
+  }
+
+  .footer-links-small {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }

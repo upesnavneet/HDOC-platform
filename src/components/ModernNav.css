@@ -52,7 +52,7 @@
     width: 100% !important;
   }
   .floating-navbar-container.scrolled .nav-pill {
-    width: 200px !important;
+    width: 100% !important;
   }
 }
 

@@ -3537,23 +3537,28 @@ button {
 @media (max-width: 900px) {
   .debug-workspace {
     flex-direction: column;
-    min-height: auto;
+    height: calc(100vh - 100px); /* Fixed height so panels scroll internally */
+    min-height: 600px;
   }
 
   .debug-problem-panel {
     width: 100%;
     min-width: 0;
-    max-height: 50vh;
+    height: 40%;
+    max-height: none;
+    flex: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .debug-split-divider {
-    width: 100%;
-    height: 1px;
-    cursor: row-resize;
+    display: none; /* Hide the divider on mobile since we have a border */
   }
 
   .debug-code-panel {
-    min-height: 400px;
+    width: 100%;
+    height: 60%;
+    min-height: 0;
+    flex: 1;
   }
 
   .debug-submission-dock {
@@ -3997,6 +4002,7 @@ button {
 
 .lb-table {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   font-size: 0.88rem;
 }
@@ -5913,6 +5919,7 @@ button {
   justify-content: center;
   align-items: center;
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 .circular-gallery-container {
@@ -5920,6 +5927,7 @@ button {
   width: 240px;
   height: 130px;
   transform-style: preserve-3d;
+  pointer-events: none;
 }
 
 /* Gallery Day Card */
@@ -6784,4 +6792,43 @@ button {
 .advance-day-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+@media (max-width: 768px) { .gallery-scrollbar-container { display: none !important; } }
+/* --- Leaderboard Mobile Responsiveness Fixes --- */
+.lb-table-wrap {
+  overflow-x: auto !important;
+  max-width: 100%;
+}
+.lb-page {
+  max-width: 100%;
+}
+@media (max-width: 600px) {
+  .lb-tabs {
+    flex-wrap: wrap;
+    height: auto;
+    justify-content: center;
+  }
+  .lb-header {
+    padding: 1rem;
+    text-align: center;
+    align-items: center;
+  }
+  .lb-podium-card {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+  .lb-search-wrap {
+    justify-content: center;
+  }
+  .lb-your-pos-grid {
+    justify-content: center;
+  }
+  .lb-podium {
+    align-items: center;
+    flex-direction: column;
+  }
+  .lb-podium-card.gold { order: 1; margin-bottom: 0; }
+  .lb-podium-card.silver { order: 2; }
+  .lb-podium-card.bronze { order: 3; }
 }

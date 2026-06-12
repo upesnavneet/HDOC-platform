@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatRating } from '../utils/ratingHelper';
 import { parseChallengeContent } from '../utils/challengeContent';
@@ -12,6 +12,33 @@ export default function Questions() {
   const [commitUrl, setCommitUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMsg, setSubmitMsg] = useState('');
+
+  const isDragging = useRef(false);
+  const touchStartX = useRef(0);
+  const dragStartScroll = useRef(0);
+
+  const handleTouchStart = (e) => {
+    isDragging.current = true;
+    touchStartX.current = e.touches ? e.touches[0].clientX : e.clientX;
+    dragStartScroll.current = smoothScrollValue;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging.current) return;
+    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    const diff = touchStartX.current - currentX;
+    // 1 card width ~ 100px of drag
+    const newScroll = Math.max(0, Math.min(archivedQuestions.length - 1, dragStartScroll.current + diff / 100));
+    setSmoothScrollValue(newScroll);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const newIndex = Math.round(smoothScrollValue);
+    setManualSelection(archivedQuestions[newIndex]);
+    setSmoothScrollValue(newIndex);
+  };
 
   const currentDay = db.currentDay;
   const questions = db.questions;
@@ -39,6 +66,7 @@ export default function Questions() {
   const selectedQuestion = defaultSelection;
 
   useEffect(() => {
+    if (isDragging.current) return;
     const idx = archivedQuestions.findIndex((q) => q.id === selectedQuestion?.id);
     setSmoothScrollValue(idx === -1 ? 0 : idx);
   }, [selectedQuestion, archivedQuestions]);
@@ -129,6 +157,13 @@ export default function Questions() {
                 if (currentIndex > 0) setManualSelection(archivedQuestions[currentIndex - 1]);
               }
             }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleTouchStart}
+            onMouseMove={handleTouchMove}
+            onMouseUp={handleTouchEnd}
+            onMouseLeave={handleTouchEnd}
           >
             {archivedQuestions.length === 0 ? (
               <div className="no-results-compact">No days match your filter criteria.</div>
@@ -142,7 +177,8 @@ export default function Questions() {
                     const activeIndex = archivedQuestions.findIndex(
                       (item) => item.id === selectedQuestion?.id
                     );
-                    const safeActiveIndex = activeIndex === -1 ? 0 : activeIndex;
+                    // Use smoothScrollValue for fluid rotation if dragging, else use activeIndex
+                    const safeActiveIndex = isDragging.current ? smoothScrollValue : (activeIndex === -1 ? 0 : activeIndex);
                     const offset = index - safeActiveIndex;
 
                     return (
@@ -150,14 +186,17 @@ export default function Questions() {
                         type="button"
                         key={q.id}
                         className={`gallery-day-card circular-item ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''} ${isMaster ? 'master-card' : ''}`}
-                        onClick={() => setManualSelection(q)}
+                        onClick={() => {
+                          setManualSelection(q);
+                          document.getElementById('question-details-panel')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         aria-pressed={isSelected}
                         aria-label={`Day ${q.day}, ${q.titleLc}, ${q.titleCustom}${isToday ? ', today' : ''}`}
                         style={{
                           transform: `translateX(${offset * 115}%) translateZ(${Math.abs(offset) * -100}px) rotateY(${offset * -18}deg)`,
                           zIndex: 100 - Math.abs(offset),
                           opacity: Math.abs(offset) > 4 ? 0 : 1,
-                          pointerEvents: Math.abs(offset) > 2 ? 'none' : 'auto',
+                          pointerEvents: Math.abs(offset) > 4 ? 'none' : 'auto',
                           visibility: Math.abs(offset) > 4 ? 'hidden' : 'visible',
                         }}
                       >
@@ -206,7 +245,7 @@ export default function Questions() {
           )}
         </div>
 
-        <div className="archive-bottom-details-panel">
+        <div id="question-details-panel" className="archive-bottom-details-panel">
           {selectedQuestion ? (
             <div
               className={`question-detailed-view-vertical ${selectedQuestion.isMaster ? 'master-styled' : ''}`}

@@ -563,3 +563,32 @@
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+/* --- Base Card Responsiveness --- */
+.np-header-card, .np-activity-card, .np-insights-card, .np-history-card {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* --- Ensure StreakGrid doesn't overflow horizontally --- */
+.np-activity-card.np-streak-override {
+  overflow-x: auto;
+}
+
+/* --- Prevent table squishing on mobile --- */
+.np-history-table {
+  min-width: 600px;
+}
+
+/* --- Mobile specific enhancements --- */
+@media (max-width: 653px) {
+  .np-user-info { width: 100%; }
+  .np-header-stats { width: 100%; justify-content: space-between; }
+  .np-stat-group { flex: 1 1 45%; }
+  .np-history-controls { width: 100%; }
+  .np-search-wrapper { width: 100%; }
+  .np-search-wrapper input, .np-search-wrapper input:focus { width: 100%; }
+  .np-header-card, .np-activity-card, .np-insights-card, .np-history-card { padding: 1.2rem; }
+  .np-pills-row { flex-direction: column; align-items: stretch; }
+  .np-pill { justify-content: center; }
+}
