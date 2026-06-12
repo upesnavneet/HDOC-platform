@@ -102,6 +102,21 @@ export default function Questions() {
     }
   };
 
+  if (currentDay > 0 && currentDay % 7 === 0) {
+    return (
+      <div className="questions-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F2AA4C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1.5rem' }}>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#F3F3F3' }}>Challenges are Locked on Sundays</h2>
+        <p style={{ fontSize: '1.1rem', color: 'rgba(243, 243, 243, 0.7)', maxWidth: '500px', lineHeight: 1.6 }}>
+          Today is Day {currentDay}, which is a designated Sunday. Please navigate to the <strong>Debugging tab</strong> to complete your Sunday Challenge!
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="questions-container">
       <div className="page-header">
