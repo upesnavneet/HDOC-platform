@@ -6,8 +6,10 @@ export default function AppFooter() {
     <footer className="traditional-footer">
       <div className="traditional-footer-content">
         <div className="footer-brand-small">
-          <img src="/acm-acmw-white.png" alt="ACM Logo" className="footer-small-logo" />
-          <img src="/logo-1.png" alt="HDOC Logo" className="footer-small-logo" />
+          <div className="footer-logos">
+            <img src="/acm-acmw-white.png" alt="ACM Logo" className="footer-small-logo" />
+            <img src="/logo-1.png" alt="HDOC Logo" className="footer-small-logo" />
+          </div>
           <span className="footer-copyright">
             © {new Date().getFullYear()} UPES ACM. All rights reserved.
           </span>
