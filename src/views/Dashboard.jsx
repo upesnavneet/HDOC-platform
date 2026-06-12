@@ -9,6 +9,7 @@ import { calculateFinishRate } from '../services/statsService';
 import { parseChallengeContent } from '../utils/challengeContent';
 import TiltCard from '../components/TiltCard';
 import ScrambledText from '../components/ScrambledText';
+import AdvanceTimer from '../components/AdvanceTimer';
 import { error as logError } from '../utils/logger';
 
 export default function Dashboard() {
@@ -232,6 +233,12 @@ export default function Dashboard() {
             <div className="hero-stat">
               <span className="hero-stat-num">{Math.min(currentDay, 100)}/100</span>
               <span className="hero-stat-label">Day Counter</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-num">
+                <AdvanceTimer hideIcon />
+              </span>
+              <span className="hero-stat-label">Next Advance In</span>
             </div>
           </div>
         </div>

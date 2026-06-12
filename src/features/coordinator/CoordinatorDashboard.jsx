@@ -9,6 +9,7 @@ import DebuggingGradingTab from './tabs/DebuggingGradingTab';
 import DebuggingQuestionsTab from './tabs/DebuggingQuestionsTab';
 import SubmissionsTab from './tabs/SubmissionsTab';
 import MagicBento from '../../components/MagicBento';
+import AdvanceTimer from '../../components/AdvanceTimer';
 import { updateSystemConfig } from '../../services/completionService';
 import { error as logError } from '../../utils/logger';
 
@@ -180,13 +181,16 @@ export default function CoordinatorDashboard() {
                 Challenge Complete (Day 100)
               </span>
             ) : (
-              <button
-                className="advance-day-btn"
-                onClick={handleAdvanceDay}
-                disabled={isAdvancing}
-              >
-                {isAdvancing ? 'Advancing...' : `Advance to Day ${currentDay + 1}`}
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <AdvanceTimer />
+                <button
+                  className="advance-day-btn"
+                  onClick={handleAdvanceDay}
+                  disabled={isAdvancing}
+                >
+                  {isAdvancing ? 'Advancing...' : `Advance to Day ${currentDay + 1}`}
+                </button>
+              </div>
             )}
           </div>
           <p className="subtitle">
