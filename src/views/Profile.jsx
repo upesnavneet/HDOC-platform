@@ -37,33 +37,23 @@ export default function Profile() {
   // --- Data Computation ---
   const userSubs = useMemo(() => {
     return (db.submissions || [])
-      .filter((s) => s?.userId === currentUser?.id)
-      .sort(
-        (a, b) =>
-          (b.day || 0) - (a.day || 0) || String(a.type || '').localeCompare(String(b.type || ''))
-      );
+      .filter(s => s?.userId === currentUser?.id)
+      .sort((a, b) => (b.day || 0) - (a.day || 0) || String(a.type || '').localeCompare(String(b.type || '')));
   }, [db.submissions, currentUser?.id]);
 
-  const totalSubmissionsCount = userSubs.filter(
-    (s) => s.status === 'Submitted' || s.status === 'Late'
-  ).length;
-  const gradedSubmissions = userSubs.filter((s) => s.marks != null);
-  const averageCodingScore =
-    gradedSubmissions.length > 0
-      ? (
-          gradedSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0) /
-          gradedSubmissions.length
-        ).toFixed(1)
-      : '0.0';
+  const totalSubmissionsCount = userSubs.filter(s => s.status === 'Submitted' || s.status === 'Late').length;
+  const gradedSubmissions = userSubs.filter(s => s.marks != null);
+  const averageCodingScore = gradedSubmissions.length > 0 
+    ? (gradedSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0) / gradedSubmissions.length).toFixed(1)
+    : '0.0';
 
   // Insights
-  const bestScore =
-    gradedSubmissions.length > 0
-      ? Math.max(...gradedSubmissions.map((s) => Number(s.marks || 0))).toFixed(1)
-      : '-';
+  const bestScore = gradedSubmissions.length > 0 
+    ? Math.max(...gradedSubmissions.map(s => Number(s.marks || 0))).toFixed(1)
+    : '-';
 
   const typeCounts = userSubs.reduce((acc, sub) => {
-    const typeLabel = sub.type === 'leetcode' ? 'Algorithms' : sub.type || 'Custom';
+    const typeLabel = sub.type === 'leetcode' ? 'Algorithms' : (sub.type || 'Custom');
     acc[typeLabel] = (acc[typeLabel] || 0) + 1;
     return acc;
   }, {});
@@ -76,25 +66,21 @@ export default function Profile() {
     }
   }
 
-  const globalPct = db.users?.length
+  const globalPct = db.users?.length 
     ? `Top ${Math.max(1, Math.round((Number(currentUser?.overallRank || 1) / db.users.length) * 100))}%`
     : `Rank #${currentUser?.overallRank || '-'}`;
 
   // Filtered Submissions for Table
   const filteredSubs = useMemo(() => {
-    return userSubs.filter((sub) => {
-      const q = (db.questions || []).find((question) => question.id === sub.questionId);
-      const titleStr = q
-        ? sub.type === 'leetcode'
-          ? q.titleLc
-          : q.titleCustom
+    return userSubs.filter(sub => {
+      const q = (db.questions || []).find(question => question.id === sub.questionId);
+      const titleStr = q 
+        ? (sub.type === 'leetcode' ? q.titleLc : q.titleCustom)
         : `Day ${sub.day || '?'} Problem`;
 
       const safeTitleStr = titleStr || `Day ${sub.day || '?'} Problem`;
-      const matchesSearch = String(safeTitleStr)
-        .toLowerCase()
-        .includes(String(searchQuery || '').toLowerCase());
-
+      const matchesSearch = String(safeTitleStr).toLowerCase().includes(String(searchQuery || '').toLowerCase());
+      
       let matchesFilter = true;
       if (filter === 'Success') {
         matchesFilter = sub.marks != null && Number(sub.marks) > 0;
@@ -118,9 +104,9 @@ export default function Profile() {
           <div className="np-user-info">
             <div className="np-avatar-wrapper">
               {currentUser?.gitHubId ? (
-                <img
-                  src={`https://github.com/${currentUser.gitHubId}.png`}
-                  alt="Profile"
+                <img 
+                  src={`https://github.com/${currentUser.gitHubId}.png`} 
+                  alt="Profile" 
                   className="np-avatar"
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -128,15 +114,8 @@ export default function Profile() {
                   }}
                 />
               ) : null}
-              <div
-                className="np-avatar-fallback"
-                style={{ display: currentUser?.gitHubId ? 'none' : 'flex' }}
-              >
-                {String(currentUser?.name || '?')
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .toUpperCase()}
+              <div className="np-avatar-fallback" style={{ display: currentUser?.gitHubId ? 'none' : 'flex' }}>
+                {String(currentUser?.name || '?').split(' ').map(n => n[0]).join('').toUpperCase()}
               </div>
             </div>
             <div className="np-user-details">
@@ -148,7 +127,7 @@ export default function Profile() {
               </div>
             </div>
           </div>
-
+          
           <div className="np-header-stats">
             <div className="np-stat-group">
               <span className="np-stat-label">CURRENT RANK</span>
@@ -157,43 +136,27 @@ export default function Profile() {
             <div className="np-stat-divider"></div>
             <div className="np-stat-group">
               <span className="np-stat-label">TOTAL SCORE</span>
-              <span className="np-stat-value">
-                {Number(currentUser?.totalCodingScore || 0) +
-                  Number(currentUser?.totalDebuggingScore || 0)}{' '}
-                <span className="np-stat-unit">pts</span>
-              </span>
+              <span className="np-stat-value">{Number(currentUser?.totalCodingScore || 0) + Number(currentUser?.totalDebuggingScore || 0)} <span className="np-stat-unit">pts</span></span>
             </div>
             <div className="np-stat-divider"></div>
             <div className="np-stat-group">
               <span className="np-stat-label">CODING SCORE</span>
-              <span className="np-stat-value">
-                {averageCodingScore}
-                <span className="np-stat-unit">/10</span>
-              </span>
+              <span className="np-stat-value">{averageCodingScore}<span className="np-stat-unit">/10</span></span>
             </div>
           </div>
         </div>
 
         <div className="np-pills-row">
           <div className="np-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             <span>{totalSubmissionsCount} Solutions Submitted</span>
           </div>
           <div className="np-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="20" x2="18" y2="10"></line>
-              <line x1="12" y1="20" x2="12" y2="4"></line>
-              <line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             <span>{averageCodingScore}/10 Avg Score</span>
           </div>
           <div className="np-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"></path></svg>
             <span>{currentUser?.leetCodeStreak || 0} Day LC Streak</span>
           </div>
         </div>
@@ -234,13 +197,10 @@ export default function Profile() {
           <h2>SUBMISSION HISTORY</h2>
           <div className="np-history-controls">
             <div className="np-search-wrapper">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input
-                type="text"
-                placeholder="Search problems..."
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input 
+                type="text" 
+                placeholder="Search problems..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -263,12 +223,10 @@ export default function Profile() {
                 </tr>
               </thead>
               <tbody>
-                {filteredSubs.map((sub) => {
-                  const q = (db.questions || []).find((question) => question.id === sub.questionId);
-                  const titleStr = q
-                    ? sub.type === 'leetcode'
-                      ? q.titleLc
-                      : q.titleCustom
+                {filteredSubs.map(sub => {
+                  const q = (db.questions || []).find(question => question.id === sub.questionId);
+                  const titleStr = q 
+                    ? (sub.type === 'leetcode' ? q.titleLc : q.titleCustom)
                     : `Day ${sub.day || '?'} Problem`;
 
                   const isAccepted = sub.marks != null && Number(sub.marks) > 0;
@@ -277,64 +235,31 @@ export default function Profile() {
 
                   return (
                     <tr key={sub.id}>
-                      <td className="np-col-day">
-                        Day
-                        <br />
-                        {sub.day || '?'}
-                      </td>
+                      <td className="np-col-day">Day<br/>{sub.day || '?'}</td>
                       <td className="np-col-problem">{titleStr}</td>
                       <td className="np-col-type">
-                        <span className="np-type-badge">
-                          {sub.type === 'leetcode' ? 'Algorithms' : sub.type || 'Custom'}
-                        </span>
+                        <span className="np-type-badge">{sub.type === 'leetcode' ? 'Algorithms' : (sub.type || 'Custom')}</span>
                       </td>
                       <td className="np-col-status">
                         {isAccepted ? (
                           <span className="np-status-badge success">
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                             Accepted
                           </span>
                         ) : isPending ? (
                           <span className="np-status-badge pending">
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                             Pending
                           </span>
                         ) : (
                           <span className="np-status-badge error">
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <line x1="15" y1="9" x2="9" y2="15"></line>
-                              <line x1="9" y1="9" x2="15" y2="15"></line>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
                             Wrong Answer
                           </span>
                         )}
                       </td>
                       <td className="np-col-score">
-                        {sub.marks != null && !isNaN(Number(sub.marks))
-                          ? Number(sub.marks).toFixed(1)
-                          : '-'}
+                        {sub.marks != null && !isNaN(Number(sub.marks)) ? Number(sub.marks).toFixed(1) : '-'}
                       </td>
                     </tr>
                   );

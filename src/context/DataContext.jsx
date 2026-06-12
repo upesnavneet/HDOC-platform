@@ -75,16 +75,10 @@ export function DataProvider({ children }) {
       // Participants get only their own submissions.
       if (currentUser) {
         if (currentUser.isAdmin) {
-          unsubs.push(
-            subscribeToSubmissions((subs) => setDb((prev) => ({ ...prev, submissions: subs })))
-          );
+          unsubs.push(subscribeToSubmissions((subs) => setDb((prev) => ({ ...prev, submissions: subs }))));
         } else {
           const uid = currentUser.uid || currentUser.id;
-          unsubs.push(
-            subscribeToUserSubmissions(uid, (subs) =>
-              setDb((prev) => ({ ...prev, submissions: subs }))
-            )
-          );
+          unsubs.push(subscribeToUserSubmissions(uid, (subs) => setDb((prev) => ({ ...prev, submissions: subs }))));
         }
       }
 

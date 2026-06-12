@@ -34,18 +34,14 @@ export const deleteQuestion = async (dayNum) => {
 
 export const subscribeToQuestions = (callback) => {
   const colRef = collection(db, QUESTIONS_COLLECTION);
-  return onSnapshot(
-    colRef,
-    (querySnapshot) => {
-      const questions = [];
-      querySnapshot.forEach((doc) => {
-        questions.push({ id: doc.id, ...doc.data() });
-      });
-      questions.sort((a, b) => a.day - b.day);
-      callback(questions);
-    },
-    (error) => {
-      logError('Error subscribing to questions:', error);
-    }
-  );
+  return onSnapshot(colRef, (querySnapshot) => {
+    const questions = [];
+    querySnapshot.forEach((doc) => {
+      questions.push({ id: doc.id, ...doc.data() });
+    });
+    questions.sort((a, b) => a.day - b.day);
+    callback(questions);
+  }, (error) => {
+    logError('Error subscribing to questions:', error);
+  });
 };

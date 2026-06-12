@@ -16,26 +16,12 @@ export default function AuthLayout({ children, alerts, mode }) {
   }, []);
 
   return (
-    <div
-      className="auth-view-container"
-      style={{ position: 'relative', overflow: 'hidden', fontFamily: "'Poppins', sans-serif" }}
-    >
+    <div className="auth-view-container" style={{ position: 'relative', overflow: 'hidden', fontFamily: "'Poppins', sans-serif" }}>
       {/* Glass overlay that appears when scrolling */}
-      <div
-        className={`glass-scroll-overlay ${isScrolled ? 'visible' : ''}`}
-        style={{
-          background: 'rgba(0, 0, 0, 0.7)',
-        }}
-      />
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: 'none',
-          overflow: 'hidden',
-        }}
-      >
+      <div className={`glass-scroll-overlay ${isScrolled ? 'visible' : ''}`} style={{
+        background: 'rgba(0, 0, 0, 0.7)',
+      }} />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         {mode === 'login' ? (
           <LetterGlitch
             glitchSpeed={50}
@@ -43,8 +29,8 @@ export default function AuthLayout({ children, alerts, mode }) {
             outerVignette={false}
             smooth
             speed={10}
-            glitchColors={['#2185D5', '#3a4750', '#f3f3f3']}
-            colors={['#2185D5', '#3a4750', '#f3f3f3']}
+            glitchColors={["#2185D5", "#3a4750", "#f3f3f3"]}
+            colors={["#2185D5", "#3a4750", "#f3f3f3"]}
             showCenterVignette
             showOuterVignette={false}
           />

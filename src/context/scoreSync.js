@@ -29,8 +29,10 @@ export function computeCodingStreak(submissions, userId, currentDay) {
 }
 
 export async function syncParticipantProfile(db, userId, overrides = {}) {
-  const codingScore = overrides.codingScore ?? computeCodingScore(db.submissions, userId);
-  const debugScore = overrides.debugScore ?? computeDebugScore(db.debuggingChallenges, userId);
+  const codingScore =
+    overrides.codingScore ?? computeCodingScore(db.submissions, userId);
+  const debugScore =
+    overrides.debugScore ?? computeDebugScore(db.debuggingChallenges, userId);
   const gitHubStreak =
     overrides.gitHubStreak ?? computeCodingStreak(db.submissions, userId, db.currentDay);
 
@@ -53,12 +55,7 @@ export function computeCodingScoreWithOverride(submissions, userId, codingSubId,
     }, 0);
 }
 
-export function computeDebugScoreWithOverride(
-  debuggingChallenges,
-  userId,
-  debugChallengeId,
-  debugScore
-) {
+export function computeDebugScoreWithOverride(debuggingChallenges, userId, debugChallengeId, debugScore) {
   return debuggingChallenges.reduce((acc, challenge) => {
     const sub = challenge.submissions?.find((s) => s.userId === userId);
     if (debugChallengeId && challenge.id === debugChallengeId) {

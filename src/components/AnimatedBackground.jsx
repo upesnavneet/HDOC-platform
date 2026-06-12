@@ -1,14 +1,14 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export default function AnimatedBackground() {
   return (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         inset: 0,
-        overflow: 'hidden',
+        overflow: "hidden",
         zIndex: -1,
-        background: '#121358',
+        background: "#121358",
       }}
     >
       <motion.div
@@ -19,15 +19,15 @@ export default function AnimatedBackground() {
         transition={{
           duration: 22,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: "easeInOut",
         }}
         style={{
-          position: 'absolute',
+          position: "absolute",
           width: 600,
           height: 600,
-          borderRadius: '50%',
-          background: '#36ADA3',
-          filter: 'blur(180px)',
+          borderRadius: "50%",
+          background: "#36ADA3",
+          filter: "blur(180px)",
           opacity: 0.08,
           top: -150,
           left: -100,
@@ -42,16 +42,16 @@ export default function AnimatedBackground() {
         transition={{
           duration: 28,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: "easeInOut",
         }}
         style={{
-          position: 'absolute',
+          position: "absolute",
           width: 500,
           height: 500,
-          borderRadius: '50%',
-          background: '#2F578A',
-          filter: 'blur(170px)',
-          opacity: 0.1,
+          borderRadius: "50%",
+          background: "#2F578A",
+          filter: "blur(170px)",
+          opacity: 0.10,
           bottom: -120,
           right: -80,
         }}
@@ -65,18 +65,18 @@ export default function AnimatedBackground() {
         transition={{
           duration: 35,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: "easeInOut",
         }}
         style={{
-          position: 'absolute',
+          position: "absolute",
           width: 450,
           height: 450,
-          borderRadius: '50%',
-          background: '#232F72',
-          filter: 'blur(150px)',
+          borderRadius: "50%",
+          background: "#232F72",
+          filter: "blur(150px)",
           opacity: 0.15,
-          top: '35%',
-          left: '35%',
+          top: "35%",
+          left: "35%",
         }}
       />
     </div>

@@ -83,18 +83,14 @@ export const LiquidChrome = ({
       uniforms: {
         uTime: { value: 0 },
         uResolution: {
-          value: new Float32Array([
-            gl.canvas.width,
-            gl.canvas.height,
-            gl.canvas.width / gl.canvas.height,
-          ]),
+          value: new Float32Array([gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height])
         },
         uBaseColor: { value: new Float32Array(baseColor) },
         uAmplitude: { value: amplitude },
         uFrequencyX: { value: frequencyX },
         uFrequencyY: { value: frequencyY },
-        uMouse: { value: new Float32Array([0, 0]) },
-      },
+        uMouse: { value: new Float32Array([0, 0]) }
+      }
     });
     const mesh = new Mesh(gl, { geometry, program });
 

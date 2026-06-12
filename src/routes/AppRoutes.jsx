@@ -47,68 +47,14 @@ export default function AppRoutes() {
           <Route path="/" element={<HomeRedirect />} />
 
           <Route path="/auth" element={<HomeRedirect />} />
-          <Route
-            path="/auth/:mode"
-            element={
-              <GuestRoute>
-                <RouteErrorBoundary>
-                  <Auth />
-                </RouteErrorBoundary>
-              </GuestRoute>
-            }
-          />
+          <Route path="/auth/:mode" element={<GuestRoute><RouteErrorBoundary><Auth /></RouteErrorBoundary></GuestRoute>} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Dashboard />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/questions"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Questions />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/debugging"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Debugging />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Profile />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/dashboard" element={<ProtectedRoute><RouteErrorBoundary><Dashboard /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/questions" element={<ProtectedRoute><RouteErrorBoundary><Questions /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/debugging" element={<ProtectedRoute><RouteErrorBoundary><Debugging /></RouteErrorBoundary></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><RouteErrorBoundary><Profile /></RouteErrorBoundary></ProtectedRoute>} />
           {/* M16: Leaderboard now requires authentication */}
-          <Route
-            path="/leaderboards"
-            element={
-              <ProtectedRoute>
-                <RouteErrorBoundary>
-                  <Leaderboards />
-                </RouteErrorBoundary>
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/leaderboards" element={<ProtectedRoute><RouteErrorBoundary><Leaderboards /></RouteErrorBoundary></ProtectedRoute>} />
           <Route
             path="/coordinator"
             element={
@@ -121,14 +67,7 @@ export default function AppRoutes() {
           />
 
           {/* M9: Styled 404 page instead of silent redirect */}
-          <Route
-            path="*"
-            element={
-              <RouteErrorBoundary>
-                <NotFound />
-              </RouteErrorBoundary>
-            }
-          />
+          <Route path="*" element={<RouteErrorBoundary><NotFound /></RouteErrorBoundary>} />
         </Routes>
       </Suspense>
     </>

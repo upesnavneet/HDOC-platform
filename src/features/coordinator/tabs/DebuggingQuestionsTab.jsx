@@ -91,8 +91,7 @@ export default function DebuggingQuestionsTab() {
     <div className="coord-panel">
       <h3>Sunday Debugging Question Management</h3>
       <p className="panel-desc">
-        Add or edit weekly debugging challenges. These appear on participants' Sunday Debugging
-        page.
+        Add or edit weekly debugging challenges. These appear on participants' Sunday Debugging page.
       </p>
 
       {formMsg && (
@@ -227,7 +226,11 @@ export default function DebuggingQuestionsTab() {
             {mode === 'add' ? 'Add Debugging Challenge' : 'Save Changes'}
           </button>
           {mode === 'edit' && (
-            <button type="button" className="small-action-btn" onClick={resetForm}>
+            <button
+              type="button"
+              className="small-action-btn"
+              onClick={resetForm}
+            >
               Clear Form
             </button>
           )}

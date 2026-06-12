@@ -32,7 +32,11 @@ export default function App() {
     <AppErrorBoundary>
       <AuthProvider>
         <AppProvider>
-          {showIntro ? <IntroSplash onComplete={() => setShowIntro(false)} /> : <MainAppContent />}
+          {showIntro ? (
+            <IntroSplash onComplete={() => setShowIntro(false)} />
+          ) : (
+            <MainAppContent />
+          )}
         </AppProvider>
       </AuthProvider>
     </AppErrorBoundary>

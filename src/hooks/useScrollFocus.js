@@ -47,7 +47,8 @@ export function useVerticalSectionFocus() {
         0,
         Math.min(vh, lastRect.bottom) - Math.max(0, lastRect.top)
       );
-      const lastSectionDominant = lastVisibleHeight / vh >= 0.35 && lastRect.top < vh * 0.6;
+      const lastSectionDominant =
+        lastVisibleHeight / vh >= 0.35 && lastRect.top < vh * 0.6;
       const lastSectionAnchored = lastRect.bottom <= vh + 64;
 
       if (atBottom || lastSectionDominant || lastSectionAnchored) {

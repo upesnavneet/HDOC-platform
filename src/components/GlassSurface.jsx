@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef, useId } from 'react';
 
+
 const GlassSurface = ({
   children,
   width = 200,
@@ -21,7 +22,7 @@ const GlassSurface = ({
   yChannel = 'G',
   mixBlendMode = 'difference',
   className = '',
-  style = {},
+  style = {}
 }) => {
   const uniqueId = useId().replace(/:/g, '-');
   const filterId = `glass-filter-${uniqueId}`;
@@ -74,7 +75,7 @@ const GlassSurface = ({
     [
       { ref: redChannelRef, offset: redOffset },
       { ref: greenChannelRef, offset: greenOffset },
-      { ref: blueChannelRef, offset: blueOffset },
+      { ref: blueChannelRef, offset: blueOffset }
     ].forEach(({ ref, offset }) => {
       if (ref.current) {
         ref.current.setAttribute('scale', (distortionScale + offset).toString());
@@ -99,7 +100,7 @@ const GlassSurface = ({
     blueOffset,
     xChannel,
     yChannel,
-    mixBlendMode,
+    mixBlendMode
   ]);
 
   useEffect(() => {
@@ -149,7 +150,7 @@ const GlassSurface = ({
     borderRadius: `${borderRadius}px`,
     '--glass-frost': backgroundOpacity,
     '--glass-saturation': saturation,
-    '--filter-id': `url(#${filterId})`,
+    '--filter-id': `url(#${filterId})`
   };
 
   return (
@@ -160,31 +161,10 @@ const GlassSurface = ({
     >
       <svg className="glass-surface__filter" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter
-            id={filterId}
-            colorInterpolationFilters="sRGB"
-            x="0%"
-            y="0%"
-            width="100%"
-            height="100%"
-          >
-            <feImage
-              ref={feImageRef}
-              x="0"
-              y="0"
-              width="100%"
-              height="100%"
-              preserveAspectRatio="none"
-              result="map"
-            />
+          <filter id={filterId} colorInterpolationFilters="sRGB" x="0%" y="0%" width="100%" height="100%">
+            <feImage ref={feImageRef} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
 
-            <feDisplacementMap
-              ref={redChannelRef}
-              in="SourceGraphic"
-              in2="map"
-              id="redchannel"
-              result="dispRed"
-            />
+            <feDisplacementMap ref={redChannelRef} in="SourceGraphic" in2="map" id="redchannel" result="dispRed" />
             <feColorMatrix
               in="dispRed"
               type="matrix"
@@ -212,13 +192,7 @@ const GlassSurface = ({
               result="green"
             />
 
-            <feDisplacementMap
-              ref={blueChannelRef}
-              in="SourceGraphic"
-              in2="map"
-              id="bluechannel"
-              result="dispBlue"
-            />
+            <feDisplacementMap ref={blueChannelRef} in="SourceGraphic" in2="map" id="bluechannel" result="dispBlue" />
             <feColorMatrix
               in="dispBlue"
               type="matrix"

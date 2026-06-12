@@ -14,7 +14,6 @@ export function parseChallengeContent(desc = '') {
 
   return {
     explanation: desc,
-    example:
-      'Refer to standard problem specifications on the platform for detailed inputs/outputs.',
+    example: 'Refer to standard problem specifications on the platform for detailed inputs/outputs.',
   };
 }

@@ -167,13 +167,13 @@ export default function DistortionBackground() {
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
     // ── uniform locations ─────────────────────────────────────────────────
-    const uTime = gl.getUniformLocation(prog, 'u_time');
-    const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+    const uTime       = gl.getUniformLocation(prog, 'u_time');
+    const uMouse      = gl.getUniformLocation(prog, 'u_mouse');
     const uResolution = gl.getUniformLocation(prog, 'u_resolution');
 
     // ── resize handling ───────────────────────────────────────────────────
     function resize() {
-      canvas.width = canvas.offsetWidth;
+      canvas.width  = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
       gl.viewport(0, 0, canvas.width, canvas.height);
     }
