@@ -36,13 +36,25 @@ export default function Profile() {
 
   // --- Data Computation ---
   const userSubs = useMemo(() => {
-    return (db.submissions || [])
-      .filter((s) => s?.userId === currentUser?.id)
-      .sort(
-        (a, b) =>
-          (b.day || 0) - (a.day || 0) || String(a.type || '').localeCompare(String(b.type || ''))
-      );
-  }, [db.submissions, currentUser?.id]);
+    const subs = (db.submissions || []).filter((s) => s?.userId === currentUser?.id);
+    if (currentUser?.id && db.debuggingChallenges) {
+      db.debuggingChallenges.forEach((challenge) => {
+        const sub = challenge.submissions?.find((s) => s.userId === currentUser.id);
+        if (sub) {
+          subs.push({
+            ...sub,
+            day: challenge.week * 7,
+            status: 'Submitted',
+            type: 'debugging',
+          });
+        }
+      });
+    }
+    return subs.sort(
+      (a, b) =>
+        (b.day || 0) - (a.day || 0) || String(a.type || '').localeCompare(String(b.type || ''))
+    );
+  }, [db.submissions, db.debuggingChallenges, currentUser?.id]);
 
   const totalSubmissionsCount = userSubs.filter(
     (s) => s.status === 'Submitted' || s.status === 'Late'
@@ -190,12 +202,7 @@ export default function Profile() {
             </svg>
             <span>{averageCodingScore}/10 Avg Score</span>
           </div>
-          <div className="np-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"></path>
-            </svg>
-            <span>{currentUser?.leetCodeStreak || 0} Day LC Streak</span>
-          </div>
+
         </div>
       </div>
 

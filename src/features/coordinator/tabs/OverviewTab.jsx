@@ -67,7 +67,6 @@ export default function OverviewTab({ participants }) {
               <th scope="col">Name</th>
               <th scope="col">SAP ID</th>
               <th scope="col">Scores</th>
-              <th scope="col">Streaks</th>
               <th scope="col">Status</th>
               <th scope="col">Actions</th>
             </tr>
@@ -83,9 +82,6 @@ export default function OverviewTab({ participants }) {
                   {p.totalCodingScore} / {p.totalDebuggingScore}
                 </td>
                 <td>
-                  LC {p.leetCodeStreak} · GH {p.gitHubStreak}
-                </td>
-                <td>
                   <span className={`badge-status ${p.isActive ? 'submitted' : 'missed'}`}>
                     {p.isActive ? 'Active' : 'Suspended'}
                   </span>
@@ -98,17 +94,6 @@ export default function OverviewTab({ participants }) {
                       onClick={() => setSelectedParticipant(p)}
                     >
                       View Profile
-                    </button>
-                    <button
-                      type="button"
-                      className="small-action-btn grey"
-                      onClick={() => {
-                        setEditStreakUid(p.id);
-                        setEditLcStreak(p.leetCodeStreak);
-                        setEditGcStreak(p.gitHubStreak);
-                      }}
-                    >
-                      Edit Streak
                     </button>
                     <button
                       type="button"
