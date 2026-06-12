@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }) => {
       if (firebaseUser) {
         try {
           const tokenResult = await firebaseUser.getIdTokenResult();
-          const isAdminUser = tokenResult.claims.admin === true;
           const profile = await getUserProfile(firebaseUser.uid);
           if (profile) {
             if (profile.isActive === false) {
@@ -82,6 +81,11 @@ export const AuthProvider = ({ children }) => {
                 payload: 'Your account has been deactivated by the administrator.',
               });
             } else {
+              // Accept admin via JWT Custom Claim OR Firestore isAdminAccount flag.
+              // Custom Claims require a server-side Admin SDK — since this app has no
+              // backend, isAdminAccount in Firestore is the authoritative admin gate.
+              const isAdminUser =
+                tokenResult.claims.admin === true || profile.isAdminAccount === true;
               dispatch({ type: 'AUTH_SUCCESS', payload: { ...profile, isAdmin: isAdminUser } });
               updateActivity();
             }
@@ -120,7 +124,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const tokenResult = await userCredential.user.getIdTokenResult();
-      const isAdminUser = tokenResult.claims.admin === true;
       const profile = await getUserProfile(userCredential.user.uid);
 
       if (!profile) {
@@ -133,6 +136,12 @@ export const AuthProvider = ({ children }) => {
         dispatch({ type: 'AUTH_FAIL', payload: errMsg });
         return { success: false, message: errMsg };
       }
+
+      // Accept admin via JWT Custom Claim OR Firestore isAdminAccount flag.
+      // Custom Claims require a server-side Admin SDK — since this app has no
+      // backend, isAdminAccount in Firestore is the authoritative admin gate.
+      const isAdminUser =
+        tokenResult.claims.admin === true || profile.isAdminAccount === true;
 
       dispatch({ type: 'AUTH_SUCCESS', payload: { ...profile, isAdmin: isAdminUser } });
       updateActivity();

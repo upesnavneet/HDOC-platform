@@ -108,7 +108,7 @@ export const checkStudentIdExists = async (studentId) => {
   }
 };
 
-export const subscribeToUsers = (callback) => {
+export const subscribeToUsers = (callback, onError) => {
   const colRef = collection(db, USERS_COLLECTION);
   return onSnapshot(
     colRef,
@@ -121,6 +121,7 @@ export const subscribeToUsers = (callback) => {
     },
     (error) => {
       logError('Error subscribing to users:', error);
+      onError?.(error);
     }
   );
 };

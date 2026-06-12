@@ -32,7 +32,7 @@ export const deleteQuestion = async (dayNum) => {
   }
 };
 
-export const subscribeToQuestions = (callback) => {
+export const subscribeToQuestions = (callback, onError) => {
   const colRef = collection(db, QUESTIONS_COLLECTION);
   return onSnapshot(
     colRef,
@@ -46,6 +46,7 @@ export const subscribeToQuestions = (callback) => {
     },
     (error) => {
       logError('Error subscribing to questions:', error);
+      onError?.(error);
     }
   );
 };

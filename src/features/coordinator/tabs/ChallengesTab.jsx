@@ -12,6 +12,7 @@ export default function ChallengesTab() {
   const [qDescCustom, setQDescCustom] = useState('');
   const [qRating, setQRating] = useState('800');
   const [qSolution, setQSolution] = useState('');
+  const [qIsMaster, setQIsMaster] = useState(false); // F3: explicit master flag
   const [questionMsg, setQuestionMsg] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [challengeAction, setChallengeAction] = useState('add');
@@ -30,6 +31,7 @@ export default function ChallengesTab() {
     setQDescCustom(q.descCustom);
     setQRating(String(q.rating || q.difficulty || '800'));
     setQSolution(q.solutionCode || '');
+    setQIsMaster(Boolean(q.isMaster)); // F3
     setEditMode(true);
     setQuestionMsg(`Loaded Day ${day} for editing.`);
   };
@@ -43,6 +45,7 @@ export default function ChallengesTab() {
     setQDescCustom('');
     setQRating('800');
     setQSolution('');
+    setQIsMaster(false); // F3
     setEditMode(false);
     setQuestionMsg('');
   };
@@ -79,6 +82,7 @@ export default function ChallengesTab() {
       descCustom: qDescCustom,
       rating: qRating,
       solutionCode: qSolution,
+      isMaster: qIsMaster, // F3
     });
     setQuestionMsg(res.message);
     if (res.success && !editMode) resetQuestionForm();
@@ -284,6 +288,20 @@ export default function ChallengesTab() {
                 rows="4"
                 autoComplete="off"
               />
+            </div>
+            {/* F3: isMaster checkbox — coordinator decides which challenge is the Master */}
+            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <input
+                id="is-master"
+                name="isMaster"
+                type="checkbox"
+                checked={qIsMaster}
+                onChange={(e) => setQIsMaster(e.target.checked)}
+                style={{ width: '1.1rem', height: '1.1rem', cursor: 'pointer' }}
+              />
+              <label htmlFor="is-master" style={{ cursor: 'pointer', margin: 0 }}>
+                Mark as Master Challenge
+              </label>
             </div>
             <div className="coord-action-buttons">
               <button type="submit" className="auth-action-btn admin-submit">

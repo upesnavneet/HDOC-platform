@@ -28,6 +28,11 @@ export function DataProvider({ children }) {
     currentDay: defaultConfig.currentDay,
     simulatedTime: defaultConfig.simulatedTime,
     completedWeeks: defaultConfig.completedWeeks,
+    // B1: event start date read from system/config (null until loaded)
+    eventStartDate: null,
+    // D1: max scores read from system/config; safe defaults match current rules
+    maxCodingScore: 10,
+    maxDebugScore: 20,
   });
   const [dbError, setDbError] = useState(null);
 
@@ -46,29 +51,48 @@ export function DataProvider({ children }) {
       }
     });
 
+    // B5: shared error handler — sets a banner message without crashing the app
+    const onSubError = (label) => (err) => {
+      logError(`[${label}] Subscription error:`, err);
+      setDbError('Connection issue — data may be out of date. Please refresh.');
+    };
+
     try {
       unsubs.push(
-        subscribeToSystemConfig((config) => {
-          const normalized = normalizeSystemConfig(config);
+        subscribeToSystemConfig(
+          (config) => {
+            const normalized = normalizeSystemConfig(config);
 
-          if (normalized.needsRepair) {
-            updateSystemConfig({
+            if (normalized.needsRepair) {
+              updateSystemConfig({
+                currentDay: normalized.currentDay,
+                simulatedTime: normalized.simulatedTime,
+                completedWeeks: normalized.completedWeeks,
+              }).catch((err) => logError('Failed to repair system config:', err));
+            }
+
+            setDb((prev) => ({
+              ...prev,
               currentDay: normalized.currentDay,
               simulatedTime: normalized.simulatedTime,
               completedWeeks: normalized.completedWeeks,
-            }).catch((err) => logError('Failed to repair system config:', err));
-          }
-
-          setDb((prev) => ({
-            ...prev,
-            currentDay: normalized.currentDay,
-            simulatedTime: normalized.simulatedTime,
-            completedWeeks: normalized.completedWeeks,
-          }));
-        })
+              // B1: pass event start date through directly; no normalization needed
+              eventStartDate: config?.eventStartDate || prev.eventStartDate,
+              // D1: coordinator-configurable max scores; fallback to safe defaults
+              maxCodingScore: config?.maxCodingScore ?? prev.maxCodingScore,
+              maxDebugScore: config?.maxDebugScore ?? prev.maxDebugScore,
+            }));
+          },
+          onSubError('SystemConfig')
+        )
       );
 
-      unsubs.push(subscribeToQuestions((qs) => setDb((prev) => ({ ...prev, questions: qs }))));
+      unsubs.push(
+        subscribeToQuestions(
+          (qs) => setDb((prev) => ({ ...prev, questions: qs })),
+          onSubError('Questions')
+        )
+      );
 
       // H3: Scope submission subscription to the current user.
       // Admins get all submissions (needed for coordinator grading views).
@@ -76,19 +100,29 @@ export function DataProvider({ children }) {
       if (currentUser) {
         if (currentUser.isAdmin) {
           unsubs.push(
-            subscribeToSubmissions((subs) => setDb((prev) => ({ ...prev, submissions: subs })))
+            subscribeToSubmissions(
+              (subs) => setDb((prev) => ({ ...prev, submissions: subs })),
+              onSubError('Submissions')
+            )
           );
         } else {
           const uid = currentUser.uid || currentUser.id;
           unsubs.push(
-            subscribeToUserSubmissions(uid, (subs) =>
-              setDb((prev) => ({ ...prev, submissions: subs }))
+            subscribeToUserSubmissions(
+              uid,
+              (subs) => setDb((prev) => ({ ...prev, submissions: subs })),
+              onSubError('UserSubmissions')
             )
           );
         }
       }
 
-      unsubs.push(subscribeToUsers((us) => setDb((prev) => ({ ...prev, users: us }))));
+      unsubs.push(
+        subscribeToUsers(
+          (us) => setDb((prev) => ({ ...prev, users: us })),
+          onSubError('Users')
+        )
+      );
 
       let currentChallenges = [];
       let currentDebugSubs = [];
@@ -102,17 +136,23 @@ export function DataProvider({ children }) {
       };
 
       unsubs.push(
-        subscribeToDebuggingChallenges((challenges) => {
-          currentChallenges = challenges;
-          updateDebugChallenges();
-        })
+        subscribeToDebuggingChallenges(
+          (challenges) => {
+            currentChallenges = challenges;
+            updateDebugChallenges();
+          },
+          onSubError('DebuggingChallenges')
+        )
       );
 
       unsubs.push(
-        subscribeToDebuggingSubmissions((subs) => {
-          currentDebugSubs = subs;
-          updateDebugChallenges();
-        })
+        subscribeToDebuggingSubmissions(
+          (subs) => {
+            currentDebugSubs = subs;
+            updateDebugChallenges();
+          },
+          onSubError('DebuggingSubmissions')
+        )
       );
     } catch (error) {
       logError('Firestore subscription failed:', error);

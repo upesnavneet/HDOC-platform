@@ -11,7 +11,11 @@ export function useLeaderboardData(db, currentUserId) {
   const startDayOfWeek = (currentWeek - 1) * 7 + 1;
   const endDayOfWeek = currentWeek * 7;
 
-  const participants = useMemo(() => db.users.filter((u) => u.role !== 'admin'), [db.users]);
+  // B6: exclude admin accounts; B4: exclude suspended participants
+  const participants = useMemo(
+    () => db.users.filter((u) => !u.isAdminAccount && u.isActive !== false),
+    [db.users]
+  );
 
   /* ── Helper: compute badges for a participant ── */
   const getBadges = (p, allSubs) => {
@@ -107,23 +111,29 @@ export function useLeaderboardData(db, currentUserId) {
     return data.sort((a, b) => b.score - a.score);
   }, [participants, db.debuggingChallenges]);
 
-  /* ── Board: Contest (uses combined score, same structure as other boards) ── */
+  /* ── Board: Contest (uses real HackerRank contest data from F1) ── */
   const contestBoard = useMemo(() => {
     const data = participants.map((p) => {
-      const totalScore = (p.totalCodingScore || 0) + (p.totalDebuggingScore || 0);
       return {
         id: p.id,
         name: p.name,
         gitHubId: p.gitHubId,
         initials: getInitials(p.name),
-        score: totalScore,
-        contestsPlayed: 0,
-        bestRank: '-',
+        // F1: use real contest fields; fall back to 0/null for existing users
+        contestScore: p.contestScore ?? 0,
+        contestsPlayed: p.contestsPlayed ?? 0,
+        bestContestRank: p.bestContestRank ?? null,
         trend: getTrend(p, db.submissions),
         badges: getBadges(p, db.submissions),
       };
     });
-    return data.sort((a, b) => b.score - a.score);
+    // sort by contestScore desc; ties broken by best rank asc
+    return data.sort((a, b) => {
+      if (b.contestScore !== a.contestScore) return b.contestScore - a.contestScore;
+      const ra = a.bestContestRank ?? Infinity;
+      const rb = b.bestContestRank ?? Infinity;
+      return ra - rb;
+    });
   }, [participants, db.submissions, currentDay]);
 
   /* ── Board: Combined ── */

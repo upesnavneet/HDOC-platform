@@ -4,10 +4,17 @@ import { formatDateTime } from '../../../utils/dateFormat';
 
 export default function GradingTab() {
   const { db, currentUser, gradeSubmission } = useApp();
+  const maxCodingScore = db.maxCodingScore ?? 10; // D1: from Firestore system/config
   const [gradingFilter, setGradingFilter] = useState('pending');
+  const [dayFilter, setDayFilter] = useState(''); // F6: filter by day number
   const [gradesInput, setGradesInput] = useState({});
   const [commentsInput, setCommentsInput] = useState({});
   const [gradeMsg, setGradeMsg] = useState('');
+
+  // B4: only show submissions from active participants
+  const activeUserIds = new Set(
+    db.users.filter((u) => u.isActive !== false && !u.isAdminAccount).map((u) => u.id)
+  );
 
   const filteredSubs = db.submissions.filter((sub) => {
     const isPending = sub.marks === null || sub.marks === undefined;
@@ -17,7 +24,9 @@ export default function GradingTab() {
       (gradingFilter === 'pending' && isPending) ||
       (gradingFilter === 'graded' && isGraded);
     const isRealSub = sub.status === 'Submitted' || sub.status === 'Late';
-    return matchesFilter && isRealSub;
+    // F6: day filter — show all if blank, otherwise filter by specific day
+    const matchesDay = !dayFilter || sub.day === Number(dayFilter);
+    return matchesFilter && isRealSub && matchesDay && activeUserIds.has(sub.userId);
   });
 
   const handleGradeSubmit = async (subId) => {
@@ -31,8 +40,9 @@ export default function GradingTab() {
       return;
     }
 
-    if (Number(marks) < 0 || Number(marks) > 10) {
-      setGradeMsg('Grade score must be between 0 and 10.');
+    // D1: validate against coordinator-configurable max score
+    if (Number(marks) < 0 || Number(marks) > maxCodingScore) {
+      setGradeMsg(`Grade score must be between 0 and ${maxCodingScore}.`);
       return;
     }
 
@@ -58,7 +68,23 @@ export default function GradingTab() {
     <div className="coord-panel admin-grading-panel">
       <div className="panel-header-row">
         <h3>Submission Marking</h3>
-        <div className="toggle-filter-buttons">
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* F6: Day filter */}
+          <label htmlFor="day-filter" style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+            Day:
+          </label>
+          <input
+            id="day-filter"
+            type="number"
+            min="1"
+            max="100"
+            placeholder="All"
+            value={dayFilter}
+            onChange={(e) => setDayFilter(e.target.value)}
+            style={{ width: '70px', padding: '0.3rem 0.5rem', borderRadius: '6px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }}
+            aria-label="Filter by day number"
+          />
+          <div className="toggle-filter-buttons">
           {['pending', 'all', 'graded'].map((filter) => (
             <button
               key={filter}
@@ -72,6 +98,7 @@ export default function GradingTab() {
               {filter === 'graded' && 'Edit Graded Scores'}
             </button>
           ))}
+          </div>
         </div>
       </div>
 
@@ -138,10 +165,16 @@ export default function GradingTab() {
                     <span className="sub-time" style={{ display: 'block', marginTop: '0.5rem' }}>
                       Submitted: {formatDateTime(sub.timestamp)}
                     </span>
+                    {/* F7: show when the submission was graded */}
+                    {sub.gradedAt && (
+                      <span className="sub-time" style={{ display: 'block', marginTop: '0.25rem', opacity: 0.7 }}>
+                        Graded: {formatDateTime(sub.gradedAt)}
+                      </span>
+                    )}
                     {sub.marks !== null && (
                       <div className="grade-result" style={{ marginTop: '0.5rem' }}>
                         <span>
-                          <strong>Current Score:</strong> {sub.marks} / 10
+                          <strong>Current Score:</strong> {sub.marks} / {maxCodingScore}
                         </span>
                         {sub.comments && <p className="comment">&ldquo;{sub.comments}&rdquo;</p>}
                       </div>
@@ -150,13 +183,13 @@ export default function GradingTab() {
 
                   <div className="grading-inputs-card">
                     <div className="form-group-inline">
-                      <label htmlFor={`marks-${sub.id}`}>Marks (0-10):</label>
+                      <label htmlFor={`marks-${sub.id}`}>Marks (0-{maxCodingScore}):</label>
                       <input
                         id={`marks-${sub.id}`}
                         name="marks"
                         type="number"
                         min="0"
-                        max="10"
+                        max={maxCodingScore}
                         placeholder={sub.marks !== null ? String(sub.marks) : 'Grade'}
                         value={gradesInput[sub.id] !== undefined ? gradesInput[sub.id] : ''}
                         onChange={(e) =>
