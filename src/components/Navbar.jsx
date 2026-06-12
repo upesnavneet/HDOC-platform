@@ -74,11 +74,13 @@ export default function Navbar() {
     return items;
   }, [currentUser]);
 
-  const handleNavClick = (e, item) => {
+  const handleNavClick = async (e, item) => {
     if (item.action === 'logout' && logout) {
       e.preventDefault();
-      logout();
+      await logout();
       navigate('/auth/login', { replace: true });
+      setIsMobileMenuOpen(false);
+      return;
     }
     setIsMobileMenuOpen(false);
   };

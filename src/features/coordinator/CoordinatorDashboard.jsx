@@ -7,7 +7,6 @@ import ChallengesTab from './tabs/ChallengesTab';
 import GradingTab from './tabs/GradingTab';
 import DebuggingGradingTab from './tabs/DebuggingGradingTab';
 import DebuggingQuestionsTab from './tabs/DebuggingQuestionsTab';
-import WeeksTab from './tabs/WeeksTab';
 import SubmissionsTab from './tabs/SubmissionsTab';
 import MagicBento from '../../components/MagicBento';
 import { updateSystemConfig } from '../../services/completionService';
@@ -219,9 +218,6 @@ export default function CoordinatorDashboard() {
             <Tabs.Trigger value="debugging" className="coord-tab" activeClassName="active">
               Sunday Debug Grading
             </Tabs.Trigger>
-            <Tabs.Trigger value="weeks" className="coord-tab" activeClassName="active">
-              Week Completion
-            </Tabs.Trigger>
             <Tabs.Trigger value="submissions" className="coord-tab" activeClassName="active">
               GitHub Submissions
             </Tabs.Trigger>
@@ -242,9 +238,6 @@ export default function CoordinatorDashboard() {
             </Tabs.Panel>
             <Tabs.Panel value="debugging">
               <DebuggingGradingTab />
-            </Tabs.Panel>
-            <Tabs.Panel value="weeks">
-              <WeeksTab />
             </Tabs.Panel>
             <Tabs.Panel value="submissions">
               <SubmissionsTab />

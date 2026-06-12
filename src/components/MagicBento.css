@@ -113,21 +113,24 @@
   line-clamp: var(--clamp-desc);
 }
 
-@media (max-width: 599px) {
+@media (max-width: 767px) {
   .card-grid {
-    grid-template-columns: 1fr;
-    width: 90%;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    width: 100%;
     margin: 0 auto;
     padding: 0.5em;
+    gap: 0.75em;
   }
 
   .magic-bento-card {
     width: 100%;
-    min-height: 160px;
+    min-height: 120px;
+    aspect-ratio: auto;
+    padding: 1em;
   }
 }
 
-@media (min-width: 600px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
   }
