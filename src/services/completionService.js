@@ -232,48 +232,6 @@ export const updateSystemConfig = async (configData) => {
   }
 };
 
-// Auto-advance day at midnight UTC (server time)
-export const checkAndAutoAdvanceDay = async () => {
-  try {
-    const config = await getSystemConfig();
-    if (!config) return null;
-
-    // Use UTC time for consistency across all users
-    const nowUTC = new Date();
-    const lastAdvanceUTC =
-      config.lastDayAdvanceTime?.toDate?.() || new Date(config.lastDayAdvanceTime);
-
-    // Get start of today UTC and start of last advance day UTC
-    const startOfTodayUTC = Date.UTC(nowUTC.getFullYear(), nowUTC.getMonth(), nowUTC.getDate());
-    const startOfLastAdvanceUTC = Date.UTC(
-      lastAdvanceUTC.getFullYear(),
-      lastAdvanceUTC.getMonth(),
-      lastAdvanceUTC.getDate()
-    );
-
-    // F4: Stop auto-advancing beyond Day 100 (challenge duration)
-    if ((config.currentDay || 1) >= 100) {
-      return null;
-    }
-
-    // If we're on a new day (midnight UTC passed), advance
-    if (startOfTodayUTC > startOfLastAdvanceUTC) {
-      const newDay = (config.currentDay || 1) + 1;
-      await updateSystemConfig({
-        currentDay: newDay,
-        lastDayAdvanceTime: nowUTC,
-        completedWeeks: config.completedWeeks,
-      });
-      log(`Auto-advanced to Day ${newDay} (midnight UTC reset)`);
-      return newDay;
-    }
-
-    return null;
-  } catch (error) {
-    logError('Error checking auto-advance:', error);
-    return null;
-  }
-};
 
 export const subscribeToSystemConfig = (callback, onError) => {
   const docRef = doc(db, SYSTEM_COLLECTION, CONFIG_DOC);

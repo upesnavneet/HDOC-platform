@@ -10,7 +10,6 @@ import {
   subscribeToDebuggingSubmissions,
   subscribeToSystemConfig,
   updateSystemConfig,
-  checkAndAutoAdvanceDay,
 } from '../services/completionService';
 import { seedFirestoreIfEmpty } from '../utils/seedFirestore';
 import { getDefaultSystemConfig, normalizeSystemConfig } from '../utils/eventConfig';
@@ -44,12 +43,7 @@ export function DataProvider({ children }) {
       seedFirestoreIfEmpty().catch((err) => warn('[Seed] Seeding skipped:', err));
     }
 
-    // Check and auto-advance day after 24 hours
-    checkAndAutoAdvanceDay().then((newDay) => {
-      if (newDay) {
-        log(`[Auto-Advance] Day advanced to ${newDay}`);
-      }
-    });
+    // Auto-advance logic has been disabled. Day advances are 100% manual.
 
     // B5: shared error handler — sets a banner message without crashing the app
     const onSubError = (label) => (err) => {
