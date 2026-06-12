@@ -62,10 +62,16 @@ export default function OverviewTab({ participants }) {
           <tbody>
             {filteredParticipants.map((p) => (
               <tr key={p.id}>
-                <td><strong>{p.name}</strong></td>
+                <td>
+                  <strong>{p.name}</strong>
+                </td>
                 <td>{p.studentId}</td>
-                <td>{p.totalCodingScore} / {p.totalDebuggingScore}</td>
-                <td>LC {p.leetCodeStreak} · GH {p.gitHubStreak}</td>
+                <td>
+                  {p.totalCodingScore} / {p.totalDebuggingScore}
+                </td>
+                <td>
+                  LC {p.leetCodeStreak} · GH {p.gitHubStreak}
+                </td>
                 <td>
                   <span className={`badge-status ${p.isActive ? 'submitted' : 'missed'}`}>
                     {p.isActive ? 'Active' : 'Suspended'}
@@ -73,7 +79,11 @@ export default function OverviewTab({ participants }) {
                 </td>
                 <td>
                   <div className="coord-action-buttons">
-                    <button type="button" className="small-action-btn grey" onClick={() => setSelectedParticipant(p)}>
+                    <button
+                      type="button"
+                      className="small-action-btn grey"
+                      onClick={() => setSelectedParticipant(p)}
+                    >
                       View Profile
                     </button>
                     <button
@@ -98,7 +108,11 @@ export default function OverviewTab({ participants }) {
                     >
                       Edit Progress
                     </button>
-                    <button type="button" className="small-action-btn grey" onClick={() => resetParticipantStreak(p.id)}>
+                    <button
+                      type="button"
+                      className="small-action-btn grey"
+                      onClick={() => resetParticipantStreak(p.id)}
+                    >
                       Reset Streak
                     </button>
                     <button
@@ -123,13 +137,27 @@ export default function OverviewTab({ participants }) {
       >
         {selectedParticipant && (
           <>
-            <p><strong>Email:</strong> {selectedParticipant.email}</p>
-            <p><strong>SAP ID:</strong> {selectedParticipant.studentId}</p>
-            <p><strong>GitHub:</strong> @{selectedParticipant.gitHubId}</p>
-            <p><strong>LeetCode:</strong> @{selectedParticipant.leetCodeId}</p>
-            <p><strong>Overall Rank:</strong> #{selectedParticipant.overallRank}</p>
-            <p><strong>Coding Score:</strong> {selectedParticipant.totalCodingScore} pts</p>
-            <p><strong>Debug Score:</strong> {selectedParticipant.totalDebuggingScore} pts</p>
+            <p>
+              <strong>Email:</strong> {selectedParticipant.email}
+            </p>
+            <p>
+              <strong>SAP ID:</strong> {selectedParticipant.studentId}
+            </p>
+            <p>
+              <strong>GitHub:</strong> @{selectedParticipant.gitHubId}
+            </p>
+            <p>
+              <strong>LeetCode:</strong> @{selectedParticipant.leetCodeId}
+            </p>
+            <p>
+              <strong>Overall Rank:</strong> #{selectedParticipant.overallRank}
+            </p>
+            <p>
+              <strong>Coding Score:</strong> {selectedParticipant.totalCodingScore} pts
+            </p>
+            <p>
+              <strong>Debug Score:</strong> {selectedParticipant.totalDebuggingScore} pts
+            </p>
           </>
         )}
       </Modal>
@@ -172,7 +200,11 @@ export default function OverviewTab({ participants }) {
           >
             Save
           </button>
-          <button type="button" className="small-action-btn red" onClick={() => setEditProgressUid(null)}>
+          <button
+            type="button"
+            className="small-action-btn red"
+            onClick={() => setEditProgressUid(null)}
+          >
             Cancel
           </button>
         </div>
@@ -216,7 +248,11 @@ export default function OverviewTab({ participants }) {
           >
             Save
           </button>
-          <button type="button" className="small-action-btn red" onClick={() => setEditStreakUid(null)}>
+          <button
+            type="button"
+            className="small-action-btn red"
+            onClick={() => setEditStreakUid(null)}
+          >
             Cancel
           </button>
         </div>

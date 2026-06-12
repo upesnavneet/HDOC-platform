@@ -1,7 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
 
-
 const DEFAULT_GLOW_COLOR = '66, 165, 252';
 
 const MagicButton = ({
@@ -15,7 +14,7 @@ const MagicButton = ({
   enableMagnetism = true,
   clickEffect = true,
   enableSpotlight = true,
-  type = 'button'
+  type = 'button',
 }) => {
   const buttonRef = useRef(null);
   const isHoveredRef = useRef(false);
@@ -36,7 +35,7 @@ const MagicButton = ({
           rotateX: 0,
           rotateY: 0,
           duration: 0.3,
-          ease: 'power2.out'
+          ease: 'power2.out',
         });
       }
       if (enableMagnetism) {
@@ -44,7 +43,7 @@ const MagicButton = ({
           x: 0,
           y: 0,
           duration: 0.3,
-          ease: 'power2.out'
+          ease: 'power2.out',
         });
       }
     };
@@ -67,7 +66,7 @@ const MagicButton = ({
           rotateY,
           duration: 0.1,
           ease: 'power2.out',
-          transformPerspective: 1000
+          transformPerspective: 1000,
         });
       }
 
@@ -79,7 +78,7 @@ const MagicButton = ({
           x: magnetX,
           y: magnetY,
           duration: 0.3,
-          ease: 'power2.out'
+          ease: 'power2.out',
         });
       }
     };
@@ -122,7 +121,7 @@ const MagicButton = ({
           opacity: 0,
           duration: 0.8,
           ease: 'power2.out',
-          onComplete: () => ripple.remove()
+          onComplete: () => ripple.remove(),
         }
       );
     };

@@ -251,7 +251,10 @@ export function AppActionsProvider({ children }) {
         handout: questionData.handout || '',
         solutionCode: questionData.solutionCode || '',
       });
-      return { success: true, message: `Question for Day ${questionData.day} uploaded successfully.` };
+      return {
+        success: true,
+        message: `Question for Day ${questionData.day} uploaded successfully.`,
+      };
     } catch {
       return { success: false, message: 'Failed to upload question.' };
     }
@@ -361,7 +364,10 @@ export function AppActionsProvider({ children }) {
         starterCode: challengeData.starterCode,
         publishedDate: challengeData.publishedDate,
       });
-      return { success: true, message: `Week ${challengeData.week} Debugging Challenge scheduled.` };
+      return {
+        success: true,
+        message: `Week ${challengeData.week} Debugging Challenge scheduled.`,
+      };
     } catch {
       return { success: false, message: 'Failed to schedule debugging challenge.' };
     }

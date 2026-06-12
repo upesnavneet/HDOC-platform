@@ -2,16 +2,15 @@ import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 import { error as logError } from '../utils/logger';
 
-
 const MAX_COLORS = 8;
-const hexToRGB = hex => {
+const hexToRGB = (hex) => {
   const c = hex.replace('#', '').padEnd(6, '0');
   const r = parseInt(c.slice(0, 2), 16) / 255;
   const g = parseInt(c.slice(2, 4), 16) / 255;
   const b = parseInt(c.slice(4, 6), 16) / 255;
   return [r, g, b];
 };
-const prepStops = stops => {
+const prepStops = (stops) => {
   const base = (stops && stops.length ? stops : ['#FF9FFC', '#5227FF']).slice(0, MAX_COLORS);
   if (base.length === 1) base.push(base[0]);
   while (base.length < MAX_COLORS) base.push(base[base.length - 1]);
@@ -37,7 +36,7 @@ const GradientBlinds = ({
   spotlightOpacity = 1,
   distortAmount = 0,
   shineDirection = 'left',
-  mixBlendMode = 'lighten'
+  mixBlendMode = 'lighten',
 }) => {
   const containerRef = useRef(null);
   const rafRef = useRef(null);
@@ -56,7 +55,7 @@ const GradientBlinds = ({
     const renderer = new Renderer({
       dpr: dpr ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1),
       alpha: true,
-      antialias: true
+      antialias: true,
     });
     rendererRef.current = renderer;
     const gl = renderer.gl;
@@ -187,7 +186,7 @@ void main() {
     const { arr: colorArr, count: colorCount } = prepStops(gradientColors);
     const uniforms = {
       iResolution: {
-        value: [gl.drawingBufferWidth, gl.drawingBufferHeight, 1]
+        value: [gl.drawingBufferWidth, gl.drawingBufferHeight, 1],
       },
       iMouse: { value: [0, 0] },
       iTime: { value: 0 },
@@ -208,13 +207,13 @@ void main() {
       uColor5: { value: colorArr[5] },
       uColor6: { value: colorArr[6] },
       uColor7: { value: colorArr[7] },
-      uColorCount: { value: colorCount }
+      uColorCount: { value: colorCount },
     };
 
     const program = new Program(gl, {
       vertex,
       fragment,
-      uniforms
+      uniforms,
     });
     programRef.current = program;
 
@@ -250,7 +249,7 @@ void main() {
     const ro = new ResizeObserver(resize);
     ro.observe(container);
 
-    const onPointerMove = e => {
+    const onPointerMove = (e) => {
       const rect = canvas.getBoundingClientRect();
       const scale = renderer.dpr || 1;
       const x = (e.clientX - rect.left) * scale;
@@ -262,7 +261,7 @@ void main() {
     };
     window.addEventListener('pointermove', onPointerMove);
 
-    const loop = t => {
+    const loop = (t) => {
       rafRef.current = requestAnimationFrame(loop);
       uniforms.iTime.value = t * 0.001;
       if (mouseDampening > 0) {
@@ -324,7 +323,7 @@ void main() {
     spotlightSoftness,
     spotlightOpacity,
     distortAmount,
-    shineDirection
+    shineDirection,
   ]);
 
   return (
@@ -333,8 +332,8 @@ void main() {
       className={`gradient-blinds-container ${className}`}
       style={{
         ...(mixBlendMode && {
-          mixBlendMode: mixBlendMode
-        })
+          mixBlendMode: mixBlendMode,
+        }),
       }}
     />
   );

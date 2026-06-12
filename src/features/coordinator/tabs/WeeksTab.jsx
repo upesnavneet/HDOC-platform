@@ -23,15 +23,24 @@ export default function WeeksTab() {
     <div className="coord-panel">
       <h3>Week Completion</h3>
       <p className="panel-desc">
-        Mark a week as complete once all daily challenges and Sunday debug for that week are finished.
+        Mark a week as complete once all daily challenges and Sunday debug for that week are
+        finished.
       </p>
       {weekMsg && <div className="feedback-alert info">{weekMsg}</div>}
 
       <div className="week-completion-row press-card coord-week-panel">
-        <label htmlFor="week-complete-select" className="sr-only">Select week to mark complete</label>
-        <select id="week-complete-select" value={weekToComplete} onChange={(e) => setWeekToComplete(Number(e.target.value))}>
+        <label htmlFor="week-complete-select" className="sr-only">
+          Select week to mark complete
+        </label>
+        <select
+          id="week-complete-select"
+          value={weekToComplete}
+          onChange={(e) => setWeekToComplete(Number(e.target.value))}
+        >
           {Array.from({ length: 14 }, (_, i) => i + 1).map((w) => (
-            <option key={w} value={w}>Week {w}</option>
+            <option key={w} value={w}>
+              Week {w}
+            </option>
           ))}
         </select>
         <button type="button" className="auth-action-btn admin-submit" onClick={handleCompleteWeek}>

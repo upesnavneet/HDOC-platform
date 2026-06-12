@@ -28,10 +28,7 @@ export default function CoordinatorDashboard() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const participants = useMemo(
-    () => db.users.filter((u) => u.role !== 'admin'),
-    [db.users]
-  );
+  const participants = useMemo(() => db.users.filter((u) => u.role !== 'admin'), [db.users]);
 
   const currentDay = db.currentDay;
 
@@ -100,63 +97,63 @@ export default function CoordinatorDashboard() {
   }, [db, currentDay, participants]);
 
   const bentoCardData = [
-  {
-    color: '#120F17',
-    title: 'Active Today',
-    description: `${stats.activeToday} participants`,
-    label: 'Live'
-  },
-  {
-    color: '#120F17',
-    title: 'Submissions',
-    description: `${stats.uniqueTodaySubmitters} today`,
-    label: 'Today'
-  },
-  {
-    color: '#120F17',
-    title: 'Debug Subs',
-    description: `${stats.debugSubsToday} this week`,
-    label: 'Debug'
-  },
-  {
-    color: '#120F17',
-    title: 'Pending Grades',
-    description: `${stats.pendingGradeCount} submissions`,
-    label: 'Review'
-  },
-  {
-    color: '#120F17',
-    title: 'Top Performer',
-    description: stats.topPerformer ? stats.topPerformer.name : 'N/A',
-    label: 'Leader'
-  },
-  {
-    color: '#120F17',
-    title: 'Total Participants',
-    description: `${participants.length} enrolled`,
-    label: 'Users'
-  }
-];
+    {
+      color: '#120F17',
+      title: 'Active Today',
+      description: `${stats.activeToday} participants`,
+      label: 'Live',
+    },
+    {
+      color: '#120F17',
+      title: 'Submissions',
+      description: `${stats.uniqueTodaySubmitters} today`,
+      label: 'Today',
+    },
+    {
+      color: '#120F17',
+      title: 'Debug Subs',
+      description: `${stats.debugSubsToday} this week`,
+      label: 'Debug',
+    },
+    {
+      color: '#120F17',
+      title: 'Pending Grades',
+      description: `${stats.pendingGradeCount} submissions`,
+      label: 'Review',
+    },
+    {
+      color: '#120F17',
+      title: 'Top Performer',
+      description: stats.topPerformer ? stats.topPerformer.name : 'N/A',
+      label: 'Leader',
+    },
+    {
+      color: '#120F17',
+      title: 'Total Participants',
+      description: `${participants.length} enrolled`,
+      label: 'Users',
+    },
+  ];
 
-const BentoStatsGrid = ({ cards }) => {
+  const BentoStatsGrid = ({ cards }) => {
+    return (
+      <MagicBento
+        cards={cards}
+        textAutoHide={true}
+        enableStars={true}
+        enableSpotlight={true}
+        enableBorderGlow={true}
+        enableTilt={false}
+        enableMagnetism={true}
+        clickEffect={true}
+        spotlightRadius={400}
+        particleCount={8}
+        glowColor="66, 165, 252"
+      />
+    );
+  };
+
   return (
-    <MagicBento
-      cards={cards}
-      textAutoHide={true}
-      enableStars={true}
-      enableSpotlight={true}
-      enableBorderGlow={true}
-      enableTilt={false}
-      enableMagnetism={true}
-      clickEffect={true}
-      spotlightRadius={400}
-      particleCount={8}
-      glowColor="66, 165, 252"
-    />
-  );
-};
-
-return (
     <>
       {/* Glass overlay that appears when scrolling */}
       <div className={`glass-scroll-overlay ${isScrolled ? 'visible' : ''}`} />
@@ -165,69 +162,72 @@ return (
         <div className="page-header">
           <div className="header-top">
             <h1>Coordinator Dashboard</h1>
-            <button
-              className="advance-day-btn"
-              onClick={handleAdvanceDay}
-              disabled={isAdvancing}
-            >
+            <button className="advance-day-btn" onClick={handleAdvanceDay} disabled={isAdvancing}>
               {isAdvancing ? 'Advancing...' : `Advance to Day ${currentDay + 1}`}
             </button>
           </div>
-          <p className="subtitle">Manage participants, schedule challenges, and track weekly completion.</p>
+          <p className="subtitle">
+            Manage participants, schedule challenges, and track weekly completion.
+          </p>
         </div>
 
-      <BentoStatsGrid cards={bentoCardData} />
+        <BentoStatsGrid cards={bentoCardData} />
 
-      <Tabs value={activeTab} onChange={setActiveTab} listClassName="coordinator-tabs" aria-label="Coordinator sections">
-        <Tabs.List>
-          <Tabs.Trigger value="overview" className="coord-tab" activeClassName="active">
-            Participants
-          </Tabs.Trigger>
-          <Tabs.Trigger value="challenges" className="coord-tab" activeClassName="active">
-            Questions &amp; Challenges
-          </Tabs.Trigger>
-          <Tabs.Trigger value="debugQuestions" className="coord-tab" activeClassName="active">
-            Sunday Debug Questions
-          </Tabs.Trigger>
-          <Tabs.Trigger value="grading" className="coord-tab" activeClassName="active">
-            Mark Submissions ({stats.pendingGradeCount})
-          </Tabs.Trigger>
-          <Tabs.Trigger value="debugging" className="coord-tab" activeClassName="active">
-            Sunday Debug Grading
-          </Tabs.Trigger>
-          <Tabs.Trigger value="weeks" className="coord-tab" activeClassName="active">
-            Week Completion
-          </Tabs.Trigger>
-          <Tabs.Trigger value="submissions" className="coord-tab" activeClassName="active">
-            GitHub Submissions
-          </Tabs.Trigger>
-        </Tabs.List>
+        <Tabs
+          value={activeTab}
+          onChange={setActiveTab}
+          listClassName="coordinator-tabs"
+          aria-label="Coordinator sections"
+        >
+          <Tabs.List>
+            <Tabs.Trigger value="overview" className="coord-tab" activeClassName="active">
+              Participants
+            </Tabs.Trigger>
+            <Tabs.Trigger value="challenges" className="coord-tab" activeClassName="active">
+              Questions &amp; Challenges
+            </Tabs.Trigger>
+            <Tabs.Trigger value="debugQuestions" className="coord-tab" activeClassName="active">
+              Sunday Debug Questions
+            </Tabs.Trigger>
+            <Tabs.Trigger value="grading" className="coord-tab" activeClassName="active">
+              Mark Submissions ({stats.pendingGradeCount})
+            </Tabs.Trigger>
+            <Tabs.Trigger value="debugging" className="coord-tab" activeClassName="active">
+              Sunday Debug Grading
+            </Tabs.Trigger>
+            <Tabs.Trigger value="weeks" className="coord-tab" activeClassName="active">
+              Week Completion
+            </Tabs.Trigger>
+            <Tabs.Trigger value="submissions" className="coord-tab" activeClassName="active">
+              GitHub Submissions
+            </Tabs.Trigger>
+          </Tabs.List>
 
-        <div className="coordinator-workspace">
-          <Tabs.Panel value="overview">
-            <OverviewTab participants={participants} />
-          </Tabs.Panel>
-          <Tabs.Panel value="challenges">
-            <ChallengesTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="debugQuestions">
-            <DebuggingQuestionsTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="grading">
-            <GradingTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="debugging">
-            <DebuggingGradingTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="weeks">
-            <WeeksTab />
-          </Tabs.Panel>
-          <Tabs.Panel value="submissions">
-            <SubmissionsTab />
-          </Tabs.Panel>
-        </div>
-      </Tabs>
-    </div>
+          <div className="coordinator-workspace">
+            <Tabs.Panel value="overview">
+              <OverviewTab participants={participants} />
+            </Tabs.Panel>
+            <Tabs.Panel value="challenges">
+              <ChallengesTab />
+            </Tabs.Panel>
+            <Tabs.Panel value="debugQuestions">
+              <DebuggingQuestionsTab />
+            </Tabs.Panel>
+            <Tabs.Panel value="grading">
+              <GradingTab />
+            </Tabs.Panel>
+            <Tabs.Panel value="debugging">
+              <DebuggingGradingTab />
+            </Tabs.Panel>
+            <Tabs.Panel value="weeks">
+              <WeeksTab />
+            </Tabs.Panel>
+            <Tabs.Panel value="submissions">
+              <SubmissionsTab />
+            </Tabs.Panel>
+          </div>
+        </Tabs>
+      </div>
     </>
   );
 }

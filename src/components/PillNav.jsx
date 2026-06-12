@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 
-
 const PillNav = ({
   logo,
   logoAlt = 'Logo',
@@ -17,7 +16,7 @@ const PillNav = ({
   onMobileMenuClick,
   initialLoadAnimation = true,
   showLogo = true,
-  onItemClick
+  onItemClick,
 }) => {
   const resolvedPillTextColor = pillTextColor ?? '#42a5fc';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -33,7 +32,7 @@ const PillNav = ({
 
   useEffect(() => {
     const layout = () => {
-      circleRefs.current.forEach(circle => {
+      circleRefs.current.forEach((circle) => {
         if (!circle?.parentElement) return;
 
         const pill = circle.parentElement;
@@ -51,7 +50,7 @@ const PillNav = ({
         gsap.set(circle, {
           xPercent: -50,
           scale: 0,
-          transformOrigin: `50% ${originY}px`
+          transformOrigin: `50% ${originY}px`,
         });
 
         const label = pill.querySelector('.pill-label');
@@ -87,7 +86,7 @@ const PillNav = ({
     window.addEventListener('resize', onResize);
 
     if (document.fonts?.ready) {
-      document.fonts.ready.then(layout).catch(() => { });
+      document.fonts.ready.then(layout).catch(() => {});
     }
 
     const menu = mobileMenuRef.current;
@@ -104,7 +103,7 @@ const PillNav = ({
         gsap.to(logo, {
           scale: 1,
           duration: 0.6,
-          ease
+          ease,
         });
       }
 
@@ -113,7 +112,7 @@ const PillNav = ({
         gsap.to(navItems, {
           width: 'auto',
           duration: 0.6,
-          ease
+          ease,
         });
       }
     }
@@ -121,25 +120,25 @@ const PillNav = ({
     return () => window.removeEventListener('resize', onResize);
   }, [items, ease, initialLoadAnimation]);
 
-  const handleEnter = i => {
+  const handleEnter = (i) => {
     const tl = tlRefs.current[i];
     if (!tl) return;
     activeTweenRefs.current[i]?.kill();
     activeTweenRefs.current[i] = tl.tweenTo(tl.duration(), {
       duration: 0.3,
       ease,
-      overwrite: 'auto'
+      overwrite: 'auto',
     });
   };
 
-  const handleLeave = i => {
+  const handleLeave = (i) => {
     const tl = tlRefs.current[i];
     if (!tl) return;
     activeTweenRefs.current[i]?.kill();
     activeTweenRefs.current[i] = tl.tweenTo(0, {
       duration: 0.2,
       ease,
-      overwrite: 'auto'
+      overwrite: 'auto',
     });
   };
 
@@ -152,7 +151,7 @@ const PillNav = ({
       rotate: 360,
       duration: 0.2,
       ease,
-      overwrite: 'auto'
+      overwrite: 'auto',
     });
   };
   const toggleMobileMenu = () => {
@@ -171,7 +170,7 @@ const PillNav = ({
             xPercent: 0,
             duration: 0.4,
             ease,
-            transformOrigin: 'right center'
+            transformOrigin: 'right center',
           }
         );
       } else {
@@ -183,7 +182,7 @@ const PillNav = ({
           transformOrigin: 'right center',
           onComplete: () => {
             gsap.set(menu, { visibility: 'hidden' });
-          }
+          },
         });
       }
     }
@@ -191,7 +190,7 @@ const PillNav = ({
     onMobileMenuClick?.();
   };
 
-  const isExternalLink = href =>
+  const isExternalLink = (href) =>
     href.startsWith('http://') ||
     href.startsWith('https://') ||
     href.startsWith('//') ||
@@ -199,13 +198,13 @@ const PillNav = ({
     href.startsWith('tel:') ||
     href.startsWith('#');
 
-  const isRouterLink = href => href && !isExternalLink(href);
+  const isRouterLink = (href) => href && !isExternalLink(href);
 
   const cssVars = {
     ['--base']: baseColor,
     ['--pill-bg']: pillColor,
     ['--hover-text']: hoveredPillTextColor,
-    ['--pill-text']: resolvedPillTextColor
+    ['--pill-text']: resolvedPillTextColor,
   };
 
   return (
@@ -219,7 +218,7 @@ const PillNav = ({
               to={items[0].href}
               aria-label="Home"
               onMouseEnter={handleLogoEnter}
-              ref={el => {
+              ref={(el) => {
                 logoRef.current = el;
               }}
             >
@@ -231,7 +230,7 @@ const PillNav = ({
               href={items?.[0]?.href || '#'}
               aria-label="Home"
               onMouseEnter={handleLogoEnter}
-              ref={el => {
+              ref={(el) => {
                 logoRef.current = el;
               }}
             >
@@ -244,59 +243,61 @@ const PillNav = ({
       <nav className={`pill-nav ${className}`} aria-label="Primary" style={cssVars}>
         <div className="pill-nav-items desktop-only" ref={navItemsRef}>
           <ul className="pill-list" role="menubar">
-            {items.filter(item => item.label).map((item, i) => (
-              <li key={item.href || `item-${i}`} role="none">
-                {isRouterLink(item.href) ? (
-                  <Link
-                    role="menuitem"
-                    to={item.href}
-                    className={`pill${activeHref === item.href ? ' is-active' : ''}`}
-                    aria-label={item.ariaLabel || item.label}
-                    onMouseEnter={() => handleEnter(i)}
-                    onMouseLeave={() => handleLeave(i)}
-                    onClick={() => onItemClick?.(item)}
-                  >
-                    <span
-                      className="hover-circle"
-                      aria-hidden="true"
-                      ref={el => {
-                        circleRefs.current[i] = el;
-                      }}
-                    />
-                    <span className="label-stack">
-                      <span className="pill-label">{item.label}</span>
-                      <span className="pill-label-hover" aria-hidden="true">
-                        {item.label}
+            {items
+              .filter((item) => item.label)
+              .map((item, i) => (
+                <li key={item.href || `item-${i}`} role="none">
+                  {isRouterLink(item.href) ? (
+                    <Link
+                      role="menuitem"
+                      to={item.href}
+                      className={`pill${activeHref === item.href ? ' is-active' : ''}`}
+                      aria-label={item.ariaLabel || item.label}
+                      onMouseEnter={() => handleEnter(i)}
+                      onMouseLeave={() => handleLeave(i)}
+                      onClick={() => onItemClick?.(item)}
+                    >
+                      <span
+                        className="hover-circle"
+                        aria-hidden="true"
+                        ref={(el) => {
+                          circleRefs.current[i] = el;
+                        }}
+                      />
+                      <span className="label-stack">
+                        <span className="pill-label">{item.label}</span>
+                        <span className="pill-label-hover" aria-hidden="true">
+                          {item.label}
+                        </span>
                       </span>
-                    </span>
-                  </Link>
-                ) : (
-                  <a
-                    role="menuitem"
-                    href={item.href}
-                    className={`pill${activeHref === item.href ? ' is-active' : ''}`}
-                    aria-label={item.ariaLabel || item.label}
-                    onMouseEnter={() => handleEnter(i)}
-                    onMouseLeave={() => handleLeave(i)}
-                    onClick={() => onItemClick?.(item)}
-                  >
-                    <span
-                      className="hover-circle"
-                      aria-hidden="true"
-                      ref={el => {
-                        circleRefs.current[i] = el;
-                      }}
-                    />
-                    <span className="label-stack">
-                      <span className="pill-label">{item.label}</span>
-                      <span className="pill-label-hover" aria-hidden="true">
-                        {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      role="menuitem"
+                      href={item.href}
+                      className={`pill${activeHref === item.href ? ' is-active' : ''}`}
+                      aria-label={item.ariaLabel || item.label}
+                      onMouseEnter={() => handleEnter(i)}
+                      onMouseLeave={() => handleLeave(i)}
+                      onClick={() => onItemClick?.(item)}
+                    >
+                      <span
+                        className="hover-circle"
+                        aria-hidden="true"
+                        ref={(el) => {
+                          circleRefs.current[i] = el;
+                        }}
+                      />
+                      <span className="label-stack">
+                        <span className="pill-label">{item.label}</span>
+                        <span className="pill-label-hover" aria-hidden="true">
+                          {item.label}
+                        </span>
                       </span>
-                    </span>
-                  </a>
-                )}
-              </li>
-            ))}
+                    </a>
+                  )}
+                </li>
+              ))}
           </ul>
         </div>
 
@@ -313,11 +314,7 @@ const PillNav = ({
       </nav>
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
-        <button
-          className="mobile-menu-close"
-          onClick={toggleMobileMenu}
-          aria-label="Close menu"
-        >
+        <button className="mobile-menu-close" onClick={toggleMobileMenu} aria-label="Close menu">
           ✕
         </button>
         <ul className="mobile-menu-list">

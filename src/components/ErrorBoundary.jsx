@@ -23,33 +23,61 @@ export class AppErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          justifyContent: 'center', minHeight: '100vh', padding: '2rem',
-          background: '#0a0a0f', color: '#e0e0e8', fontFamily: 'Inter, system-ui, sans-serif',
-          textAlign: 'center',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            padding: '2rem',
+            background: '#0a0a0f',
+            color: '#e0e0e8',
+            fontFamily: 'Inter, system-ui, sans-serif',
+            textAlign: 'center',
+          }}
+        >
           <h1 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#ff6b6b' }}>
             Something went wrong
           </h1>
-          <p style={{ fontSize: '1.1rem', marginBottom: '2rem', color: '#9999aa', maxWidth: '480px' }}>
+          <p
+            style={{
+              fontSize: '1.1rem',
+              marginBottom: '2rem',
+              color: '#9999aa',
+              maxWidth: '480px',
+            }}
+          >
             An unexpected error occurred. Please try reloading the page.
           </p>
           {import.meta.env.DEV && this.state.error && (
-            <pre style={{
-              background: '#1a1a2e', padding: '1rem', borderRadius: '8px',
-              fontSize: '0.85rem', color: '#ff9999', maxWidth: '600px',
-              overflow: 'auto', marginBottom: '2rem', textAlign: 'left',
-            }}>
+            <pre
+              style={{
+                background: '#1a1a2e',
+                padding: '1rem',
+                borderRadius: '8px',
+                fontSize: '0.85rem',
+                color: '#ff9999',
+                maxWidth: '600px',
+                overflow: 'auto',
+                marginBottom: '2rem',
+                textAlign: 'left',
+              }}
+            >
               {this.state.error.toString()}
             </pre>
           )}
           <button
             onClick={() => window.location.reload()}
             style={{
-              padding: '0.75rem 2rem', fontSize: '1rem', cursor: 'pointer',
-              background: '#4f46e5', color: '#fff', border: 'none',
-              borderRadius: '8px', fontWeight: 600,
+              padding: '0.75rem 2rem',
+              fontSize: '1rem',
+              cursor: 'pointer',
+              background: '#4f46e5',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 600,
             }}
           >
             Reload Page
@@ -82,16 +110,27 @@ export class RouteErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          justifyContent: 'center', padding: '3rem 2rem',
-          textAlign: 'center', color: '#e0e0e8',
-        }}>
-          <div style={{
-            background: 'rgba(255,255,255,0.05)', borderRadius: '16px',
-            padding: '2.5rem', maxWidth: '480px', width: '100%',
-            border: '1px solid rgba(255,255,255,0.1)',
-          }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '3rem 2rem',
+            textAlign: 'center',
+            color: '#e0e0e8',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '16px',
+              padding: '2.5rem',
+              maxWidth: '480px',
+              width: '100%',
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
             <h2 style={{ fontSize: '1.5rem', marginBottom: '0.75rem', color: '#ff6b6b' }}>
               This section encountered an error
             </h2>
@@ -99,30 +138,48 @@ export class RouteErrorBoundary extends React.Component {
               You can navigate to another page or try reloading.
             </p>
             {import.meta.env.DEV && this.state.error && (
-              <pre style={{
-                background: '#1a1a2e', padding: '0.75rem', borderRadius: '8px',
-                fontSize: '0.8rem', color: '#ff9999', overflow: 'auto',
-                marginBottom: '1rem', textAlign: 'left',
-              }}>
+              <pre
+                style={{
+                  background: '#1a1a2e',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                  fontSize: '0.8rem',
+                  color: '#ff9999',
+                  overflow: 'auto',
+                  marginBottom: '1rem',
+                  textAlign: 'left',
+                }}
+              >
                 {this.state.error.toString()}
               </pre>
             )}
             <button
               onClick={() => this.setState({ hasError: false, error: null })}
               style={{
-                padding: '0.6rem 1.5rem', fontSize: '0.9rem', cursor: 'pointer',
-                background: '#4f46e5', color: '#fff', border: 'none',
-                borderRadius: '8px', fontWeight: 600, marginRight: '0.5rem',
+                padding: '0.6rem 1.5rem',
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                background: '#4f46e5',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 600,
+                marginRight: '0.5rem',
               }}
             >
               Try Again
             </button>
             <button
-              onClick={() => window.location.href = '/dashboard'}
+              onClick={() => (window.location.href = '/dashboard')}
               style={{
-                padding: '0.6rem 1.5rem', fontSize: '0.9rem', cursor: 'pointer',
-                background: 'transparent', color: '#9999cc', border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: '8px', fontWeight: 500,
+                padding: '0.6rem 1.5rem',
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                background: 'transparent',
+                color: '#9999cc',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: '8px',
+                fontWeight: 500,
               }}
             >
               Go to Dashboard

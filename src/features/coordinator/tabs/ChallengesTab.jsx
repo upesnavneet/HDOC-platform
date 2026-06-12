@@ -94,7 +94,9 @@ export default function ChallengesTab() {
   return (
     <div className="coord-panel">
       <h3>Question &amp; Challenge Management</h3>
-      <p className="panel-desc">Add, edit, remove, or schedule daily questions and coding challenges.</p>
+      <p className="panel-desc">
+        Add, edit, remove, or schedule daily questions and coding challenges.
+      </p>
       {questionMsg && <div className="feedback-alert info">{questionMsg}</div>}
 
       <div className="coord-action-strip">
@@ -119,9 +121,16 @@ export default function ChallengesTab() {
           <h4>Remove Question / Challenge</h4>
           <div className="coord-challenge-toolbar">
             <label htmlFor="remove-day-select">Select day to remove:</label>
-            <select id="remove-day-select" name="removeDay" value={qDay} onChange={(e) => setQDay(Number(e.target.value))}>
+            <select
+              id="remove-day-select"
+              name="removeDay"
+              value={qDay}
+              onChange={(e) => setQDay(Number(e.target.value))}
+            >
               {db.questions.map((q) => (
-                <option key={q.id} value={q.day}>Day {q.day} - {q.titleLc}</option>
+                <option key={q.id} value={q.day}>
+                  Day {q.day} - {q.titleLc}
+                </option>
               ))}
             </select>
             <button type="button" className="small-action-btn red" onClick={handleDeleteChallenge}>
@@ -134,9 +143,16 @@ export default function ChallengesTab() {
           {challengeAction === 'edit' && (
             <div className="coord-challenge-toolbar">
               <label htmlFor="edit-day-select">Load day to edit:</label>
-              <select id="edit-day-select" name="editDay" value={qDay} onChange={(e) => loadQuestionForEdit(e.target.value)}>
+              <select
+                id="edit-day-select"
+                name="editDay"
+                value={qDay}
+                onChange={(e) => loadQuestionForEdit(e.target.value)}
+              >
                 {db.questions.map((q) => (
-                  <option key={q.id} value={q.day}>Day {q.day} - {q.titleLc}</option>
+                  <option key={q.id} value={q.day}>
+                    Day {q.day} - {q.titleLc}
+                  </option>
                 ))}
               </select>
             </div>
@@ -150,14 +166,48 @@ export default function ChallengesTab() {
             </h4>
             <div className="form-grid">
               <div className="form-group">
-                <label htmlFor="challenge-day">{challengeAction === 'schedule' ? 'Schedule Day (1-100)' : 'Day Number (1-100)'}</label>
-                <input id="challenge-day" name="day" type="number" min="1" max="100" value={qDay} onChange={(e) => setQDay(e.target.value)} required autoComplete="off" />
+                <label htmlFor="challenge-day">
+                  {challengeAction === 'schedule' ? 'Schedule Day (1-100)' : 'Day Number (1-100)'}
+                </label>
+                <input
+                  id="challenge-day"
+                  name="day"
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={qDay}
+                  onChange={(e) => setQDay(e.target.value)}
+                  required
+                  autoComplete="off"
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="challenge-rating">Rating</label>
-                <select id="challenge-rating" name="rating" value={qRating} onChange={(e) => setQRating(e.target.value)}>
-                  {['800', '850', '900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900', '2000'].map((r) => (
-                    <option key={r} value={r}>{r}</option>
+                <select
+                  id="challenge-rating"
+                  name="rating"
+                  value={qRating}
+                  onChange={(e) => setQRating(e.target.value)}
+                >
+                  {[
+                    '800',
+                    '850',
+                    '900',
+                    '1000',
+                    '1100',
+                    '1200',
+                    '1300',
+                    '1400',
+                    '1500',
+                    '1600',
+                    '1700',
+                    '1800',
+                    '1900',
+                    '2000',
+                  ].map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -165,28 +215,75 @@ export default function ChallengesTab() {
             <div className="form-grid">
               <div className="form-group">
                 <label htmlFor="leetcode-title">LeetCode Title</label>
-                <input id="leetcode-title" name="leetcodeTitle" type="text" value={qTitleLc} onChange={(e) => setQTitleLc(e.target.value)} required autoComplete="off" />
+                <input
+                  id="leetcode-title"
+                  name="leetcodeTitle"
+                  type="text"
+                  value={qTitleLc}
+                  onChange={(e) => setQTitleLc(e.target.value)}
+                  required
+                  autoComplete="off"
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="leetcode-url">LeetCode URL</label>
-                <input id="leetcode-url" name="leetcodeUrl" type="url" value={qLinkLc} onChange={(e) => setQLinkLc(e.target.value)} required autoComplete="off" />
+                <input
+                  id="leetcode-url"
+                  name="leetcodeUrl"
+                  type="url"
+                  value={qLinkLc}
+                  onChange={(e) => setQLinkLc(e.target.value)}
+                  required
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="form-group">
               <label htmlFor="leetcode-desc">LeetCode Description</label>
-              <textarea id="leetcode-desc" name="leetcodeDesc" value={qDescLc} onChange={(e) => setQDescLc(e.target.value)} rows="2" autoComplete="off" />
+              <textarea
+                id="leetcode-desc"
+                name="leetcodeDesc"
+                value={qDescLc}
+                onChange={(e) => setQDescLc(e.target.value)}
+                rows="2"
+                autoComplete="off"
+              />
             </div>
             <div className="form-group">
               <label htmlFor="custom-title">Custom DSA Title</label>
-              <input id="custom-title" name="customTitle" type="text" value={qTitleCustom} onChange={(e) => setQTitleCustom(e.target.value)} required autoComplete="off" />
+              <input
+                id="custom-title"
+                name="customTitle"
+                type="text"
+                value={qTitleCustom}
+                onChange={(e) => setQTitleCustom(e.target.value)}
+                required
+                autoComplete="off"
+              />
             </div>
             <div className="form-group">
               <label htmlFor="custom-desc">Custom DSA Description</label>
-              <textarea id="custom-desc" name="customDesc" value={qDescCustom} onChange={(e) => setQDescCustom(e.target.value)} rows="3" required autoComplete="off" />
+              <textarea
+                id="custom-desc"
+                name="customDesc"
+                value={qDescCustom}
+                onChange={(e) => setQDescCustom(e.target.value)}
+                rows="3"
+                required
+                autoComplete="off"
+              />
             </div>
             <div className="form-group">
               <label htmlFor="ref-solution">Reference Solution (optional)</label>
-              <textarea id="ref-solution" name="refSolution" value={qSolution} onChange={(e) => setQSolution(e.target.value)} className="code-textarea" rows="4" autoComplete="off" />
+              <textarea
+                id="ref-solution"
+                name="refSolution"
+                value={qSolution}
+                onChange={(e) => setQSolution(e.target.value)}
+                className="code-textarea"
+                rows="4"
+                autoComplete="off"
+              />
             </div>
             <div className="coord-action-buttons">
               <button type="submit" className="auth-action-btn admin-submit">
@@ -195,7 +292,11 @@ export default function ChallengesTab() {
                 {challengeAction === 'schedule' && 'Schedule Challenge'}
               </button>
               {editMode && challengeAction === 'edit' && (
-                <button type="button" className="small-action-btn red" onClick={handleDeleteChallenge}>
+                <button
+                  type="button"
+                  className="small-action-btn red"
+                  onClick={handleDeleteChallenge}
+                >
                   Remove Question
                 </button>
               )}

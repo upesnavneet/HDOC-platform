@@ -1,11 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function ResetForm({
-  resetEmail,
-  setResetEmail,
-  isSubmitting,
-  onSubmit,
-}) {
+export default function ResetForm({ resetEmail, setResetEmail, isSubmitting, onSubmit }) {
   return (
     <form className="auth-form" onSubmit={onSubmit}>
       <h2 className="form-title">Reset Password</h2>
