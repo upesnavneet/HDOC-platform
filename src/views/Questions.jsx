@@ -249,13 +249,6 @@ export default function Questions() {
                       Click the button below to view examples, constraints, and submit on LeetCode.
                     </p>
                   </div>
-                  <div className="section-card-footer">
-                    <a
-                      href={selectedQuestion.linkLc}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="open-problem-btn"
-                    >
                   <div className="section-card-footer" style={{ marginTop: '1.5rem' }}>
                     <a href={selectedQuestion.linkLc} target="_blank" rel="noopener noreferrer" className="solve-button-new">
                       Solve on LeetCode →
