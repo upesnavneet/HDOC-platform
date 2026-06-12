@@ -39,26 +39,17 @@ export default function AuthLayout({ children, alerts, mode }) {
           overflow: 'hidden',
         }}
       >
-        {mode === 'login' ? (
-          <LetterGlitch
-            glitchSpeed={50}
-            centerVignette={true}
-            outerVignette={false}
-            smooth
-            speed={10}
-            glitchColors={['#2185D5', '#3a4750', '#f3f3f3']}
-            colors={['#2185D5', '#3a4750', '#f3f3f3']}
-            showCenterVignette
-            showOuterVignette={false}
-          />
-        ) : (
-          <LetterGlitch
-            glitchSpeed={50}
-            centerVignette={true}
-            outerVignette={false}
-            smooth={true}
-          />
-        )}
+        <LetterGlitch
+          glitchSpeed={50}
+          centerVignette={true}
+          outerVignette={false}
+          smooth
+          speed={10}
+          glitchColors={['#2185D5', '#3a4750', '#f3f3f3']}
+          colors={['#2185D5', '#3a4750', '#f3f3f3']}
+          showCenterVignette
+          showOuterVignette={false}
+        />
       </div>
 
       <BorderGlow
