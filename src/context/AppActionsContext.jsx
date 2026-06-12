@@ -163,6 +163,11 @@ export function AppActionsProvider({ children }) {
     async (challengeId, link) => {
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
+      // Github link validation
+      if (!link.trim().startsWith('https://github.com/upesacm/100DaysOfCode-2026/commit/')) {
+        return { success: false, message: 'Invalid commit URL. Must be a commit link from the official repository (upesacm/100DaysOfCode-2026).' };
+      }
+
       const myUid = currentUser.uid || currentUser.id;
       const challenge = db.debuggingChallenges.find((c) => c.id === challengeId);
       if (!challenge) return { success: false, message: 'Challenge not found.' };
