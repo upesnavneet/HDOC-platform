@@ -11,6 +11,7 @@ export default function OverviewTab({ participants }) {
   } = useApp();
 
   const [participantSearch, setParticipantSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const [editProgressUid, setEditProgressUid] = useState(null);
   const [editCodingScore, setEditCodingScore] = useState('');
@@ -19,14 +20,23 @@ export default function OverviewTab({ participants }) {
   const [editLcStreak, setEditLcStreak] = useState('');
   const [editGcStreak, setEditGcStreak] = useState('');
 
-  const filteredParticipants = participants.filter((p) => {
-    const term = participantSearch.toLowerCase();
-    return (
-      p.name.toLowerCase().includes(term) ||
-      p.studentId.toLowerCase().includes(term) ||
-      p.email.toLowerCase().includes(term)
-    );
-  });
+  const sortedParticipants = [...participants]
+    .filter((p) => {
+      const term = participantSearch.toLowerCase();
+      return (
+        p.name.toLowerCase().includes(term) ||
+        p.studentId.toLowerCase().includes(term) ||
+        p.email.toLowerCase().includes(term)
+      );
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const itemsPerPage = 30;
+  const totalPages = Math.max(1, Math.ceil(sortedParticipants.length / itemsPerPage));
+  const paginatedParticipants = sortedParticipants.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="coord-panel">
@@ -40,7 +50,10 @@ export default function OverviewTab({ participants }) {
           type="search"
           placeholder="Search participants…"
           value={participantSearch}
-          onChange={(e) => setParticipantSearch(e.target.value)}
+          onChange={(e) => {
+            setParticipantSearch(e.target.value);
+            setCurrentPage(1);
+          }}
           className="search-input"
           aria-labelledby="participant-mgmt-heading"
         />
@@ -60,7 +73,7 @@ export default function OverviewTab({ participants }) {
             </tr>
           </thead>
           <tbody>
-            {filteredParticipants.map((p) => (
+            {paginatedParticipants.map((p) => (
               <tr key={p.id}>
                 <td>
                   <strong>{p.name}</strong>
@@ -129,6 +142,30 @@ export default function OverviewTab({ participants }) {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center' }}>
+          <button
+            type="button"
+            className="small-action-btn grey"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            className="small-action-btn grey"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       <Modal
         isOpen={Boolean(selectedParticipant)}

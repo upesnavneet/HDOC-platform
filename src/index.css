@@ -6832,3 +6832,84 @@ button {
   .lb-podium-card.silver { order: 2; }
   .lb-podium-card.bronze { order: 3; }
 }
+
+/* --- Coordinator Mobile Responsiveness Fixes --- */
+@media (max-width: 768px) {
+  .coordinator-dashboard-container {
+    padding: 0 0.5rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  .coordinator-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .coord-tab {
+    flex: 1 1 calc(50% - 0.5rem);
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+    height: auto;
+    white-space: normal;
+  }
+  .participants-table-wrapper,
+  .submissions-table-wrapper,
+  .admin-table-wrap {
+    overflow-x: auto !important;
+    max-width: calc(100vw - 1rem);
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  .admin-table {
+    min-width: 800px;
+  }
+  .coord-action-buttons {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .panel-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .header-top {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+  .coord-stat-card {
+    padding: 1rem;
+  }
+}
+
+/* --- Dashboard Solve Buttons --- */
+.solve-button-new {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-orange);
+  color: var(--background-dark, #120F17);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  width: fit-content;
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+.solve-button-new:hover {
+  background: #ffaa33;
+  color: #120F17;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(234, 224, 207, 0.4);
+}
