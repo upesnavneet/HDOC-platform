@@ -20,9 +20,12 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
   const [focusedDay, setFocusedDay] = useState(null);
 
   const getDayStatus = (dayNum) => {
-    const daySubs = submissions.filter((s) => s.day === dayNum || s.dayNumber === dayNum);
+    // Exclude submissions marked as Late from lighting up the grid
+    const daySubs = submissions.filter(
+      (s) => (s.day === dayNum || s.dayNumber === dayNum) && s.status !== 'Late'
+    );
 
-    // If the user has made the required submissions for the day (now just 1 commit)
+    // If the user has made the required submission for the day
     if (daySubs.length >= 1) {
       return { class: 'level-4', text: 'Solved' };
     }

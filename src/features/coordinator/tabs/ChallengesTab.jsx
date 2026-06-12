@@ -12,13 +12,17 @@ export default function ChallengesTab() {
   const [qDescCustom, setQDescCustom] = useState('');
   const [qSolution, setQSolution] = useState('');
   const [questionMsg, setQuestionMsg] = useState('');
+  const [msgType, setMsgType] = useState('info'); // 'info' | 'success' | 'error'
   const [editMode, setEditMode] = useState(false);
   const [challengeAction, setChallengeAction] = useState('add');
+
+
 
   const loadQuestionForEdit = (day) => {
     const q = db.questions.find((question) => question.day === Number(day));
     if (!q) {
       setQuestionMsg(`No challenge found for Day ${day}.`);
+      setMsgType('error');
       return;
     }
     setQDay(q.day);
@@ -30,6 +34,7 @@ export default function ChallengesTab() {
     setQSolution(q.solutionCode || '');
     setEditMode(true);
     setQuestionMsg(`Loaded Day ${day} for editing.`);
+    setMsgType('info');
   };
 
   const resetQuestionForm = () => {
@@ -41,7 +46,6 @@ export default function ChallengesTab() {
     setQDescCustom('');
     setQSolution('');
     setEditMode(false);
-    setQuestionMsg('');
   };
 
   const handleChallengeAction = (action) => {
@@ -62,28 +66,52 @@ export default function ChallengesTab() {
 
   const handleQuestionSubmit = async (e) => {
     e.preventDefault();
-    setQuestionMsg('');
-    if (!qTitleLc || !qLinkLc || !qTitleCustom || !qDescCustom) {
-      setQuestionMsg('Please fill in all required fields.');
-      return;
+    try {
+      setQuestionMsg('Submitting...');
+      setMsgType('info');
+      if (!qTitleLc || !qLinkLc || !qTitleCustom || !qDescCustom) {
+        setQuestionMsg('Please fill in all required fields.');
+        setMsgType('error');
+        return;
+      }
+      
+      const res = await uploadQuestion({
+        day: qDay,
+        titleLc: qTitleLc,
+        linkLc: qLinkLc,
+        descLc: qDescLc,
+        titleCustom: qTitleCustom,
+        descCustom: qDescCustom,
+        solutionCode: qSolution,
+      });
+
+      if (res?.success && challengeAction === 'schedule') {
+        setQuestionMsg(`Challenge for Day ${qDay} scheduled. It will be released when you advance to Day ${qDay}.`);
+      } else {
+        setQuestionMsg(res?.message || 'Operation completed.');
+      }
+      setMsgType(res?.success ? 'success' : 'error');
+      if (res?.success && !editMode) {
+        setQDay(db.currentDay + 1);
+        setQTitleLc('');
+        setQLinkLc('');
+        setQDescLc('');
+        setQTitleCustom('');
+        setQDescCustom('');
+        setQSolution('');
+      }
+    } catch (err) {
+      console.error('Error submitting question:', err);
+      setQuestionMsg(`Error: ${err.message}`);
+      setMsgType('error');
     }
-    const res = await uploadQuestion({
-      day: qDay,
-      titleLc: qTitleLc,
-      linkLc: qLinkLc,
-      descLc: qDescLc,
-      titleCustom: qTitleCustom,
-      descCustom: qDescCustom,
-      solutionCode: qSolution,
-    });
-    setQuestionMsg(res.message);
-    if (res.success && !editMode) resetQuestionForm();
   };
 
   const handleDeleteChallenge = async () => {
     if (!window.confirm(`Delete challenge for Day ${qDay}?`)) return;
     const res = await deleteQuestion(qDay);
     setQuestionMsg(res.message);
+    setMsgType(res.success ? 'success' : 'error');
     if (res.success) resetQuestionForm();
   };
 
@@ -93,7 +121,7 @@ export default function ChallengesTab() {
       <p className="panel-desc">
         Add, edit, remove, or schedule daily questions and coding challenges.
       </p>
-      {questionMsg && <div className="feedback-alert info">{questionMsg}</div>}
+      {questionMsg && <div className={`feedback-alert ${msgType}`}>{questionMsg}</div>}
 
       <div className="coord-action-strip">
         {['add', 'edit', 'remove', 'schedule'].map((action) => (

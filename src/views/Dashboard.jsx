@@ -32,7 +32,20 @@ export default function Dashboard() {
   const submissions = db.submissions;
 
   const userId = currentUser?.id || currentUser?.uid;
-  const userSubs = userId ? submissions.filter((s) => s.userId === userId) : [];
+  let userSubs = userId ? submissions.filter((s) => s.userId === userId) : [];
+
+  if (userId && db.debuggingChallenges) {
+    db.debuggingChallenges.forEach((challenge) => {
+      const sub = challenge.submissions?.find((s) => s.userId === userId);
+      if (sub) {
+        userSubs.push({
+          ...sub,
+          day: challenge.week * 7,
+          status: 'Submitted',
+        });
+      }
+    });
+  }
 
   // Today's questions
   const todayQs = questions.filter((q) => q.day === currentDay);
@@ -255,91 +268,7 @@ export default function Dashboard() {
           zIndex: 10,
         }}
       >
-        {/* ── Progress Metrics Strip ── */}
-        <div className="metrics-strip-unified">
-          <div className="metric-item">
-            <div className="metric-card-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M8 21l8 0" />
-                <path d="M12 17l0 4" />
-                <path d="M7 4l10 0" />
-                <path d="M17 4v8a5 5 0 0 1 -10 0v-8" />
-                <path d="M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                <path d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-              </svg>
-            </div>
-            <div className="metric-card-content">
-              <span className="metric-card-label">Leaderboard Rank</span>
-              <span className="metric-card-value">#{overallRank}</span>
-            </div>
-          </div>
 
-          <div className="metric-divider"></div>
-
-          <div className="metric-item">
-            <div className="metric-card-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 12c2 -2.96 0 -7 -1 -8c0 3 -3 4.5 -4.5 6c-1.5 1.5 -2.5 3.05 -2.5 5c0 4.418 3.582 8 8 8s8 -3.582 8 -8c0 -1.95 -1 -3.5 -2.5 -5c-1.5 -1.5 -4.5 -3 -4.5 -6c-1 1 -3 5.04 -1 8z" />
-              </svg>
-            </div>
-            <div className="metric-card-content">
-              <span className="metric-card-label">Current Streak</span>
-              <span className="metric-card-value">
-                <span className="highlight">{currentUser.leetCodeStreak}</span> Days
-              </span>
-            </div>
-          </div>
-
-          <div className="metric-divider"></div>
-
-          <div className="metric-item">
-            <div className="metric-card-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="6" cy="18" r="2" />
-                <circle cx="6" cy="6" r="2" />
-                <circle cx="18" cy="18" r="2" />
-                <path d="M6 8v8" />
-                <path d="M6 12a4 4 0 0 0 4 4h6" />
-              </svg>
-            </div>
-            <div className="metric-card-content">
-              <span className="metric-card-label">GitHub Streak</span>
-              <span className="metric-card-value">
-                <span className="highlight">{currentUser.gitHubStreak}</span> Days
-              </span>
-            </div>
-          </div>
-        </div>
 
         {/* ── Two Column Layout ── */}
         <div className="dashboard-grid-layout">
