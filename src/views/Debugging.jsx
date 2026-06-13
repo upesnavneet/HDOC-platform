@@ -272,15 +272,14 @@ export default function Debugging() {
 
   if (db.debuggingLocked) {
     return (
-      <div className="debugging-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F2AA4C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1.5rem' }}>
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </svg>
-        <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#F3F3F3' }}>Debugging Locked</h2>
-        <p style={{ fontSize: '1.1rem', color: 'rgba(243, 243, 243, 0.7)', maxWidth: '500px', lineHeight: 1.6 }}>
-          Debugging Challenges are currently locked by the coordinator. Please return to the <strong>Challenges tab</strong>.
-        </p>
+      <div className="debugging-container">
+        <div className="debug-closed-state">
+          <div className="lock-icon">🔒</div>
+          <h2>Debugging Locked</h2>
+          <p className="upcoming-note">
+            Debugging challenges will open from 9pm to 10pm only on Sundays.
+          </p>
+        </div>
       </div>
     );
   }
@@ -521,37 +520,10 @@ export default function Debugging() {
     <div className="debugging-container">
       <div className="debug-closed-state">
         <div className="lock-icon">🔒</div>
-        {timeStatus === 'upcoming' && activeChallenge ? (
-          <>
-            <h2>
-              Week {activeChallenge.week} Challenge: {activeChallenge.theme}
-            </h2>
-            <p className="upcoming-note">
-              This week&apos;s debugging challenge goes live at 21:00 tonight. Come back then to
-              start.
-            </p>
-            <div className="debug-closed-timer" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-              <AdvanceTimer hideIcon={true} />
-            </div>
-          </>
-        ) : (
-          <>
-            <h2>No active challenge right now</h2>
-            <p className="upcoming-note" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-              <AdvanceTimer hideIcon={true} />
-            </p>
-            <div className="debug-rules-grid">
-              <div className="debug-rule-card">
-                <span className="number">01</span>
-                <h4>Sundays Release</h4>
-              </div>
-              <div className="debug-rule-card">
-                <span className="number">02</span>
-                <h4>GitHub Submissions</h4>
-              </div>
-            </div>
-          </>
-        )}
+        <h2>Debugging Locked</h2>
+        <p className="upcoming-note">
+          Debugging challenges will open from 9pm to 10pm only on Sundays.
+        </p>
       </div>
     </div>
   );
