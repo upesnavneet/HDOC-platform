@@ -270,7 +270,7 @@ export default function Debugging() {
 
   const { activeChallenge, timeStatus, isChallengeOpen } = windowState;
 
-  if (db.currentDay % 7 !== 0) {
+  if (db.debuggingLocked) {
     return (
       <div className="debugging-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F2AA4C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1.5rem' }}>
@@ -279,7 +279,7 @@ export default function Debugging() {
         </svg>
         <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#F3F3F3' }}>Debugging Locked</h2>
         <p style={{ fontSize: '1.1rem', color: 'rgba(243, 243, 243, 0.7)', maxWidth: '500px', lineHeight: 1.6 }}>
-          Today is Day {db.currentDay}. Debugging Challenges are only available on Sundays (Day 7, 14, 21, etc.). Please return to the <strong>Challenges tab</strong>.
+          Debugging Challenges are currently locked by the coordinator. Please return to the <strong>Challenges tab</strong>.
         </p>
       </div>
     );

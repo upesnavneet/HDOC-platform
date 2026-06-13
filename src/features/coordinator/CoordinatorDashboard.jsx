@@ -18,6 +18,7 @@ export default function CoordinatorDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAdvancing, setIsAdvancing] = useState(false);
+  const [isLocking, setIsLocking] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,6 +64,24 @@ export default function CoordinatorDashboard() {
       alert('Failed to advance day. Please try again.');
     } finally {
       setIsAdvancing(false);
+    }
+  };
+
+  const handleToggleLock = async (type) => {
+    setIsLocking(true);
+    try {
+      const updates = {};
+      if (type === 'challenges') {
+        updates.challengesLocked = !db.challengesLocked;
+      } else if (type === 'debugging') {
+        updates.debuggingLocked = !db.debuggingLocked;
+      }
+      await updateSystemConfig(updates);
+    } catch (error) {
+      logError(`Failed to toggle ${type} lock:`, error);
+      alert(`Failed to toggle ${type} lock. Please try again.`);
+    } finally {
+      setIsLocking(false);
     }
   };
 
@@ -192,6 +211,23 @@ export default function CoordinatorDashboard() {
                 </button>
               </div>
             )}
+            
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'center' }}>
+              <button
+                className={`small-action-btn ${db.challengesLocked ? 'red' : 'green'}`}
+                onClick={() => handleToggleLock('challenges')}
+                disabled={isLocking}
+              >
+                {db.challengesLocked ? 'Unlock Challenges' : 'Lock Challenges'}
+              </button>
+              <button
+                className={`small-action-btn ${db.debuggingLocked ? 'red' : 'green'}`}
+                onClick={() => handleToggleLock('debugging')}
+                disabled={isLocking}
+              >
+                {db.debuggingLocked ? 'Unlock Debugging' : 'Lock Debugging'}
+              </button>
+            </div>
           </div>
           <p className="subtitle">
             Manage participants, schedule challenges, and track weekly completion.

@@ -44,6 +44,10 @@ export function AppActionsProvider({ children }) {
       if (!db.eventStartDate) {
         return { success: false, message: 'Event configuration is still loading. Please try again.' };
       }
+      
+      if (db.challengesLocked) {
+        return { success: false, message: 'Challenges are currently locked by the coordinator.' };
+      }
 
       const myUid = currentUser.uid || currentUser.id;
       const q = db.questions.find((question) => question.day === dayNum);
@@ -98,7 +102,7 @@ export function AppActionsProvider({ children }) {
   const submitCommitUrl = useCallback(
     async (providedDayNum, commitUrl) => {
       const dayNum = db.currentDay; // strictly enforce active website day
-      if (dayNum % 7 === 0) return { success: false, message: 'Challenges are locked on Sundays. Please use the Debugging tab.' };
+      if (db.challengesLocked) return { success: false, message: 'Challenges are currently locked by the coordinator.' };
 
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
@@ -165,7 +169,7 @@ export function AppActionsProvider({ children }) {
   const submitDebuggingChallenge = useCallback(
     async (providedChallengeId, link) => {
       const dayNum = db.currentDay;
-      if (dayNum % 7 !== 0) return { success: false, message: 'Debugging Challenges are only available on Sundays.' };
+      if (db.debuggingLocked) return { success: false, message: 'Debugging Challenges are currently locked by the coordinator.' };
 
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
@@ -428,6 +432,23 @@ export function AppActionsProvider({ children }) {
     [buildConfigPayload]
   );
 
+  const setPageLocks = useCallback(
+    async (challengesLocked, debuggingLocked) => {
+      try {
+        await updateSystemConfig(
+          buildConfigPayload({
+            challengesLocked,
+            debuggingLocked,
+          })
+        );
+        return { success: true, message: 'Page locks updated successfully.' };
+      } catch {
+        return { success: false, message: 'Failed to update page locks.' };
+      }
+    },
+    [buildConfigPayload]
+  );
+
   const uploadDebuggingChallenge = useCallback(async (challengeData) => {
     try {
       await addOrUpdateDebuggingChallenge(challengeData.week, {
@@ -468,6 +489,7 @@ export function AppActionsProvider({ children }) {
       revertWeek,
       uploadHandout,
       setSimulatedTimeAndDay,
+      setPageLocks,
       uploadDebuggingChallenge,
     }),
     [
@@ -487,6 +509,7 @@ export function AppActionsProvider({ children }) {
       revertWeek,
       uploadHandout,
       setSimulatedTimeAndDay,
+      setPageLocks,
       uploadDebuggingChallenge,
     ]
   );
