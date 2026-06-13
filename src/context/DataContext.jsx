@@ -27,6 +27,8 @@ export function DataProvider({ children }) {
     currentDay: defaultConfig.currentDay,
     simulatedTime: defaultConfig.simulatedTime,
     completedWeeks: defaultConfig.completedWeeks,
+    challengesLocked: defaultConfig.challengesLocked,
+    debuggingLocked: defaultConfig.debuggingLocked,
     // B1: event start date read from system/config (null until loaded)
     eventStartDate: null,
     // D1: max scores read from system/config; safe defaults match current rules
@@ -75,6 +77,8 @@ export function DataProvider({ children }) {
               currentDay: normalized.currentDay,
               simulatedTime: normalized.simulatedTime,
               completedWeeks: normalized.completedWeeks,
+              challengesLocked: normalized.challengesLocked,
+              debuggingLocked: normalized.debuggingLocked,
               // B1: pass event start date through directly; default to EVENT_START_ISO if missing
               eventStartDate: config?.eventStartDate || prev.eventStartDate || getDefaultSystemConfig().simulatedTime || '2026-05-25T09:00:00+05:30',
               // D1: coordinator-configurable max scores; fallback to safe defaults
