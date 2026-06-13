@@ -338,7 +338,7 @@ export default function Debugging() {
     },
   ];
 
-  if (timeStatus === 'open' && activeChallenge) {
+  if (activeChallenge) {
     return (
       <div className="debugging-container">
         {/* ═══ IDE-style split workspace ═══ */}
