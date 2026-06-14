@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
       case 'auth/wrong-password':
         return 'Incorrect password. Please try again.';
       case 'auth/invalid-credential':
-        return 'Invalid credentials provided.';
+        return "The account doesn't exist or wrong credentials.";
       case 'auth/weak-password':
         return 'Password is too weak. Please choose a stronger password.';
       case 'auth/too-many-requests':

@@ -289,7 +289,6 @@ export default function Debugging() {
   }, [timeStatus]);
 
   const activeChallengeSub = activeChallenge?.submissions?.find((s) => s.userId === userId);
-  const gitLinkDefault = activeChallengeSub?.link || '';
 
   const handleSub = async (e) => {
     e.preventDefault();
@@ -305,6 +304,9 @@ export default function Debugging() {
     }
     const res = await submitDebuggingChallenge(activeChallenge.id, link);
     setSubmitMsg(res.success ? res.message : `Error: ${res.message}`);
+    if (res.success) {
+      e.target.reset();
+    }
   };
 
   const handleCopyCode = useCallback(() => {
@@ -447,16 +449,6 @@ export default function Debugging() {
 
           {/* ─── Right Panel: Code Viewer ─── */}
           <section className="debug-code-panel">
-            {/* IDE Tab Bar */}
-            <div className="debug-ide-tabs">
-              <div className="debug-ide-tab">
-                <span className="tab-icon">
-                  <FileIcon />
-                </span>
-                <span className="tab-name">{fileName}</span>
-              </div>
-            </div>
-
             {/* Editor Toolbar — Prominent Read-Only banner */}
             <div className="debug-editor-toolbar">
               <div className="debug-readonly-banner" aria-label="This file is read-only">
@@ -506,7 +498,6 @@ export default function Debugging() {
                   name="git-debug-link"
                   type="url"
                   placeholder="GitHub Solution URL"
-                  defaultValue={gitLinkDefault}
                   required
                   spellCheck={false}
                   autoComplete="off"
