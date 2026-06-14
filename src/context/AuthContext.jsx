@@ -103,16 +103,20 @@ export const AuthProvider = ({ children }) => {
 
   const mapFirebaseAuthError = (code) => {
     switch (code) {
+      case 'auth/email-already-in-use':
+        return 'This email address is already registered.';
       case 'auth/invalid-email':
         return 'Please enter a valid email address.';
       case 'auth/user-not-found':
-        return 'No account found with this username.';
+        return 'No account found with this username or email.';
       case 'auth/wrong-password':
         return 'Incorrect password. Please try again.';
       case 'auth/invalid-credential':
-        return 'Invalid username and password combination.';
+        return 'Invalid credentials provided.';
+      case 'auth/weak-password':
+        return 'Password is too weak. Please choose a stronger password.';
       case 'auth/too-many-requests':
-        return 'Too many failed login attempts. Please wait and try again.';
+        return 'Too many failed attempts. Please wait and try again.';
       case 'auth/user-disabled':
         return 'Your account has been temporarily disabled. Contact support.';
       case 'auth/network-request-failed':
@@ -120,7 +124,7 @@ export const AuthProvider = ({ children }) => {
       case 'auth/internal-error':
         return 'Server error. Please try again later.';
       default:
-        return 'Login failed. Please try again.';
+        return 'An error occurred. Please try again.';
     }
   };
 
@@ -231,7 +235,7 @@ export const AuthProvider = ({ children }) => {
       return { success: true, user: { ...newProfile, isAdmin: false } };
     } catch (error) {
       logError('Registration failed:', error);
-      const errMsg = error.message || 'Registration failed. Please try again.';
+      const errMsg = error.code ? mapFirebaseAuthError(error.code) : 'Registration failed. Please try again.';
       dispatch({ type: 'AUTH_FAIL', payload: errMsg });
       return { success: false, message: errMsg };
     }
@@ -252,7 +256,8 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       logError('Password reset failed:', error);
-      return { success: false, message: error.message };
+      const errMsg = error.code ? mapFirebaseAuthError(error.code) : 'Password reset failed. Please try again.';
+      return { success: false, message: errMsg };
     }
   };
 

@@ -20,6 +20,36 @@ import {
 
 const AppActionsContext = createContext(null);
 
+/**
+ * Validates a GitHub commit/push URL against all registered GitHub IDs.
+ * Accepts: https://github.com/{registeredGitHubId}/100DaysOfCode-2026/...
+ * Comparison is case-insensitive for both the GitHub ID and the repo name.
+ */
+function isValidRepoUrl(url, registeredUsers) {
+  const trimmed = (url || '').trim().toLowerCase();
+  if (!trimmed.startsWith('https://github.com/')) return false;
+
+  // Extract the path after github.com/
+  const pathPart = trimmed.slice('https://github.com/'.length);
+  const segments = pathPart.split('/');
+  if (segments.length < 2) return false;
+
+  const urlGitHubId = segments[0];
+  const urlRepoName = segments[1];
+
+  // Repo name must be 100daysofcode-2026 (case-insensitive)
+  if (urlRepoName !== '100daysofcode-2026') return false;
+
+  // GitHub ID must belong to a registered user
+  const registeredIds = new Set(
+    registeredUsers
+      .map((u) => (u.gitHubId || '').trim().toLowerCase())
+      .filter(Boolean)
+  );
+
+  return registeredIds.has(urlGitHubId);
+}
+
 export function AppActionsProvider({ children }) {
   const { currentUser } = useAuth();
   const { db } = useData();
@@ -111,9 +141,9 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Event configuration is still loading. Please try again.' };
       }
 
-      // Github link validation
-      if (!commitUrl.trim().startsWith('https://github.com/upesacm/100DaysOfCode-2026/commit/')) {
-        return { success: false, message: 'Invalid commit URL. Must be a commit link from the official repository (upesacm/100DaysOfCode-2026).' };
+      // Github link validation — must be from a registered user's fork
+      if (!isValidRepoUrl(commitUrl, db.users)) {
+        return { success: false, message: 'Invalid URL.' };
       }
 
       const myUid = currentUser.uid || currentUser.id;
@@ -163,7 +193,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit commit.' };
       }
     },
-    [currentUser, db.submissions, db.simulatedTime, db.eventStartDate, db.currentDay]
+    [currentUser, db.users, db.submissions, db.simulatedTime, db.eventStartDate, db.currentDay]
   );
 
   const submitDebuggingChallenge = useCallback(
@@ -173,9 +203,9 @@ export function AppActionsProvider({ children }) {
 
       if (!currentUser) return { success: false, message: 'Not logged in.' };
 
-      // Github link validation
-      if (!link.trim().startsWith('https://github.com/upesacm/100DaysOfCode-2026/commit/')) {
-        return { success: false, message: 'Invalid commit URL. Must be a commit link from the official repository (upesacm/100DaysOfCode-2026).' };
+      // Github link validation — must be from a registered user's fork
+      if (!isValidRepoUrl(link, db.users)) {
+        return { success: false, message: 'Invalid URL.' };
       }
 
       const myUid = currentUser.uid || currentUser.id;
@@ -185,10 +215,6 @@ export function AppActionsProvider({ children }) {
 
       const challengeId = challenge.id;
       const eventTime = new Date(db.simulatedTime);
-      const publishedTime = new Date(challenge.publishedDate);
-      if (eventTime < publishedTime) {
-        return { success: false, message: 'Challenge has not started yet.' };
-      }
 
       try {
         await submitDebuggingSolution(challengeId, myUid, link, eventTime.toISOString());
@@ -197,7 +223,7 @@ export function AppActionsProvider({ children }) {
         return { success: false, message: 'Failed to submit debugging solution.' };
       }
     },
-    [currentUser, db.debuggingChallenges, db.simulatedTime]
+    [currentUser, db.users, db.debuggingChallenges, db.simulatedTime, db.debuggingLocked, db.currentDay]
   );
 
   const syncParticipantScores = useCallback(

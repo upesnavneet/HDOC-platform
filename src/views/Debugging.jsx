@@ -11,11 +11,22 @@ const getCurrentWeek = (currentDay) => {
 };
 
 function getChallengeWindow(simulatedTime, debuggingChallenges, currentWeek) {
+  if (!debuggingChallenges || !Array.isArray(debuggingChallenges)) {
+    return {
+      activeChallenge: null,
+      timeStatus: 'closed',
+      isChallengeOpen: false,
+      countdown: 'No upcoming debugging challenge scheduled.',
+    };
+  }
+
   const now = new Date(simulatedTime);
   const match = debuggingChallenges.find((c) => c.week === currentWeek);
 
   if (match) {
     const pubTime = new Date(match.publishedDate);
+    // Challenge is available as long as the admin has unlocked the tab.
+    // The time status is informational only (for countdown display).
     if (now >= pubTime) {
       const deadline = new Date(pubTime.getTime() + 24 * 60 * 60 * 1000);
       const diff = Math.max(0, deadline - now);
@@ -25,17 +36,16 @@ function getChallengeWindow(simulatedTime, debuggingChallenges, currentWeek) {
         activeChallenge: match,
         timeStatus: 'open',
         isChallengeOpen: true,
-        countdown: `${h}h ${m}m remaining`,
+        countdown: diff > 0 ? `${h}h ${m}m remaining` : 'Challenge window ended',
       };
     }
-    const diff = pubTime - now;
-    const h = Math.floor(diff / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    // Challenge exists but publish date hasn't arrived yet
+    // Still show it as available since admin controls access via lock toggle
     return {
       activeChallenge: match,
       timeStatus: 'upcoming',
-      isChallengeOpen: false,
-      countdown: `Starts in ${h}h ${m}m`,
+      isChallengeOpen: true,
+      countdown: 'Waiting for scheduled start',
     };
   }
 
@@ -270,19 +280,7 @@ export default function Debugging() {
 
   const { activeChallenge, timeStatus, isChallengeOpen } = windowState;
 
-  if (db.debuggingLocked) {
-    return (
-      <div className="debugging-container">
-        <div className="debug-closed-state">
-          <div className="lock-icon">🔒</div>
-          <h2>Debugging Locked</h2>
-          <p className="upcoming-note">
-            Debugging challenges will open from 9pm to 10pm only on Sundays.
-          </p>
-        </div>
-      </div>
-    );
-  }
+
 
   useEffect(() => {
     if (timeStatus !== 'upcoming' && timeStatus !== 'open') return undefined;
@@ -317,6 +315,21 @@ export default function Debugging() {
       });
     }
   }, [activeChallenge?.starterCode]);
+
+  if (db.debuggingLocked) {
+    return (
+      <div className="debugging-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F2AA4C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1.5rem' }}>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#F3F3F3' }}>Debugging Locked</h2>
+        <p style={{ fontSize: '1.1rem', color: 'rgba(243, 243, 243, 0.7)', maxWidth: '500px', lineHeight: 1.6 }}>
+          Debugging challenges will open from 9pm to 10pm only on Sundays.
+        </p>
+      </div>
+    );
+  }
 
     const codeContent = activeChallenge?.starterCode || '';
   const lineCount = getLineCount(codeContent);
@@ -517,14 +530,15 @@ export default function Debugging() {
 
   // ═══ Closed or Upcoming State ═══
   return (
-    <div className="debugging-container">
-      <div className="debug-closed-state">
-        <div className="lock-icon">🔒</div>
-        <h2>Debugging Locked</h2>
-        <p className="upcoming-note">
-          Debugging challenges will open from 9pm to 10pm only on Sundays.
-        </p>
-      </div>
+    <div className="debugging-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F2AA4C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1.5rem' }}>
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+      <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: '#F3F3F3' }}>Debugging Locked</h2>
+      <p style={{ fontSize: '1.1rem', color: 'rgba(243, 243, 243, 0.7)', maxWidth: '500px', lineHeight: 1.6 }}>
+        Debugging challenges will open from 9pm to 10pm only on Sundays.
+      </p>
     </div>
   );
 }

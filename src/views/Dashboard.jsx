@@ -233,7 +233,7 @@ export default function Dashboard() {
                 document.getElementById('todays-challenges')?.scrollIntoView({ behavior: 'smooth' })
               }
             >
-              Go to Day {currentDay}'s Challenges →
+              {currentDay === 0 ? 'View Guidelines →' : `Go to Day ${currentDay}'s Challenges →`}
             </button>
           </div>
           <div className="hero-stats-row">
@@ -276,7 +276,9 @@ export default function Dashboard() {
           <div className="dashboard-main-col">
             {/* ── Today's Coding Challenges Section ── */}
             <div id="todays-challenges">
-              <h3 className="redesigned-section-header" style={{ marginBottom: '1rem' }}>Today's Challenges - Day {currentDay}</h3>
+              <h3 className="redesigned-section-header" style={{ marginBottom: '1rem' }}>
+                {currentDay === 0 ? 'Event Starting Soon' : `Today's Challenges - Day ${currentDay}`}
+              </h3>
 
               <div className="unified-challenge-content">
                 {/* Challenge 1: LeetCode */}
@@ -386,6 +388,11 @@ export default function Dashboard() {
               </h3>
               <div className="timeline-container">
                 <div className="timeline-rail" />
+                {currentDay === 0 && (
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', padding: '1rem 0' }}>
+                    Activity will appear here once Day 1 begins.
+                  </p>
+                )}
                 {Array.from({ length: Math.min(currentDay, 4) }, (_, i) => {
                   const d = currentDay - i;
                   const isToday = d === currentDay;

@@ -212,7 +212,26 @@ export default function CoordinatorDashboard() {
               </div>
             )}
             
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                className="small-action-btn grey"
+                onClick={async () => {
+                  if (window.confirm("Are you sure you want to reset the event to Day 0?")) {
+                    setIsAdvancing(true);
+                    try {
+                      await updateSystemConfig({ currentDay: 0, lastDayAdvanceTime: new Date() });
+                    } catch (error) {
+                      console.error("Failed to reset:", error);
+                      alert("Failed to reset to Day 0");
+                    } finally {
+                      setIsAdvancing(false);
+                    }
+                  }
+                }}
+                disabled={isAdvancing || isLocking}
+              >
+                Reset to Day 0
+              </button>
               <button
                 className={`small-action-btn ${db.challengesLocked ? 'red' : 'green'}`}
                 onClick={() => handleToggleLock('challenges')}

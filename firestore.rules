@@ -112,13 +112,11 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
              'id', 'challengeId', 'userId', 'link', 'timestamp', 'score'
            ])
-        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 == 0
         && request.resource.data.score == null;
 
       // Self-update: cannot change score.
       allow update: if isAuthenticated()
         && resource.data.userId == request.auth.uid
-        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 == 0
         && !request.resource.data.diff(resource.data).affectedKeys()
               .hasAny(['score']);
 

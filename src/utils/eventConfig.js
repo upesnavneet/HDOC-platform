@@ -1,7 +1,7 @@
 export const EVENT_START_ISO = '2026-05-25T09:00:00+05:30';
 
 export const getDefaultSystemConfig = () => ({
-  currentDay: 8,
+  currentDay: 0,
   simulatedTime: '2026-06-01T09:00:00+05:30',
   completedWeeks: [1],
   challengesLocked: false,
@@ -16,7 +16,7 @@ export const normalizeSystemConfig = (config) => {
   }
 
   const parsedDay = Number(config.currentDay);
-  const currentDay = Number.isFinite(parsedDay) && parsedDay >= 1 ? parsedDay : defaults.currentDay;
+  const currentDay = Number.isFinite(parsedDay) && parsedDay >= 0 ? parsedDay : defaults.currentDay;
 
   let simulatedTime = config.simulatedTime;
   if (!simulatedTime || Number.isNaN(new Date(simulatedTime).getTime())) {
@@ -32,7 +32,7 @@ export const normalizeSystemConfig = (config) => {
 
   const needsRepair =
     !Number.isFinite(parsedDay) ||
-    parsedDay < 1 ||
+    parsedDay < 0 ||
     !config.simulatedTime ||
     Number.isNaN(new Date(config.simulatedTime).getTime()) ||
     !Array.isArray(config.completedWeeks) ||
