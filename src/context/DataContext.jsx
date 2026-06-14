@@ -9,7 +9,6 @@ import {
   subscribeToDebuggingChallenges,
   subscribeToDebuggingSubmissions,
   subscribeToSystemConfig,
-  updateSystemConfig,
 } from '../services/completionService';
 import { seedFirestoreIfEmpty } from '../utils/seedFirestore';
 import { getDefaultSystemConfig, normalizeSystemConfig } from '../utils/eventConfig';
@@ -64,13 +63,9 @@ export function DataProvider({ children }) {
           (config) => {
             const normalized = normalizeSystemConfig(config);
 
-            if (normalized.needsRepair) {
-              updateSystemConfig({
-                currentDay: normalized.currentDay,
-                simulatedTime: normalized.simulatedTime,
-                completedWeeks: normalized.completedWeeks,
-              }).catch((err) => logError('Failed to repair system config:', err));
-            }
+            // Note: needsRepair normalization is applied locally only.
+            // We intentionally do NOT write repaired values back to Firestore
+            // to avoid cross-client race conditions (e.g. deployed build vs local dev).
 
             setDb((prev) => ({
               ...prev,

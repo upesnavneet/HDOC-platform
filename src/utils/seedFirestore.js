@@ -238,9 +238,9 @@ export async function seedFirestoreIfEmpty() {
 
     log('[Seed] Empty Firestore detected - seeding initial data...');
 
-    // 1. Seed system config at Day 8 so past debugging challenges are visible
+    // 1. Seed system config at Day 0
     await setDoc(doc(firestoreDb, 'system', 'config'), {
-      currentDay: 8,
+      currentDay: 0,
       simulatedTime: '2026-06-01T09:00:00+05:30',
       completedWeeks: [1],
       lastDayAdvanceTime: new Date(),

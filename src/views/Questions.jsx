@@ -387,9 +387,11 @@ export default function Questions() {
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
-              <h3>Select a challenge from the archive</h3>
+              <h3>{currentDay === 0 ? "Event hasn't started yet" : "Select a challenge from the archive"}</h3>
               <p>
-                Choose any day from Day 1 to Day {currentDay} to inspect problem statements.
+                {currentDay === 0
+                  ? "Challenges will appear here once Day 1 begins. Stay tuned!"
+                  : `Choose any day from Day 1 to Day ${currentDay} to inspect problem statements.`}
               </p>
             </div>
           )}
