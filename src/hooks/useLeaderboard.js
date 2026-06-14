@@ -13,7 +13,14 @@ export function useLeaderboardData(db, currentUserId) {
 
   // B6: exclude admin accounts; B4: exclude suspended participants
   const participants = useMemo(
-    () => db.users.filter((u) => !u.isAdminAccount && u.isActive !== false),
+    () =>
+      db.users.filter(
+        (u) =>
+          !u.isAdminAccount &&
+          u.isActive !== false &&
+          u.name?.toLowerCase() !== 'admin' &&
+          !u.email?.toLowerCase().includes('admin')
+      ),
     [db.users]
   );
 

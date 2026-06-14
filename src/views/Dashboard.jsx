@@ -82,14 +82,14 @@ export default function Dashboard() {
   // Find rank preview
   const codingRank = userId
     ? db.users
-      .filter((u) => u.role !== 'admin')
+      .filter((u) => !u.isAdminAccount && u.isActive !== false && u.name?.toLowerCase() !== 'admin' && !u.email?.toLowerCase().includes('admin'))
       .sort((a, b) => b.totalCodingScore - a.totalCodingScore)
       .findIndex((u) => u.id === userId) + 1
     : 0;
 
   const debugRank = userId
     ? db.users
-      .filter((u) => u.role !== 'admin')
+      .filter((u) => !u.isAdminAccount && u.isActive !== false && u.name?.toLowerCase() !== 'admin' && !u.email?.toLowerCase().includes('admin'))
       .sort((a, b) => b.totalDebuggingScore - a.totalDebuggingScore)
       .findIndex((u) => u.id === userId) + 1
     : 0;
@@ -459,7 +459,7 @@ export default function Dashboard() {
               <div className="leaderboard-list">
                 {(() => {
                   const participants = db.users
-                    .filter((u) => u.role !== 'admin')
+                    .filter((u) => !u.isAdminAccount && u.isActive !== false && u.name?.toLowerCase() !== 'admin' && !u.email?.toLowerCase().includes('admin'))
                     .sort((a, b) => b.totalCodingScore - a.totalCodingScore);
 
                   const top10 = participants.slice(0, 10);
@@ -484,14 +484,7 @@ export default function Dashboard() {
                         <div className="leaderboard-avatar">{initials}</div>
                         <div className="leaderboard-info">
                           <span className="leaderboard-name">{user.name}</span>
-                          <div className="leaderboard-bar-wrapper">
-                            <div
-                              className="leaderboard-bar"
-                              style={{
-                                width: `${Math.max((user.totalCodingScore / maxVal) * 100, 5)}%`,
-                              }}
-                            />
-                          </div>
+
                         </div>
                       </div>
                     );
