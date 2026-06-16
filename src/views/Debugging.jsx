@@ -333,25 +333,15 @@ export default function Debugging() {
     );
   }
 
-    const codeContent = activeChallenge?.starterCode || '';
+  const codeContent = activeChallenge?.buggyCode || activeChallenge?.starterCode || '';
   const lineCount = getLineCount(codeContent);
   const fileName = getCodeFileName(activeChallenge);
 
-  const symptoms = activeChallenge?.symptoms || [
-    'Application freezes during high-volume concurrent operations.',
-    'CPU utilization drops to 0% while threads are stuck in waiting states.',
-    'Thread dumps show threads permanently blocked on resource acquisition.',
-  ];
-  const hints = activeChallenge?.hints || [
-    {
-      title: 'Hint 1: Resource Ordering',
-      body: 'Look closely at the order in which different threads attempt to lock shared resources. A consistent ordering can prevent circular dependencies.',
-    },
-    {
-      title: 'Hint 2: Standard Library Solutions',
-      body: 'Consider using mechanisms that acquire multiple locks simultaneously without deadlock risk. Many languages provide built-in utilities for this.',
-    },
-  ];
+  const requirements = activeChallenge?.requirements || [];
+  const expectedOutputs = activeChallenge?.expectedOutputs || [];
+  const constraints = activeChallenge?.constraints || '';
+  const brief = activeChallenge?.challengeBrief || activeChallenge?.description || '';
+
 
   if (activeChallenge) {
     return (
@@ -371,59 +361,80 @@ export default function Debugging() {
               {/* Title + Meta */}
               <div className="debug-title-row">
                 <h1>
-                  Week {activeChallenge.week} — {activeChallenge.theme}
+                  Week {activeChallenge.week} — {activeChallenge.title || activeChallenge.theme}
                 </h1>
-              </div>
-
-              {/* Timer */}
-              <div className="debug-timer-badge">
-                <span className="pulse-dot" aria-hidden="true" />
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <AdvanceTimer hideIcon={true} /> remaining
-                </span>
+                {activeChallenge.difficulty && (
+                  <span className={`difficulty-badge ${activeChallenge.difficulty.toLowerCase()}`}>
+                    {activeChallenge.difficulty}
+                  </span>
+                )}
               </div>
 
               {/* Challenge Brief */}
               <div className="debug-section">
                 <h2 className="debug-section-heading">Challenge Brief</h2>
-                <p className="debug-brief-text">{activeChallenge.description}</p>
+                <p className="debug-brief-text">{brief}</p>
               </div>
 
-              {/* Observed Symptoms — driven by challenge data */}
-              <div className="debug-section">
-                <h2 className="debug-section-heading">Observed Symptoms</h2>
-                <ul className="debug-symptoms-list">
-                  {symptoms.map((symptom, i) => (
-                    <li key={i} className="debug-symptom-item">
-                      <span className="debug-symptom-icon">
-                        <ErrorCircleIcon />
-                      </span>
-                      <span className="debug-symptom-text">{symptom}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Hint System — driven by challenge data */}
-              <div className="debug-hints-section">
-                <h2 className="debug-section-heading">Hint System</h2>
-                {hints.map((hint, i) => (
-                  <details key={i} className="debug-hint-accordion">
-                    <summary>
-                      <div className="debug-hint-summary-left">
-                        <span className="debug-hint-icon">
-                          <LightbulbIcon />
+              {/* Requirements (What the Code Must Do) */}
+              {requirements.length > 0 && requirements.some(r => r.trim() !== '') && (
+                <div className="debug-section">
+                  <h2 className="debug-section-heading">What the Code Must Do</h2>
+                  <ul className="debug-symptoms-list">
+                    {requirements.filter(r => r.trim() !== '').map((req, i) => (
+                      <li key={i} className="debug-symptom-item">
+                        <span className="debug-symptom-icon" style={{ color: '#2ea043' }}>
+                          ✓
                         </span>
-                        {hint.title}
-                      </div>
-                      <span className="debug-hint-chevron">
-                        <ChevronDownIcon />
-                      </span>
-                    </summary>
-                    <div className="debug-hint-content">{hint.body}</div>
-                  </details>
-                ))}
-              </div>
+                        <span className="debug-symptom-text">{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Expected Output */}
+              {expectedOutputs.length > 0 && expectedOutputs.some(o => o.trim() !== '') && (
+                <div className="debug-section">
+                  <h2 className="debug-section-heading">Expected Output</h2>
+                  <ul className="debug-symptoms-list">
+                    {expectedOutputs.filter(o => o.trim() !== '').map((out, i) => (
+                      <li key={i} className="debug-symptom-item">
+                        <span className="debug-symptom-icon" style={{ color: '#58a6ff' }}>
+                          ›
+                        </span>
+                        <span className="debug-symptom-text">{out}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Constraints */}
+              {Array.isArray(constraints) && constraints.length > 0 && constraints.some(c => c.trim() !== '') ? (
+                <div className="debug-section">
+                  <h2 className="debug-section-heading">Constraints</h2>
+                  <ul className="debug-symptoms-list">
+                    {constraints.filter(c => c.trim() !== '').map((con, i) => (
+                      <li key={i} className="debug-symptom-item">
+                        <span className="debug-symptom-icon" style={{ color: '#d2a8ff' }}>
+                          •
+                        </span>
+                        <span className="debug-symptom-text" style={{ fontFamily: 'monospace' }}>{con}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                typeof constraints === 'string' && constraints.trim() && (
+                  <div className="debug-section">
+                    <h2 className="debug-section-heading">Constraints</h2>
+                    <div className="debug-hint-content" style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontFamily: 'monospace' }}>
+                      {constraints}
+                    </div>
+                  </div>
+                )
+              )}
 
               {/* Submission Status (if submitted) */}
               {activeChallengeSub && (
@@ -476,10 +487,13 @@ export default function Debugging() {
                 ))}
               </div>
               {/* Syntax-Highlighted Code */}
-              <div
-                className="debug-code-content"
-                dangerouslySetInnerHTML={highlightCode(codeContent)}
-              />
+              <pre style={{ margin: 0, whiteSpace: 'pre-wrap', tabSize: 4 }}>
+                <code
+                  className="debug-code-content"
+                  style={{ display: 'block' }}
+                  dangerouslySetInnerHTML={highlightCode(codeContent)}
+                />
+              </pre>
             </div>
 
             {/* Sticky Submission Dock */}

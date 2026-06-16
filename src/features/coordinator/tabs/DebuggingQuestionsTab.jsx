@@ -7,13 +7,18 @@ export default function DebuggingQuestionsTab() {
 
   const [mode, setMode] = useState('add'); // 'add' | 'edit'
   const [weekNum, setWeekNum] = useState('');
-  const [theme, setTheme] = useState('');
-  const [description, setDescription] = useState('');
-  const [starterCode, setStarterCode] = useState('');
+  const [title, setTitle] = useState('');
   const [publishedDate, setPublishedDate] = useState('');
-  // F2: symptoms (what they see) and hints (optional guidance)
-  const [symptomsText, setSymptomsText] = useState('');
-  const [hintsText, setHintsText] = useState('');
+  
+  // New Structured Fields
+  const [timeLimit, setTimeLimit] = useState('');
+  const [difficulty, setDifficulty] = useState('Medium');
+  const [buggyCode, setBuggyCode] = useState('');
+  const [challengeBrief, setChallengeBrief] = useState('');
+  const [requirements, setRequirements] = useState(['']);
+  const [expectedOutputs, setExpectedOutputs] = useState(['']);
+  const [constraints, setConstraints] = useState(['']);
+  
   const [formMsg, setFormMsg] = useState('');
 
   const existingChallenges = db.debuggingChallenges || [];
@@ -25,13 +30,16 @@ export default function DebuggingQuestionsTab() {
       return;
     }
     setWeekNum(String(challenge.week));
-    setTheme(challenge.theme || '');
-    setDescription(challenge.description || '');
-    setStarterCode(challenge.starterCode || '');
-    // F2: join array back to newline text for editing
-    setSymptomsText((challenge.symptoms || []).join('\n'));
-    setHintsText((challenge.hints || []).join('\n'));
-    // Convert ISO date to datetime-local format
+    setTitle(challenge.title || challenge.theme || '');
+    setBuggyCode(challenge.buggyCode || challenge.starterCode || '');
+    
+    setTimeLimit(challenge.timeLimit || '');
+    setDifficulty(challenge.difficulty || 'Medium');
+    setChallengeBrief(challenge.challengeBrief || challenge.description || '');
+    setRequirements(challenge.requirements?.length ? challenge.requirements : ['']);
+    setExpectedOutputs(challenge.expectedOutputs?.length ? challenge.expectedOutputs : ['']);
+    setConstraints(Array.isArray(challenge.constraints) && challenge.constraints.length ? challenge.constraints : ['']);
+
     if (challenge.publishedDate) {
       const d = new Date(challenge.publishedDate);
       const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -46,12 +54,15 @@ export default function DebuggingQuestionsTab() {
 
   const resetForm = () => {
     setWeekNum('');
-    setTheme('');
-    setDescription('');
-    setStarterCode('');
+    setTitle('');
+    setBuggyCode('');
     setPublishedDate('');
-    setSymptomsText(''); // F2
-    setHintsText('');    // F2
+    setTimeLimit('');
+    setDifficulty('Medium');
+    setChallengeBrief('');
+    setRequirements(['']);
+    setExpectedOutputs(['']);
+    setConstraints(['']);
     setFormMsg('');
   };
 
@@ -66,11 +77,27 @@ export default function DebuggingQuestionsTab() {
     }
   };
 
+  const handleListChange = (setter, list, index, value) => {
+    const newList = [...list];
+    newList[index] = value;
+    setter(newList);
+  };
+
+  const addListItem = (setter, list) => {
+    setter([...list, '']);
+  };
+
+  const removeListItem = (setter, list, index) => {
+    if (list.length > 1) {
+      setter(list.filter((_, i) => i !== index));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormMsg('');
 
-    if (!weekNum || !theme || !description || !starterCode || !publishedDate) {
+    if (!weekNum || !title || !publishedDate || !buggyCode) {
       setFormMsg('Please fill in all required fields.');
       return;
     }
@@ -83,13 +110,21 @@ export default function DebuggingQuestionsTab() {
 
     const res = await uploadDebuggingChallenge({
       week: Number(weekNum),
-      theme,
-      description,
-      starterCode,
+      title,
+      theme: title, // backward compatibility
+      buggyCode,
+      starterCode: buggyCode, // backward compatibility
       publishedDate: pubDate.toISOString(),
-      // F2: split newline-separated text into arrays, filter blank lines
-      symptoms: symptomsText.split('\n').map((s) => s.trim()).filter(Boolean),
-      hints: hintsText.split('\n').map((h) => h.trim()).filter(Boolean),
+      timeLimit,
+      difficulty,
+      challengeBrief,
+      requirements: requirements.filter(Boolean),
+      expectedOutputs: expectedOutputs.filter(Boolean),
+      constraints: constraints.filter(Boolean),
+      // Pass old fields as empty to prevent lingering values
+      description: challengeBrief,
+      symptoms: [],
+      hints: [],
     });
 
     setFormMsg(res.message);
@@ -146,7 +181,7 @@ export default function DebuggingQuestionsTab() {
             ) : (
               existingChallenges.map((c) => (
                 <option key={c.id} value={c.week}>
-                  Week {c.week} - {c.theme}
+                  Week {c.week} - {c.title || c.theme}
                 </option>
               ))
             )}
@@ -160,7 +195,21 @@ export default function DebuggingQuestionsTab() {
           {mode === 'add' ? 'Add New Debugging Challenge' : 'Edit Debugging Challenge'}
         </h4>
 
+        {/* Basic Information */}
         <div className="form-grid">
+          <div className="form-group">
+            <label htmlFor="debug-title">Challenge Title</label>
+            <input
+              id="debug-title"
+              name="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              autoComplete="off"
+              placeholder="e.g. Memory Leak and BFS Traversal"
+            />
+          </div>
           <div className="form-group">
             <label htmlFor="debug-week-num">Week Number</label>
             <input
@@ -177,88 +226,128 @@ export default function DebuggingQuestionsTab() {
               readOnly={mode === 'edit'}
             />
           </div>
+        </div>
+
+        <div className="form-grid">
           <div className="form-group">
-            <label htmlFor="debug-publish-date">Published Date &amp; Time</label>
-            <input
-              id="debug-publish-date"
-              name="publishedDate"
-              type="datetime-local"
-              value={publishedDate}
-              onChange={(e) => setPublishedDate(e.target.value)}
-              required
-            />
+            <label htmlFor="debug-difficulty">Difficulty</label>
+            <select
+              id="debug-difficulty"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+            >
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
           </div>
         </div>
 
         <div className="form-group">
-          <label htmlFor="debug-theme">Theme / Title</label>
-          <input
-            id="debug-theme"
-            name="theme"
-            type="text"
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            required
-            autoComplete="off"
-            placeholder="e.g. Memory Leak and BFS Traversal"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="debug-description">Problem Description</label>
+          <label htmlFor="debug-buggy-code">Buggy Code Editor</label>
           <textarea
-            id="debug-description"
-            name="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows="3"
-            required
-            autoComplete="off"
-            placeholder="Describe the debugging task participants need to solve..."
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="debug-starter-code">Starter Code (Buggy)</label>
-          <textarea
-            id="debug-starter-code"
-            name="starterCode"
-            value={starterCode}
-            onChange={(e) => setStarterCode(e.target.value)}
+            id="debug-buggy-code"
+            name="buggyCode"
+            value={buggyCode}
+            onChange={(e) => setBuggyCode(e.target.value)}
             className="code-textarea"
             rows="8"
             required
             autoComplete="off"
-            placeholder="Paste the buggy starter code here..."
+            placeholder="Paste the buggy code here (indentation is preserved)..."
           />
         </div>
 
-        {/* F2: Symptoms — what participants observe as incorrect behaviour */}
         <div className="form-group">
-          <label htmlFor="debug-symptoms">Observed Symptoms (one per line)</label>
+          <label htmlFor="debug-challenge-brief">Challenge Brief</label>
           <textarea
-            id="debug-symptoms"
-            name="symptoms"
-            value={symptomsText}
-            onChange={(e) => setSymptomsText(e.target.value)}
-            rows="3"
+            id="debug-challenge-brief"
+            name="challengeBrief"
+            value={challengeBrief}
+            onChange={(e) => setChallengeBrief(e.target.value)}
+            rows="4"
             autoComplete="off"
-            placeholder="e.g. Output is always 0&#10;Program crashes on large input"
+            placeholder="Provide the story, background, and context of the challenge..."
           />
         </div>
 
-        {/* F2: Hints — optional guidance to help participants */}
+        {/* Dynamic Lists */}
         <div className="form-group">
-          <label htmlFor="debug-hints">Hints (one per line, optional)</label>
-          <textarea
-            id="debug-hints"
-            name="hints"
-            value={hintsText}
-            onChange={(e) => setHintsText(e.target.value)}
-            rows="2"
-            autoComplete="off"
-            placeholder="e.g. Check the loop termination condition"
-          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <label style={{ margin: 0 }}>What the Code Must Do</label>
+            <button type="button" className="small-action-btn" onClick={() => addListItem(setRequirements, requirements)}>+ Add Requirement</button>
+          </div>
+          {requirements.map((req, index) => (
+            <div key={`req-${index}`} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <input
+                type="text"
+                value={req}
+                onChange={(e) => handleListChange(setRequirements, requirements, index, e.target.value)}
+                placeholder={`Requirement ${index + 1}`}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                className="small-action-btn red"
+                onClick={() => removeListItem(setRequirements, requirements, index)}
+                disabled={requirements.length === 1}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="form-group">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <label style={{ margin: 0 }}>Expected Output</label>
+            <button type="button" className="small-action-btn" onClick={() => addListItem(setExpectedOutputs, expectedOutputs)}>+ Add Output</button>
+          </div>
+          {expectedOutputs.map((out, index) => (
+            <div key={`out-${index}`} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <input
+                type="text"
+                value={out}
+                onChange={(e) => handleListChange(setExpectedOutputs, expectedOutputs, index, e.target.value)}
+                placeholder={`Expected Output ${index + 1}`}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                className="small-action-btn red"
+                onClick={() => removeListItem(setExpectedOutputs, expectedOutputs, index)}
+                disabled={expectedOutputs.length === 1}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="form-group">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <label style={{ margin: 0 }}>Constraints</label>
+            <button type="button" className="small-action-btn" onClick={() => addListItem(setConstraints, constraints)}>+ Add Constraint</button>
+          </div>
+          {constraints.map((con, index) => (
+            <div key={`con-${index}`} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              <input
+                type="text"
+                value={con}
+                onChange={(e) => handleListChange(setConstraints, constraints, index, e.target.value)}
+                placeholder={`Constraint ${index + 1}`}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                className="small-action-btn red"
+                onClick={() => removeListItem(setConstraints, constraints, index)}
+                disabled={constraints.length === 1}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
         </div>
 
         <div className="coord-action-buttons">
@@ -287,7 +376,7 @@ export default function DebuggingQuestionsTab() {
                   <div className="debug-preview-left">
                     <span className="debug-week-badge">Week {c.week}</span>
                     <div className="debug-preview-info">
-                      <h5>{c.theme}</h5>
+                      <h5>{c.title || c.theme}</h5>
                       <span className="debug-preview-date">
                         Publishes: {formatDate(c.publishedDate)}
                       </span>
@@ -301,8 +390,9 @@ export default function DebuggingQuestionsTab() {
                       type="button"
                       className="small-action-btn"
                       onClick={() => {
-                        setMode('edit');
+                        handleModeSwitch('edit');
                         loadChallengeForEdit(c.week);
+                        document.querySelector('.coord-form-panel')?.scrollIntoView({ behavior: 'smooth' });
                       }}
                     >
                       Edit

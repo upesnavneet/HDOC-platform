@@ -324,6 +324,13 @@ export function AppActionsProvider({ children }) {
         isMaster: Boolean(questionData.isMaster),
         handout: questionData.handout || '',
         solutionCode: questionData.solutionCode || '',
+        // New structured fields
+        title: questionData.title,
+        timeLimit: questionData.timeLimit,
+        explanation: questionData.explanation,
+        exampleInput: questionData.exampleInput,
+        exampleOutput: questionData.exampleOutput,
+        starterCode: questionData.starterCode,
       });
       return {
         success: true,
@@ -487,6 +494,14 @@ export function AppActionsProvider({ children }) {
         // F2: symptoms and hints are coordinator-managed per challenge
         symptoms: challengeData.symptoms || [],
         hints: challengeData.hints || [],
+        // New structured fields
+        title: challengeData.title,
+        timeLimit: challengeData.timeLimit,
+        challengeBrief: challengeData.challengeBrief,
+        requirements: challengeData.requirements || [],
+        expectedOutputs: challengeData.expectedOutputs || [],
+        constraints: challengeData.constraints,
+        buggyCode: challengeData.buggyCode,
       });
       return {
         success: true,
