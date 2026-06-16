@@ -165,6 +165,9 @@ export default function RegisterForm({
           onChange={(e) => setRegHackerrankId(e.target.value)}
           required
         />
+        <p style={{ color: '#8b949e', fontSize: '0.75rem', marginTop: '0.5rem', lineHeight: '1.4', textAlign: 'center' }}>
+          ⚠️ HackerRank account must be registered using your official college email ID (@stu.upes.ac.in). Otherwise your submissions may not be verified correctly.
+        </p>
       </div>
       <button type="submit" className="auth-action-btn" disabled={isSubmitting}>
         {isSubmitting ? 'Registering…' : 'Register'}

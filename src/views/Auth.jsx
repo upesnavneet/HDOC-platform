@@ -62,6 +62,16 @@ export default function Auth() {
     redirectAfterLogin(res.user);
   };
 
+  const extractUsername = (input) => {
+    if (!input) return '';
+    const trimmed = input.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.includes('/')) {
+      const urlParts = trimmed.replace(/\/$/, '').split('/');
+      return urlParts[urlParts.length - 1];
+    }
+    return trimmed;
+  };
+
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -78,9 +88,9 @@ export default function Auth() {
       regEmail,
       regPass,
       regStudentId,
-      regGithubId,
-      regLeetcodeId,
-      regHackerrankId
+      extractUsername(regGithubId),
+      extractUsername(regLeetcodeId),
+      extractUsername(regHackerrankId)
     );
     setIsSubmitting(false);
 

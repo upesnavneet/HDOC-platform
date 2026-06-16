@@ -25,6 +25,75 @@ export default function Profile() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: currentUser?.name || '',
+    studentId: currentUser?.studentId || '',
+    gitHubId: currentUser?.gitHubId || '',
+    leetCodeId: currentUser?.leetCodeId || '',
+    hackerRankId: currentUser?.hackerRankId || '',
+  });
+  const [editIsSubmitting, setEditIsSubmitting] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [editSuccess, setEditSuccess] = useState(false);
+
+  const handleEditProfileOpen = () => {
+    setEditFormData({
+      name: currentUser?.name || '',
+      studentId: currentUser?.studentId || '',
+      gitHubId: currentUser?.gitHubId || '',
+      leetCodeId: currentUser?.leetCodeId || '',
+      hackerRankId: currentUser?.hackerRankId || '',
+    });
+    setEditError('');
+    setEditSuccess(false);
+    setIsEditModalOpen(true);
+  };
+
+  const extractUsername = (input) => {
+    if (!input) return '';
+    const trimmed = input.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.includes('/')) {
+      const urlParts = trimmed.replace(/\/$/, '').split('/');
+      return urlParts[urlParts.length - 1];
+    }
+    return trimmed;
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setEditError('');
+    setEditSuccess(false);
+
+    const updates = {
+      name: editFormData.name.trim(),
+      studentId: editFormData.studentId.trim(),
+      gitHubId: extractUsername(editFormData.gitHubId),
+      leetCodeId: extractUsername(editFormData.leetCodeId),
+      hackerRankId: extractUsername(editFormData.hackerRankId),
+    };
+
+    if (!updates.name || !updates.studentId || !updates.leetCodeId || !updates.hackerRankId) {
+      setEditError('Please fill in all required fields.');
+      return;
+    }
+
+    setEditIsSubmitting(true);
+    try {
+      await updateUserProfile(currentUser.id, updates);
+      setEditSuccess(true);
+      setTimeout(() => {
+        setIsEditModalOpen(false);
+        setEditSuccess(false);
+        window.location.reload();
+      }, 1500);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      setEditError('Failed to update profile. Please try again.');
+    }
+    setEditIsSubmitting(false);
+  };
+
   const currentDayIndex = (db.currentDay || 1) % DAILY_QUOTES.length;
   const dailyQuote = DAILY_QUOTES[currentDayIndex];
 
@@ -41,14 +110,7 @@ export default function Profile() {
     setIsUpdatingGitHub(false);
   };
 
-  if (!currentUser) {
-    return (
-      <div className="new-profile-container error-state">
-        <h1>Sign in to view your profile</h1>
-        <p>Your stats, submission history, and rankings are waiting for you.</p>
-      </div>
-    );
-  }
+  // Moved early return to avoid hook violations
 
   // --- Data Computation ---
   const userSubs = useMemo(() => {
@@ -134,6 +196,15 @@ export default function Profile() {
     ? `https://github-readme-activity-graph.vercel.app/graph?username=${currentUser.gitHubId}&bg_color=0d1117&color=58a6ff&line=58a6ff&point=58a6ff&area=true&hide_border=true&title_color=0d1117`
     : null;
 
+  if (!currentUser) {
+    return (
+      <div className="new-profile-container error-state">
+        <h1>Sign in to view your profile</h1>
+        <p>Your stats, submission history, and rankings are waiting for you.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="new-profile-container">
       {/* HEADER SECTION */}
@@ -170,6 +241,13 @@ export default function Profile() {
                 <span className="np-meta-dot">•</span>
                 <span>@{currentUser?.gitHubId || currentUser?.studentId || 'user'}</span>
               </div>
+              <button 
+                className="edit-profile-btn" 
+                onClick={handleEditProfileOpen}
+                style={{ marginTop: '0.8rem', padding: '0.4rem 0.8rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', color: '#c9d1d9', cursor: 'pointer' }}
+              >
+                Edit Profile
+              </button>
             </div>
           </div>
 
@@ -355,6 +433,82 @@ export default function Profile() {
           )}
         </div>
       </div>
+
+      {isEditModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '520px', width: '100%', padding: '24px', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 20px 50px rgba(0,0,0,0.35)' }}>
+            <div className="edit-modal-header">
+              <h2 className="edit-modal-title">Edit Profile</h2>
+              <p className="edit-modal-subtitle">Update your personal and coding profiles.</p>
+            </div>
+            <div className="modal-body" style={{ padding: '0' }}>
+              {editError && <div className="feedback-alert error">{editError}</div>}
+              {editSuccess && <div className="feedback-alert success">Profile updated successfully!</div>}
+              <form onSubmit={handleEditSubmit} className="edit-profile-form" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="form-group edit-form-group">
+                  <label>Name</label>
+                  <input
+                    type="text"
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    required
+                    className="edit-profile-input"
+                  />
+                </div>
+                <div className="form-group edit-form-group">
+                  <label>SAP ID</label>
+                  <input
+                    type="text"
+                    value={editFormData.studentId}
+                    onChange={(e) => setEditFormData({ ...editFormData, studentId: e.target.value })}
+                    required
+                    className="edit-profile-input"
+                  />
+                </div>
+                <div className="form-grid edit-form-grid">
+                  <div className="form-group edit-form-group">
+                    <label>GitHub Username</label>
+                    <input
+                      type="text"
+                      value={editFormData.gitHubId}
+                      onChange={(e) => setEditFormData({ ...editFormData, gitHubId: e.target.value })}
+                      className="edit-profile-input"
+                    />
+                  </div>
+                  <div className="form-group edit-form-group">
+                    <label>LeetCode Username</label>
+                    <input
+                      type="text"
+                      value={editFormData.leetCodeId}
+                      onChange={(e) => setEditFormData({ ...editFormData, leetCodeId: e.target.value })}
+                      required
+                      className="edit-profile-input"
+                    />
+                  </div>
+                </div>
+                <div className="form-group edit-form-group">
+                  <label>HackerRank Username</label>
+                  <input
+                    type="text"
+                    value={editFormData.hackerRankId}
+                    onChange={(e) => setEditFormData({ ...editFormData, hackerRankId: e.target.value })}
+                    required
+                    className="edit-profile-input"
+                  />
+                </div>
+                <div className="modal-actions" style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <button type="submit" className="auth-action-btn edit-save-btn" disabled={editIsSubmitting}>
+                    {editIsSubmitting ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button type="button" className="edit-cancel-btn" onClick={() => setIsEditModalOpen(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
