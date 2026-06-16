@@ -353,12 +353,22 @@ export default function Profile() {
               </thead>
               <tbody>
                 {filteredSubs.map((sub) => {
-                  const q = (db.questions || []).find((question) => question.id === sub.questionId);
-                  const titleStr = q
-                    ? sub.type === 'leetcode'
-                      ? q.titleLc
-                      : q.titleCustom
-                    : `Day ${sub.day || '?'} Problem`;
+                  let q = (db.questions || []).find((question) => question.id === sub.questionId);
+                  if (!q && sub.day) {
+                    q = (db.questions || []).find((question) => question.day === sub.day);
+                  }
+
+                  let titleStr = `Day ${sub.day || '?'} Problem`;
+                  if (q) {
+                    if (sub.type === 'leetcode') titleStr = q.titleLc || titleStr;
+                    else if (sub.type === 'custom') titleStr = q.titleCustom || titleStr;
+                    else titleStr = q.titleLc || q.titleCustom || q.title || titleStr;
+                  } else {
+                    const debugQ = (db.debuggingChallenges || []).find(c => c.week * 7 === sub.day);
+                    if (debugQ) {
+                      titleStr = debugQ.title || debugQ.theme || `Debugging Week ${debugQ.week}`;
+                    }
+                  }
 
                   const isAccepted = sub.marks != null && Number(sub.marks) > 0;
                   const isPending = sub.marks == null;
@@ -374,7 +384,10 @@ export default function Profile() {
                       <td className="np-col-problem">{titleStr}</td>
                       <td className="np-col-type">
                         <span className="np-type-badge">
-                          {sub.type === 'leetcode' ? 'Algorithms' : sub.type || 'Custom'}
+                          {sub.type === 'leetcode' ? 'Algorithms' 
+                           : sub.type === 'commit' ? 'GitHub Commit' 
+                           : sub.type === 'debugging' ? 'Debugging' 
+                           : sub.type || 'Custom'}
                         </span>
                       </td>
                       <td className="np-col-status">
@@ -399,10 +412,9 @@ export default function Profile() {
                               stroke="currentColor"
                               strokeWidth="2"
                             >
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <polyline points="12 6 12 12 16 14"></polyline>
+                              <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            Pending
+                            {sub.status || 'Submitted'}
                           </span>
                         ) : (
                           <span className="np-status-badge error">
