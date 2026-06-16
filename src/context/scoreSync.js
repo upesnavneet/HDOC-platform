@@ -15,13 +15,17 @@ export function computeDebugScore(debuggingChallenges, userId) {
 
 export function computeCodingStreak(submissions, userId, currentDay) {
   let streak = 0;
-  for (let d = currentDay - 1; d >= 1; d--) {
-    const daySubs = submissions.filter((s) => s.userId === userId && s.day === d);
-    const hasLeetcode = daySubs.some((s) => s.type === 'leetcode' && s.status === 'Submitted');
-    const hasCustom = daySubs.some((s) => s.type === 'custom' && s.status === 'Submitted');
-    if (hasLeetcode && hasCustom) {
+  for (let d = currentDay; d >= 1; d--) {
+    const daySubs = submissions.filter((s) => s.userId === userId && s.day === d && s.status === 'Submitted');
+    
+    if (daySubs.length >= 1) {
       streak++;
     } else {
+      if (d === currentDay) {
+        // Missing today doesn't break the streak (day is not over yet)
+        continue;
+      }
+      // Missed a past day, streak is broken
       break;
     }
   }

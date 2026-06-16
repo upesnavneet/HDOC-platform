@@ -79,7 +79,7 @@ export function useLeaderboardData(db, currentUserId) {
         initials: getInitials(p.name),
         score: p.totalCodingScore || 0,
         completedDays: completedDaysCount,
-        streak: p.leetCodeStreak || 0,
+        streak: Math.max(p.leetCodeStreak || 0, p.gitHubStreak || 0),
         trend: getTrend(p, db.submissions),
         badges: getBadges(p, db.submissions),
       };
@@ -145,7 +145,7 @@ export function useLeaderboardData(db, currentUserId) {
   /* ── Board: Combined ── */
   const combinedBoard = useMemo(() => {
     const data = participants.map((p) => {
-      const combinedStreak = (p.leetCodeStreak || 0) + (p.gitHubStreak || 0);
+      const combinedStreak = Math.max(p.leetCodeStreak || 0, p.gitHubStreak || 0);
       return {
         id: p.id,
         name: p.name,

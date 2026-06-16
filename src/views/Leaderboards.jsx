@@ -47,7 +47,6 @@ const COLUMNS = {
   combined: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'combinedStreak', label: 'Streak', align: 'center' },
   ],
 };
 
@@ -175,14 +174,9 @@ export default function Leaderboards() {
                 <h3 className="lb-podium-name">{row.name}</h3>
                 <span className="lb-podium-handle">@{row.gitHubId}</span>
                 <div className="lb-podium-stats">
-                  <div className="lb-podium-stat">
+                  <div className="lb-podium-stat" style={{ width: '100%' }}>
                     <span className="lb-podium-stat-val">{scoreVal}</span>
                     <span className="lb-podium-stat-lbl">Score</span>
-                  </div>
-                  <div className="lb-podium-divider" />
-                  <div className="lb-podium-stat">
-                    <span className="lb-podium-stat-val">{streakVal}d</span>
-                    <span className="lb-podium-stat-lbl">Streak</span>
                   </div>
                 </div>
               </div>
@@ -209,10 +203,6 @@ export default function Leaderboards() {
             <div className="lb-pos-item">
               <span className="lb-pos-val">{yourPosition.score}</span>
               <span className="lb-pos-lbl">Score</span>
-            </div>
-            <div className="lb-pos-item">
-              <span className="lb-pos-val">{yourPosition.streak}d</span>
-              <span className="lb-pos-lbl">Streak</span>
             </div>
           </div>
         </section>

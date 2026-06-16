@@ -12,6 +12,7 @@ import MagicBento from '../../components/MagicBento';
 import AdvanceTimer from '../../components/AdvanceTimer';
 import { updateSystemConfig } from '../../services/completionService';
 import { error as logError } from '../../utils/logger';
+import { syncParticipantProfile } from '../../context/scoreSync';
 
 export default function CoordinatorDashboard() {
   const { db } = useApp();
@@ -64,6 +65,19 @@ export default function CoordinatorDashboard() {
       alert('Failed to advance day. Please try again.');
     } finally {
       setIsAdvancing(false);
+    }
+  };
+
+  const handleFixStreaks = async () => {
+    if (!window.confirm('Recalculate all streaks based on submissions? This may take a moment.')) return;
+    try {
+      for (const p of participants) {
+        await syncParticipantProfile(db, p.id || p.uid);
+      }
+      alert('All streaks and scores recalculated successfully!');
+    } catch (err) {
+      logError('Failed to recalculate streaks:', err);
+      alert('Error recalculating streaks');
     }
   };
 
@@ -231,6 +245,12 @@ export default function CoordinatorDashboard() {
                 disabled={isAdvancing || isLocking}
               >
                 Reset to Day 0
+              </button>
+              <button
+                className="small-action-btn grey"
+                onClick={handleFixStreaks}
+              >
+                Recalculate All Streaks
               </button>
               <button
                 className={`small-action-btn ${db.challengesLocked ? 'red' : 'green'}`}
