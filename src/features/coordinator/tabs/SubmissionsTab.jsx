@@ -27,9 +27,9 @@ export default function SubmissionsTab() {
   const filteredSubmissions =
     filterDay === 'all'
       ? submissions
-      : submissions.filter((s) => s.dayNumber === parseInt(filterDay));
+      : submissions.filter((s) => s.day === parseInt(filterDay));
 
-  const uniqueDays = [...new Set(submissions.map((s) => s.dayNumber))].sort((a, b) => a - b);
+  const uniqueDays = [...new Set(submissions.map((s) => s.day))].sort((a, b) => a - b);
 
   return (
     <div className="submissions-tab">

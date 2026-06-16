@@ -396,7 +396,7 @@ export default function Dashboard() {
                 {Array.from({ length: Math.min(currentDay, 4) }, (_, i) => {
                   const d = currentDay - i;
                   const isToday = d === currentDay;
-                  const daySubs = userSubs.filter((s) => s.dayNumber === d);
+                  const daySubs = userSubs.filter((s) => s.day === d);
                   const isCompleted = daySubs.length > 0;
 
                   let dotClass = 'missed';
@@ -407,7 +407,15 @@ export default function Dashboard() {
                   }
 
                   const q = questions.find((q) => q.day === d);
-                  const tag = q?.difficulty ? `${q.difficulty} · Coding` : 'Coding';
+                  const debugQ = db.debuggingChallenges?.find((c) => c.week * 7 === d);
+                  
+                  let challengeTitle = '';
+                  if (q) challengeTitle = q.titleLc || q.titleCustom || q.title || 'Daily Challenge';
+                  else if (debugQ) challengeTitle = debugQ.title || debugQ.theme || 'Weekly Debugging';
+
+                  let tag = 'Coding';
+                  if (q?.difficulty) tag = `${q.difficulty} · Coding`;
+                  else if (debugQ) tag = `${debugQ.difficulty || 'Medium'} · Debugging`;
 
                   return (
                     <div key={d} className="timeline-item">
@@ -420,8 +428,8 @@ export default function Dashboard() {
                           <span className="timeline-details">
                             {isCompleted
                               ? `Completed with ${daySubs.length} submission(s)`
-                              : isToday
-                                ? 'Pending submission for today'
+                              : challengeTitle 
+                                ? (isToday ? `Pending: ${challengeTitle}` : `Missed: ${challengeTitle}`)
                                 : 'No submissions found'}
                           </span>
                         </div>

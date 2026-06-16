@@ -20,7 +20,7 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
   const [focusedDay, setFocusedDay] = useState(null);
 
   const getDayStatus = (dayNum) => {
-    const daySubs = submissions.filter((s) => s.day === dayNum || s.dayNumber === dayNum);
+    const daySubs = submissions.filter((s) => s.day === dayNum);
 
     // If the user has made the required submissions for the day (now just 1 commit)
     if (daySubs.length >= 1) {
