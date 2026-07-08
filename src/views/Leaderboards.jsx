@@ -41,12 +41,10 @@ const COLUMNS = {
   contest: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'contestScore', label: 'Score', align: 'center' },
   ],
   combined: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'totalScore', label: 'Score', align: 'center' },
   ],
 };
 
@@ -297,15 +295,19 @@ export default function Leaderboards() {
                         );
                       }
                       /* ── Generic value cell ── */
+                      let cellVal = row[col.key] ?? 0;
+                      if (activeTab === 'combined' && col.key === 'totalScore' && rank > 3) {
+                        cellVal = '—';
+                      } else if (col.key === 'combinedStreak') {
+                        cellVal = `${cellVal}d`;
+                      } else if (col.key === 'bestContestRank') {
+                        cellVal = row[col.key] ?? '—';
+                      }
+                      
                       return (
                         <td key={col.key} className={col.align === 'right' ? 'align-right' : col.align === 'center' ? 'align-center' : ''}>
                           <span className="lb-cell-val">
-                            {col.key === 'combinedStreak'
-                              ? `${row[col.key] ?? 0}d`
-                              : col.key === 'bestContestRank'
-                                ? (row[col.key] ?? '—')
-                                : `${row[col.key] ?? 0}`
-                            }
+                            {cellVal}
                           </span>
                         </td>
                       );
