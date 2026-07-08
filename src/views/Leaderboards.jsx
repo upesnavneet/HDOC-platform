@@ -41,8 +41,7 @@ const COLUMNS = {
   contest: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
-    { key: 'contestsPlayed', label: 'Played', align: 'center' },
-    { key: 'bestContestRank', label: 'Best Rank', align: 'center' },
+    { key: 'contestScore', label: 'Score', align: 'center' },
   ],
   combined: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },

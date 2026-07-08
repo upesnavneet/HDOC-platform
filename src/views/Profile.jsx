@@ -122,7 +122,8 @@ export default function Profile() {
           subs.push({
             ...sub,
             day: challenge.week * 7,
-            status: 'Submitted',
+            marks: sub.score,
+            status: sub.score != null ? 'Graded' : 'Submitted',
             type: 'debugging',
           });
         }
@@ -141,9 +142,9 @@ export default function Profile() {
   const averageCodingScore =
     gradedSubmissions.length > 0
       ? (
-          gradedSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0) /
-          gradedSubmissions.length
-        ).toFixed(1)
+        gradedSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0) /
+        gradedSubmissions.length
+      ).toFixed(1)
       : '0.0';
 
   // Insights
@@ -241,8 +242,8 @@ export default function Profile() {
                 <span className="np-meta-dot">•</span>
                 <span>@{currentUser?.gitHubId || currentUser?.studentId || 'user'}</span>
               </div>
-              <button 
-                className="edit-profile-btn" 
+              <button
+                className="edit-profile-btn"
                 onClick={handleEditProfileOpen}
                 style={{ marginTop: '0.8rem', padding: '0.4rem 0.8rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', color: '#c9d1d9', cursor: 'pointer' }}
               >
@@ -384,10 +385,10 @@ export default function Profile() {
                       <td className="np-col-problem">{titleStr}</td>
                       <td className="np-col-type">
                         <span className="np-type-badge">
-                          {sub.type === 'leetcode' ? 'Algorithms' 
-                           : sub.type === 'commit' ? 'GitHub Commit' 
-                           : sub.type === 'debugging' ? 'Debugging' 
-                           : sub.type || 'Custom'}
+                          {sub.type === 'leetcode' ? 'Algorithms'
+                            : sub.type === 'commit' ? 'GitHub Commit'
+                              : sub.type === 'debugging' ? 'Debugging'
+                                : sub.type || 'Custom'}
                         </span>
                       </td>
                       <td className="np-col-status">

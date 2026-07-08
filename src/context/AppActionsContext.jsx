@@ -378,18 +378,11 @@ export function AppActionsProvider({ children }) {
     [db.users]
   );
 
-  // F1: Allow coordinator to update HackerRank contest data for a participant
   const editParticipantContestData = useCallback(
-    async (userId, contestScore, contestsPlayed, bestContestRank) => {
+    async (userId, updates) => {
       try {
-        await updateUserProfile(userId, {
-          contestScore: Number(contestScore),
-          contestsPlayed: Number(contestsPlayed),
-          bestContestRank: bestContestRank === '' || bestContestRank == null
-            ? null
-            : Number(bestContestRank),
-        });
-        return { success: true, message: 'Contest data updated.' };
+        await updateUserProfile(userId, updates);
+        return { success: true, message: 'Contest score updated.' };
       } catch {
         return { success: false, message: 'Failed to update contest data.' };
       }

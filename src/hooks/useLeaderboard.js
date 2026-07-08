@@ -120,25 +120,22 @@ export function useLeaderboardData(db, currentUserId) {
   /* ── Board: Contest (uses real HackerRank contest data from F1) ── */
   const contestBoard = useMemo(() => {
     const data = participants.map((p) => {
+      const sumContestScore = (p.contestScore_21 || 0) + (p.contestScore_51 || 0) + (p.contestScore_99 || 0) + (p.contestScore_100 || 0);
+
       return {
         id: p.id,
         name: p.name,
         gitHubId: p.gitHubId,
         initials: getInitials(p.name),
         // F1: use real contest fields; fall back to 0/null for existing users
-        contestScore: p.contestScore ?? 0,
-        contestsPlayed: p.contestsPlayed ?? 0,
-        bestContestRank: p.bestContestRank ?? null,
+        contestScore: sumContestScore,
         trend: getTrend(p, db.submissions),
         badges: getBadges(p, db.submissions),
       };
     });
-    // sort by contestScore desc; ties broken by best rank asc
+    // sort by contestScore desc
     return data.sort((a, b) => {
-      if (b.contestScore !== a.contestScore) return b.contestScore - a.contestScore;
-      const ra = a.bestContestRank ?? Infinity;
-      const rb = b.bestContestRank ?? Infinity;
-      return ra - rb;
+      return b.contestScore - a.contestScore;
     });
   }, [participants, db.submissions, currentDay]);
 
@@ -146,6 +143,7 @@ export function useLeaderboardData(db, currentUserId) {
   const combinedBoard = useMemo(() => {
     const data = participants.map((p) => {
       const combinedStreak = Math.max(p.leetCodeStreak || 0, p.gitHubStreak || 0);
+      const sumContestScore = (p.contestScore_21 || 0) + (p.contestScore_51 || 0) + (p.contestScore_99 || 0) + (p.contestScore_100 || 0);
       return {
         id: p.id,
         name: p.name,
@@ -154,8 +152,8 @@ export function useLeaderboardData(db, currentUserId) {
         initials: getInitials(p.name),
         dailyScore: p.totalCodingScore || 0,
         debugScore: p.totalDebuggingScore || 0,
-        contestScore: 0,
-        totalScore: (p.totalCodingScore || 0) + (p.totalDebuggingScore || 0),
+        contestScore: sumContestScore,
+        totalScore: (p.totalCodingScore || 0) + (p.totalDebuggingScore || 0) + sumContestScore,
         combinedStreak,
         gitHubStreak: p.gitHubStreak || 0,
         leetCodeStreak: p.leetCodeStreak || 0,

@@ -7,6 +7,7 @@ import ChallengesTab from './tabs/ChallengesTab';
 import GradingTab from './tabs/GradingTab';
 import DebuggingGradingTab from './tabs/DebuggingGradingTab';
 import DebuggingQuestionsTab from './tabs/DebuggingQuestionsTab';
+import ContestGradingTab from './tabs/ContestGradingTab';
 import SubmissionsTab from './tabs/SubmissionsTab';
 import MagicBento from '../../components/MagicBento';
 import AdvanceTimer from '../../components/AdvanceTimer';
@@ -297,6 +298,9 @@ export default function CoordinatorDashboard() {
             <Tabs.Trigger value="debugging" className="coord-tab" activeClassName="active">
               Sunday Debug Grading
             </Tabs.Trigger>
+            <Tabs.Trigger value="contest" className="coord-tab" activeClassName="active">
+              Contest Grading
+            </Tabs.Trigger>
             <Tabs.Trigger value="submissions" className="coord-tab" activeClassName="active">
               GitHub Submissions
             </Tabs.Trigger>
@@ -317,6 +321,9 @@ export default function CoordinatorDashboard() {
             </Tabs.Panel>
             <Tabs.Panel value="debugging">
               <DebuggingGradingTab />
+            </Tabs.Panel>
+            <Tabs.Panel value="contest">
+              <ContestGradingTab />
             </Tabs.Panel>
             <Tabs.Panel value="submissions">
               <SubmissionsTab />
