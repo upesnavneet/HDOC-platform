@@ -46,6 +46,7 @@ const COLUMNS = {
   combined: [
     { key: 'rank', label: '#', align: 'center', width: '60px' },
     { key: 'participant', label: 'Participant' },
+    { key: 'totalScore', label: 'Score', align: 'center' },
   ],
 };
 
@@ -80,7 +81,7 @@ export default function Leaderboards() {
   /* ── Select board based on active tab ── */
   const boardMap = { daily: dailyBoard, debugging: debuggingBoard, contest: contestBoard, combined: combinedBoard };
   const activeBoard = boardMap[activeTab] || combinedBoard;
-  const scoreField = activeTab === 'combined' ? 'totalScore' : 'score';
+  const scoreField = activeTab === 'combined' ? 'totalScore' : activeTab === 'contest' ? 'contestScore' : 'score';
   const yourPosition = getYourPosition(activeBoard, scoreField);
 
   /* ── Filter & Sort ── */

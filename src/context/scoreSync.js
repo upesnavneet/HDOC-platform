@@ -16,7 +16,9 @@ export function computeDebugScore(debuggingChallenges, userId) {
 export function computeCodingStreak(submissions, userId, currentDay) {
   let streak = 0;
   for (let d = currentDay; d >= 1; d--) {
-    const daySubs = submissions.filter((s) => s.userId === userId && s.day === d && s.status === 'Submitted');
+    const daySubs = submissions.filter(
+      (s) => s.userId === userId && s.day === d && (s.status === 'Submitted' || s.status === 'Late' || s.status === 'Graded')
+    );
     
     if (daySubs.length >= 1) {
       streak++;

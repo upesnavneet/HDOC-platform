@@ -10,8 +10,10 @@ function getOverallRank(userId, allUsers) {
   const participants = allUsers
     .filter((u) => !u.isAdminAccount)
     .sort((a, b) => {
-      const scoreA = (a.totalCodingScore || 0) + (a.totalDebuggingScore || 0);
-      const scoreB = (b.totalCodingScore || 0) + (b.totalDebuggingScore || 0);
+      const contestScoreA = (a.contestScore_21 || 0) + (a.contestScore_51 || 0) + (a.contestScore_99 || 0) + (a.contestScore_100 || 0);
+      const contestScoreB = (b.contestScore_21 || 0) + (b.contestScore_51 || 0) + (b.contestScore_99 || 0) + (b.contestScore_100 || 0);
+      const scoreA = (a.totalCodingScore || 0) + (a.totalDebuggingScore || 0) + contestScoreA;
+      const scoreB = (b.totalCodingScore || 0) + (b.totalDebuggingScore || 0) + contestScoreB;
       return scoreB - scoreA;
     });
   const index = participants.findIndex((u) => (u.uid || u.id) === userId);

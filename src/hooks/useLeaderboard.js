@@ -133,9 +133,10 @@ export function useLeaderboardData(db, currentUserId) {
         badges: getBadges(p, db.submissions),
       };
     });
-    // sort by contestScore desc
+    // sort by contestScore desc, then alphabetically by name
     return data.sort((a, b) => {
-      return b.contestScore - a.contestScore;
+      if (b.contestScore !== a.contestScore) return b.contestScore - a.contestScore;
+      return (a.name || '').localeCompare(b.name || '');
     });
   }, [participants, db.submissions, currentDay]);
 
