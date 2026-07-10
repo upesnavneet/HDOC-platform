@@ -325,12 +325,12 @@ export function AppActionsProvider({ children }) {
         handout: questionData.handout || '',
         solutionCode: questionData.solutionCode || '',
         // New structured fields
-        title: questionData.title,
-        timeLimit: questionData.timeLimit,
-        explanation: questionData.explanation,
-        exampleInput: questionData.exampleInput,
-        exampleOutput: questionData.exampleOutput,
-        starterCode: questionData.starterCode,
+        title: questionData.title || '',
+        timeLimit: questionData.timeLimit || '',
+        explanation: questionData.explanation || '',
+        exampleInput: questionData.exampleInput || '',
+        exampleOutput: questionData.exampleOutput || '',
+        starterCode: questionData.starterCode || '',
       });
       return {
         success: true,

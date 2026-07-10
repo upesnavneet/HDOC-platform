@@ -114,7 +114,14 @@ export default function Profile() {
 
   // --- Data Computation ---
   const userSubs = useMemo(() => {
-    const subs = (db.submissions || []).filter((s) => s?.userId === currentUser?.id);
+    const subs = (db.submissions || []).filter((s) => {
+      if (s?.userId !== currentUser?.id) return false;
+      // If it's a multiple of 7, it's a debugging day, so regular coding submissions are invalid
+      if (s.day && s.day % 7 === 0 && s.type !== 'debugging') {
+        return false;
+      }
+      return true;
+    });
     if (currentUser?.id && db.debuggingChallenges) {
       db.debuggingChallenges.forEach((challenge) => {
         const sub = challenge.submissions?.find((s) => s.userId === currentUser.id);
@@ -129,23 +136,45 @@ export default function Profile() {
         }
       });
     }
+
+
+
     return subs.sort(
       (a, b) =>
         (b.day || 0) - (a.day || 0) || String(a.type || '').localeCompare(String(b.type || ''))
     );
-  }, [db.submissions, db.debuggingChallenges, currentUser?.id]);
+  }, [db.submissions, db.debuggingChallenges, currentUser]);
 
   const totalSubmissionsCount = userSubs.filter(
-    (s) => s.status === 'Submitted' || s.status === 'Late'
+    (s) => s.status === 'Submitted' || s.status === 'Late' || s.type === 'contest'
   ).length;
+  
   const gradedSubmissions = userSubs.filter((s) => s.marks != null);
-  const averageCodingScore =
-    gradedSubmissions.length > 0
-      ? (
-        gradedSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0) /
-        gradedSubmissions.length
-      ).toFixed(1)
-      : '0.0';
+  // Exclude debugging and contest (so we can manually calculate contest average independently)
+  const codingSubmissions = gradedSubmissions.filter((s) => s.type !== 'debugging' && s.type !== 'contest');
+  
+  let totalCodingScore = codingSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0);
+  let totalCodingCount = codingSubmissions.length;
+  
+  const CONTEST_DAYS = [21, 51, 99, 100];
+  const currentDayNum = Number(db.currentDay) || 1;
+  if (currentUser) {
+    CONTEST_DAYS.forEach(day => {
+      // Only include contests that have already occurred
+      if (day <= currentDayNum) {
+        const scoreField = `contestScore_${day}`;
+        if (currentUser[scoreField] != null && !isNaN(Number(currentUser[scoreField]))) {
+          totalCodingScore += Number(currentUser[scoreField]);
+          totalCodingCount += 1;
+        } else {
+          // Treat dash (pending) as 0 for the average
+          totalCodingCount += 1;
+        }
+      }
+    });
+  }
+
+  const averageCodingScore = totalCodingCount > 0 ? (totalCodingScore / totalCodingCount).toFixed(1) : '0.0';
 
   // Insights
   const bestScore =
@@ -363,15 +392,27 @@ export default function Profile() {
                     q = (db.questions || []).find((question) => question.day === sub.day);
                   }
 
+                  let cScore = null;
+                  const isContestDay = [21, 51, 99, 100].includes(sub.day);
+
                   let titleStr = `Day ${sub.day || '?'} Problem`;
-                  if (q) {
-                    if (sub.type === 'leetcode') titleStr = q.titleLc || titleStr;
-                    else if (sub.type === 'custom') titleStr = q.titleCustom || titleStr;
-                    else titleStr = q.titleLc || q.titleCustom || q.title || titleStr;
-                  } else {
+
+                  if (sub.type === 'debugging') {
                     const debugQ = (db.debuggingChallenges || []).find(c => c.week * 7 === sub.day);
                     if (debugQ) {
                       titleStr = debugQ.title || debugQ.theme || `Debugging Week ${debugQ.week}`;
+                    }
+                  } else if (q) {
+                    if (sub.type === 'leetcode') titleStr = q.titleLc || titleStr;
+                    else if (sub.type === 'custom') titleStr = q.titleCustom || titleStr;
+                    else titleStr = q.titleLc || q.titleCustom || q.title || titleStr;
+                  }
+
+                  if (isContestDay && currentUser) {
+                    titleStr += ' / Contest Score';
+                    const cScoreField = `contestScore_${sub.day}`;
+                    if (currentUser[cScoreField] != null) {
+                      cScore = Number(currentUser[cScoreField]);
                     }
                   }
 
@@ -392,6 +433,7 @@ export default function Profile() {
                           {sub.type === 'leetcode' ? 'Algorithms'
                             : sub.type === 'commit' ? 'GitHub Commit'
                               : sub.type === 'debugging' ? 'Debugging'
+                                : sub.type === 'contest' ? 'Contest'
                                 : sub.type || 'Custom'}
                         </span>
                       </td>
@@ -439,8 +481,8 @@ export default function Profile() {
                       </td>
                       <td className="np-col-score">
                         {sub.marks != null && !isNaN(Number(sub.marks))
-                          ? Number(sub.marks).toFixed(1)
-                          : '-'}
+                          ? `${Number(sub.marks).toFixed(1)}${isContestDay ? ` / ${cScore != null ? cScore.toFixed(1) : '-'}` : ''}`
+                          : (isContestDay ? `- / ${cScore != null ? cScore.toFixed(1) : '-'}` : '-')}
                       </td>
                     </tr>
                   );
