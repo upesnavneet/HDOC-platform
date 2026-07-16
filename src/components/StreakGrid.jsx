@@ -22,7 +22,7 @@ export default function StreakGrid({ currentDay, submissions, questions, tiltPro
   const [focusedDay, setFocusedDay] = useState(null);
 
   const userId = currentUser?.id || currentUser?.uid;
-  const currentStreak = computeCodingStreak(submissions, userId, currentDay);
+  const currentStreak = computeCodingStreak(submissions, userId, currentDay, db.debuggingChallenges);
 
   const getDayStatus = (dayNum) => {
     const daySubs = submissions.filter((s) => s.day === dayNum);

@@ -241,6 +241,32 @@ export default function DebuggingQuestionsTab() {
               <option value="Hard">Hard</option>
             </select>
           </div>
+          <div className="form-group">
+            <label htmlFor="debug-published-date">Publish Date</label>
+            <input
+              id="debug-published-date"
+              name="publishedDate"
+              type="datetime-local"
+              value={publishedDate}
+              onChange={(e) => setPublishedDate(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-grid">
+          <div className="form-group">
+            <label htmlFor="debug-time-limit">Time Limit (mins)</label>
+            <input
+              id="debug-time-limit"
+              name="timeLimit"
+              type="number"
+              min="1"
+              value={timeLimit}
+              onChange={(e) => setTimeLimit(e.target.value)}
+              placeholder="e.g. 30"
+            />
+          </div>
         </div>
 
         <div className="form-group">

@@ -113,7 +113,7 @@ export function AppActionsProvider({ children }) {
       try {
         await addOrUpdateSubmission(subId, subDetails);
         const updatedSubs = [...db.submissions.filter(s => s.id !== subId), { id: subId, ...subDetails }];
-        const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay);
+        const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay, db.debuggingChallenges);
         await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
         // B3: score sync removed — scores are coordinator-managed only
         return {
@@ -186,7 +186,7 @@ export function AppActionsProvider({ children }) {
       try {
         await addOrUpdateSubmission(subId, subDetails);
         const updatedSubs = [...db.submissions.filter(s => s.id !== subId), { id: subId, ...subDetails }];
-        const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay);
+        const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay, db.debuggingChallenges);
         await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
         return { success: true, message: 'Commit submitted successfully.' };
       } catch {

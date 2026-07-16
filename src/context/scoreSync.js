@@ -13,14 +13,24 @@ export function computeDebugScore(debuggingChallenges, userId) {
   }, 0);
 }
 
-export function computeCodingStreak(submissions, userId, currentDay) {
+export function computeCodingStreak(submissions, userId, currentDay, debuggingChallenges = []) {
   let streak = 0;
   for (let d = currentDay; d >= 1; d--) {
     const daySubs = submissions.filter(
       (s) => s.userId === userId && s.day === d && (s.status === 'Submitted' || s.status === 'Late' || s.status === 'Graded')
     );
     
-    if (daySubs.length >= 1) {
+    let hasSubmission = daySubs.length >= 1;
+    
+    if (!hasSubmission && d % 7 === 0) {
+      const weekNum = d / 7;
+      const debugChallenge = debuggingChallenges.find(c => c.week === weekNum || c.id === `week-${weekNum}`);
+      if (debugChallenge && debugChallenge.submissions && debugChallenge.submissions.some(s => s.userId === userId)) {
+        hasSubmission = true;
+      }
+    }
+    
+    if (hasSubmission) {
       streak++;
     } else {
       if (d === currentDay) {
@@ -38,7 +48,7 @@ export async function syncParticipantProfile(db, userId, overrides = {}) {
   const codingScore = overrides.codingScore ?? computeCodingScore(db.submissions, userId);
   const debugScore = overrides.debugScore ?? computeDebugScore(db.debuggingChallenges, userId);
   const gitHubStreak =
-    overrides.gitHubStreak ?? computeCodingStreak(db.submissions, userId, db.currentDay);
+    overrides.gitHubStreak ?? computeCodingStreak(db.submissions, userId, db.currentDay, db.debuggingChallenges);
 
   await updateUserProfile(userId, {
     totalCodingScore: codingScore,
