@@ -114,14 +114,7 @@ export default function Profile() {
 
   // --- Data Computation ---
   const userSubs = useMemo(() => {
-    const subs = (db.submissions || []).filter((s) => {
-      if (s?.userId !== currentUser?.id) return false;
-      // If it's a multiple of 7, it's a debugging day, so regular coding submissions are invalid
-      if (s.day && s.day % 7 === 0 && s.type !== 'debugging') {
-        return false;
-      }
-      return true;
-    });
+    const subs = (db.submissions || []).filter((s) => s?.userId === currentUser?.id);
     if (currentUser?.id && db.debuggingChallenges) {
       db.debuggingChallenges.forEach((challenge) => {
         const sub = challenge.submissions?.find((s) => s.userId === currentUser.id);
@@ -137,49 +130,70 @@ export default function Profile() {
       });
     }
 
-
-
     return subs.sort(
       (a, b) =>
         (b.day || 0) - (a.day || 0) || String(a.type || '').localeCompare(String(b.type || ''))
     );
   }, [db.submissions, db.debuggingChallenges, currentUser]);
 
-  const totalSubmissionsCount = userSubs.filter(
-    (s) => s.status === 'Submitted' || s.status === 'Late' || s.type === 'contest'
-  ).length;
+  // Count unique days where they have submitted any valid solution
+  const totalSubmissionsCount = new Set(
+    userSubs
+      .filter((s) => s.status === 'Submitted' || s.status === 'Late' || s.status === 'Graded' || s.type === 'contest')
+      .map((s) => s.day)
+  ).size;
   
+  // --- Calculate accurate average score ---
   const gradedSubmissions = userSubs.filter((s) => s.marks != null);
-  // Exclude debugging and contest (so we can manually calculate contest average independently)
-  const codingSubmissions = gradedSubmissions.filter((s) => s.type !== 'debugging' && s.type !== 'contest');
   
-  let totalCodingScore = codingSubmissions.reduce((acc, curr) => acc + Number(curr.marks || 0), 0);
-  let totalCodingCount = codingSubmissions.length;
+  // Base score from ALL graded submissions (Coding AND Debugging, excluding the manual contest fields)
+  // Debugging submissions are out of 20, so we normalize them by dividing by 2 to keep the average out of 10.
+  let totalScore = gradedSubmissions.filter(s => s.type !== 'contest').reduce((acc, curr) => {
+    let m = Number(curr.marks || 0);
+    if (curr.type === 'debugging') m = m / 2;
+    return acc + m;
+  }, 0);
+  
+  // Count graded submissions plus any past days that were completely missed
+  const currentDayNum = Number(db.currentDay) || 1;
+  let missedDays = 0;
+  
+  for (let d = 1; d < currentDayNum; d++) {
+    const hasAnySub = userSubs.some(s => s.day === d);
+    if (!hasAnySub) {
+      missedDays++;
+    }
+  }
+
+  let totalCount = gradedSubmissions.filter(s => s.type !== 'contest').length + missedDays;
   
   const CONTEST_DAYS = [21, 51, 99, 100];
-  const currentDayNum = Number(db.currentDay) || 1;
   if (currentUser) {
     CONTEST_DAYS.forEach(day => {
-      // Only include contests that have already occurred
       if (day <= currentDayNum) {
         const scoreField = `contestScore_${day}`;
-        if (currentUser[scoreField] != null && !isNaN(Number(currentUser[scoreField]))) {
-          totalCodingScore += Number(currentUser[scoreField]);
-          totalCodingCount += 1;
-        } else {
-          // Treat dash (pending) as 0 for the average
-          totalCodingCount += 1;
+        const cScore = currentUser[scoreField];
+        
+        if (cScore != null && !isNaN(Number(cScore))) {
+          totalScore += Number(cScore);
+          totalCount += 1;
+        } else if (day < currentDayNum) {
+          totalCount += 1;
         }
       }
     });
   }
 
-  const averageCodingScore = totalCodingCount > 0 ? (totalCodingScore / totalCodingCount).toFixed(1) : '0.0';
+  const averageCodingScore = totalCount > 0 ? (totalScore / totalCount).toFixed(1) : '0.0';
 
   // Insights
   const bestScore =
     gradedSubmissions.length > 0
-      ? Math.max(...gradedSubmissions.map((s) => Number(s.marks || 0))).toFixed(1)
+      ? Math.max(...gradedSubmissions.map((s) => {
+          let m = Number(s.marks || 0);
+          if (s.type === 'debugging') m = m / 2;
+          return m;
+        })).toFixed(1)
       : '-';
 
   const typeCounts = userSubs.reduce((acc, sub) => {
