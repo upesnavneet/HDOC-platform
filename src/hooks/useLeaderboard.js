@@ -128,7 +128,7 @@ export function useLeaderboardData(db, currentUserId) {
         gitHubId: p.gitHubId,
         initials: getInitials(p.name),
         // F1: use real contest fields; fall back to 0/null for existing users
-        contestScore: sumContestScore,
+        contestScore: Number(sumContestScore.toFixed(1)),
         trend: getTrend(p, db.submissions),
         badges: getBadges(p, db.submissions),
       };
@@ -153,8 +153,8 @@ export function useLeaderboardData(db, currentUserId) {
         initials: getInitials(p.name),
         dailyScore: p.totalCodingScore || 0,
         debugScore: p.totalDebuggingScore || 0,
-        contestScore: sumContestScore,
-        totalScore: (p.totalCodingScore || 0) + (p.totalDebuggingScore || 0) + sumContestScore,
+        contestScore: Number(sumContestScore.toFixed(1)),
+        totalScore: Number(((p.totalCodingScore || 0) + (p.totalDebuggingScore || 0) + sumContestScore).toFixed(1)),
         combinedStreak,
         gitHubStreak: p.gitHubStreak || 0,
         leetCodeStreak: p.leetCodeStreak || 0,

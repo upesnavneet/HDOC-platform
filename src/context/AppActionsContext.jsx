@@ -351,17 +351,58 @@ export function AppActionsProvider({ children }) {
     }
   }, []);
 
-  const editParticipantProgress = useCallback(async (userId, codingScore, debugScore) => {
+  const editParticipantProgress = useCallback(async (userId, dayNumber, newScore) => {
     try {
-      await updateUserProfile(userId, {
-        totalCodingScore: Number(codingScore),
-        totalDebuggingScore: Number(debugScore),
+      const day = parseInt(dayNumber, 10);
+      const score = Number(newScore);
+      if (isNaN(day) || isNaN(score)) return { success: false, message: 'Invalid day or score.' };
+      
+      if (day % 7 === 0) {
+        // Debugging Challenge Day
+        const weekNum = day / 7;
+        const challengeId = `week-${weekNum}`;
+        // Verify challenge exists
+        const debugChallenge = db.debuggingChallenges?.find(c => c.week === weekNum || c.id === challengeId);
+        if (!debugChallenge) {
+          return { success: false, message: `Debugging challenge for week ${weekNum} not found.` };
+        }
+        // submit placeholder if missing, then grade
+        const subExists = debugChallenge.submissions?.some(s => s.userId === userId);
+        if (!subExists) {
+          await submitDebuggingSolution(challengeId, userId, 'admin-override', new Date().toISOString());
+        }
+        await gradeDebuggingSolution(challengeId, userId, score, new Date().toISOString());
+      } else {
+        // Standard Coding Day
+        // Find if they already have a standard submission for this day
+        const existingSub = db.submissions?.find(s => s.userId === userId && s.day === day && s.type !== 'contest');
+        
+        const subId = existingSub ? existingSub.id : `sub-${userId}-${day}-admin`;
+        const subDetails = {
+          id: subId,
+          userId,
+          day,
+          type: existingSub?.type || 'commit',
+          status: 'Graded',
+          marks: score,
+          link: existingSub?.link || 'admin-override',
+          timestamp: existingSub?.timestamp || new Date().toISOString(),
+          gradedBy: 'admin',
+          gradedAt: new Date().toISOString()
+        };
+        await addOrUpdateSubmission(subId, subDetails);
+      }
+      
+      // Resync profile immediately to reflect the new cumulative score
+      await import('./scoreSync.js').then(({ syncParticipantProfile }) => {
+        syncParticipantProfile(db, userId);
       });
-      return { success: true, message: 'Participant progress updated.' };
-    } catch {
-      return { success: false, message: 'Failed to update progress.' };
+      
+      return { success: true, message: `Day ${day} score updated successfully.` };
+    } catch (e) {
+      return { success: false, message: 'Failed to update day-wise score: ' + e.message };
     }
-  }, []);
+  }, [db]);
 
   // B6: Toggle coordinator/admin account flag on a user document
   const toggleAdminAccount = useCallback(

@@ -304,12 +304,14 @@ export default function Profile() {
             <div className="np-stat-group">
               <span className="np-stat-label">TOTAL SCORE</span>
               <span className="np-stat-value">
-                {Number(currentUser?.totalCodingScore || 0) +
+                {(
+                  Number(currentUser?.totalCodingScore || 0) +
                   Number(currentUser?.totalDebuggingScore || 0) +
                   (Number(currentUser?.contestScore_21) || 0) +
                   (Number(currentUser?.contestScore_51) || 0) +
                   (Number(currentUser?.contestScore_99) || 0) +
-                  (Number(currentUser?.contestScore_100) || 0)}{' '}
+                  (Number(currentUser?.contestScore_100) || 0)
+                ).toFixed(1)}{' '}
                 <span className="np-stat-unit">pts</span>
               </span>
             </div>

@@ -7,6 +7,7 @@ export default function GradingTab() {
   const maxCodingScore = db.maxCodingScore ?? 10; // D1: from Firestore system/config
   const [gradingFilter, setGradingFilter] = useState('pending');
   const [dayFilter, setDayFilter] = useState(''); // F6: filter by day number
+  const [searchTerm, setSearchTerm] = useState('');
   const [gradesInput, setGradesInput] = useState({});
   const [commentsInput, setCommentsInput] = useState({});
   const [gradeMsg, setGradeMsg] = useState('');
@@ -26,7 +27,10 @@ export default function GradingTab() {
     const isRealSub = sub.status === 'Submitted' || sub.status === 'Late';
     // F6: day filter — show all if blank, otherwise filter by specific day
     const matchesDay = !dayFilter || sub.day === Number(dayFilter);
-    return matchesFilter && isRealSub && matchesDay && activeUserIds.has(sub.userId);
+    const student = db.users.find(u => u.id === sub.userId);
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = !term || (student?.name?.toLowerCase().includes(term) || student?.studentId?.toLowerCase().includes(term));
+    return matchesFilter && isRealSub && matchesDay && matchesSearch && activeUserIds.has(sub.userId);
   });
 
   const handleGradeSubmit = async (subId) => {
@@ -69,6 +73,13 @@ export default function GradingTab() {
       <div className="panel-header-row">
         <h3>Submission Marking</h3>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <input
+            type="text"
+            placeholder="Search by name or SAP ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: '220px', padding: '0.3rem 0.5rem', borderRadius: '6px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }}
+          />
           {/* F6: Day filter */}
           <label htmlFor="day-filter" style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
             Day:

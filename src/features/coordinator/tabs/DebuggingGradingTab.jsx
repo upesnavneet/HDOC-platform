@@ -5,6 +5,7 @@ export default function DebuggingGradingTab() {
   const { db, gradeDebuggingSubmission } = useApp();
   const maxDebugScore = db.maxDebugScore ?? 20; // D1: from Firestore system/config
   const [activeDebugGradeWeek, setActiveDebugGradeWeek] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const [debugGradesInput, setDebugGradesInput] = useState({});
   const [debugGradeMsg, setDebugGradeMsg] = useState('');
 
@@ -32,9 +33,12 @@ export default function DebuggingGradingTab() {
 
   const selectedChallenge = db.debuggingChallenges.find((c) => c.week === activeDebugGradeWeek);
   // B4: filter out inactive participant submissions
-  const visibleSubmissions = (selectedChallenge?.submissions || []).filter(
-    (s) => activeUserIds.has(s.userId)
-  );
+  const visibleSubmissions = (selectedChallenge?.submissions || []).filter((s) => {
+    if (!activeUserIds.has(s.userId)) return false;
+    const student = db.users.find(u => u.id === s.userId);
+    const term = searchTerm.toLowerCase();
+    return !term || (student?.name?.toLowerCase().includes(term) || student?.studentId?.toLowerCase().includes(term));
+  });
 
   return (
     <div className="coord-panel admin-grading-panel">
@@ -61,6 +65,13 @@ export default function DebuggingGradingTab() {
             </option>
           ))}
         </select>
+        <input
+          type="text"
+          placeholder="Search by name or SAP ID..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: '220px', padding: '0.3rem 0.5rem', borderRadius: '6px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)', marginLeft: '1rem' }}
+        />
       </div>
 
       {!selectedChallenge ? (

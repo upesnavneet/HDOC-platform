@@ -13,8 +13,8 @@ export default function OverviewTab({ participants }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const [editProgressUid, setEditProgressUid] = useState(null);
-  const [editCodingScore, setEditCodingScore] = useState('');
-  const [editDebugScore, setEditDebugScore] = useState('');
+  const [editDay, setEditDay] = useState('');
+  const [editDayScore, setEditDayScore] = useState('');
   const [editStreakUid, setEditStreakUid] = useState(null);
   const [editLcStreak, setEditLcStreak] = useState('');
   const [editGcStreak, setEditGcStreak] = useState('');
@@ -99,8 +99,8 @@ export default function OverviewTab({ participants }) {
                       className="small-action-btn grey"
                       onClick={() => {
                         setEditProgressUid(p.id);
-                        setEditCodingScore(p.totalCodingScore);
-                        setEditDebugScore(p.totalDebuggingScore);
+                        setEditDay('');
+                        setEditDayScore('');
                       }}
                     >
                       Edit Progress
@@ -179,37 +179,42 @@ export default function OverviewTab({ participants }) {
       <Modal
         isOpen={Boolean(editProgressUid)}
         onClose={() => setEditProgressUid(null)}
-        title="Edit Progress"
+        title="Override Day Score"
       >
         <div className="form-group">
-          <label htmlFor="edit-coding-score">Coding Score</label>
+          <label htmlFor="edit-day-number">Day Number</label>
           <input
-            id="edit-coding-score"
-            name="codingScore"
+            id="edit-day-number"
+            name="dayNumber"
             type="number"
             autoComplete="off"
-            value={editCodingScore}
-            onChange={(e) => setEditCodingScore(e.target.value)}
+            placeholder="e.g. 12"
+            value={editDay}
+            onChange={(e) => setEditDay(e.target.value)}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="edit-debug-score">Debug Score</label>
+          <label htmlFor="edit-day-score">New Score</label>
           <input
-            id="edit-debug-score"
-            name="debugScore"
+            id="edit-day-score"
+            name="dayScore"
             type="number"
             autoComplete="off"
-            value={editDebugScore}
-            onChange={(e) => setEditDebugScore(e.target.value)}
+            placeholder="e.g. 10 (or 20 for debugging)"
+            value={editDayScore}
+            onChange={(e) => setEditDayScore(e.target.value)}
           />
         </div>
         <div className="coord-action-buttons">
           <button
             type="button"
             className="small-action-btn green"
-            onClick={() => {
-              editParticipantProgress(editProgressUid, editCodingScore, editDebugScore);
-              setEditProgressUid(null);
+            onClick={async () => {
+              const res = await editParticipantProgress(editProgressUid, editDay, editDayScore);
+              alert(res.message);
+              if (res.success) {
+                setEditProgressUid(null);
+              }
             }}
           >
             Save
