@@ -24,7 +24,7 @@ export default function GradingTab() {
       gradingFilter === 'all' ||
       (gradingFilter === 'pending' && isPending) ||
       (gradingFilter === 'graded' && isGraded);
-    const isRealSub = sub.status === 'Submitted' || sub.status === 'Late';
+    const isRealSub = sub.status === 'Submitted' || sub.status === 'Late' || sub.status === 'Graded';
     // F6: day filter — show all if blank, otherwise filter by specific day
     const matchesDay = !dayFilter || sub.day === Number(dayFilter);
     const student = db.users.find(u => u.id === sub.userId);

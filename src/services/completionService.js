@@ -207,6 +207,24 @@ export const subscribeToDebuggingSubmissions = (callback, onError) => {
   );
 };
 
+export const subscribeToUserDebuggingSubmissions = (userId, callback, onError) => {
+  const q = query(collection(db, DEBUGGING_SUBMISSIONS_COLLECTION), where('userId', '==', userId));
+  return onSnapshot(
+    q,
+    (querySnapshot) => {
+      const subs = [];
+      querySnapshot.forEach((doc) => {
+        subs.push({ id: doc.id, ...doc.data() });
+      });
+      callback(subs);
+    },
+    (error) => {
+      logError('Error subscribing to user debugging submissions:', error);
+      onError?.(error);
+    }
+  );
+};
+
 // --- System Configuration (Time Travel Clock) ---
 export const getSystemConfig = async () => {
   try {

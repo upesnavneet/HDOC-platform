@@ -2,7 +2,7 @@ import { updateUserProfile } from '../services/userService';
 
 export function computeCodingScore(submissions, userId) {
   return submissions
-    .filter((s) => s.userId === userId && (s.status === 'Submitted' || s.status === 'Late'))
+    .filter((s) => s.userId === userId && (s.status === 'Submitted' || s.status === 'Late' || s.status === 'Graded'))
     .reduce((acc, curr) => acc + (curr.marks || 0), 0);
 }
 
@@ -60,7 +60,7 @@ export async function syncParticipantProfile(db, userId, overrides = {}) {
 
 export function computeCodingScoreWithOverride(submissions, userId, codingSubId, codingMarks) {
   return submissions
-    .filter((s) => s.userId === userId && (s.status === 'Submitted' || s.status === 'Late'))
+    .filter((s) => s.userId === userId && (s.status === 'Submitted' || s.status === 'Late' || s.status === 'Graded'))
     .reduce((acc, curr) => {
       if (codingSubId && curr.id === codingSubId) {
         return acc + (Number(codingMarks) || 0);

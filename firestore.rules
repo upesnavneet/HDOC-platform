@@ -48,85 +48,80 @@ service cloud.firestore {
       allow update: if isAuthenticated()
         && request.auth.uid == userId
         && !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['role', 'isActive', 'overallRank', 'isAdminAccount',
-                       'totalCodingScore', 'totalDebuggingScore',
-                       'contestScore', 'contestsPlayed', 'bestContestRank']);
+            .hasAny(['totalCodingScore', 'totalDebuggingScore', 'overallRank', 'isAdminAccount', 'isActive', 'gitHubStreak', 'leetCodeStreak']);
 
-      // Admin: full write access via Custom Claims.
+      // C2: Admins can update anything.
       allow update, delete: if isAdmin();
-    }
-
-    // ── Questions ───────────────────────────────────────────────────────
-    match /questions/{questionId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
     }
 
     // ── Submissions ─────────────────────────────────────────────────────
     match /submissions/{subId} {
-      allow read: if isAuthenticated();
+      // H3: Users can read their own submissions, admins can read all
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
 
-      // H4: Validate submission schema on create.
-      // Users cannot set marks, gradedBy, comments, gradedAt, or status — those are admin fields.
+      // H3/C4: Users can create/update only their own submissions.
+      // Prevent tampering with graded fields (marks, gradedBy, gradedAt).
       allow create: if isAuthenticated()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasOnly([
-             'id', 'userId', 'questionId', 'day', 'type',
-             'code', 'language', 'timestamp', 'status',
-             'marks', 'gradedBy', 'comments', 'gradedAt', 'link'
-           ])
-        && request.resource.data.day is int
-        && request.resource.data.type is string
-        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 != 0
-        && request.resource.data.day == get(/databases/$(database)/documents/system/config).data.currentDay;
+        && request.auth.uid == request.resource.data.userId
+        && !request.resource.data.keys().hasAny(['marks', 'gradedBy', 'gradedAt']);
 
-      // Self-update: can update own submission but NOT marks/gradedBy/comments/gradedAt.
-      // And can only update submissions for the current active day!
       allow update: if isAuthenticated()
-        && resource.data.userId == request.auth.uid
-        && get(/databases/$(database)/documents/system/config).data.currentDay % 7 != 0
-        && resource.data.day == get(/databases/$(database)/documents/system/config).data.currentDay
-        && request.resource.data.day == resource.data.day
+        && request.auth.uid == resource.data.userId
+        && request.auth.uid == request.resource.data.userId
         && !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['marks', 'gradedBy', 'comments', 'gradedAt']);
+            .hasAny(['marks', 'gradedBy', 'gradedAt']);
 
-      // Admin: full write access.
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
+      // C4: Admins have full access.
+      allow update, delete: if isAdmin();
     }
 
-    // ── Debugging Challenges ────────────────────────────────────────────
+    // ── Sunday Debugging (H1/A2) ────────────────────────────────────────
     match /debuggingChallenges/{challengeId} {
+      // F4: All authenticated users can view challenges.
       allow read: if isAuthenticated();
+      // B3: Only admins can manage challenges (creation, editing)
       allow write: if isAdmin();
     }
 
-    // ── Debugging Submissions ───────────────────────────────────────────
     match /debuggingSubmissions/{subId} {
-      allow read: if isAuthenticated();
+      // Users can see their own debugging submissions; admins can see all.
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
 
-      // H4: Validate debugging submission schema.
-      // Users cannot set score — that is graded by admin.
+      // F5/C4: Users submit their own work, without assigning grades.
       allow create: if isAuthenticated()
-        && request.resource.data.userId == request.auth.uid
-        && request.resource.data.keys().hasOnly([
-             'id', 'challengeId', 'userId', 'link', 'timestamp', 'score'
-           ])
-        && request.resource.data.score == null;
+        && request.auth.uid == request.resource.data.userId
+        && !request.resource.data.keys().hasAny(['score', 'gradedAt']);
 
-      // Self-update: cannot change score.
       allow update: if isAuthenticated()
-        && resource.data.userId == request.auth.uid
+        && request.auth.uid == resource.data.userId
+        && request.auth.uid == request.resource.data.userId
         && !request.resource.data.diff(resource.data).affectedKeys()
-              .hasAny(['score']);
+            .hasAny(['score', 'gradedAt']);
 
-      // Admin: full write access.
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
+      // C4: Admins can grade and manage all submissions.
+      allow update, delete: if isAdmin();
     }
 
-    // ── System Config ───────────────────────────────────────────────────
+    // ── Questions Cache (B5/D2) ─────────────────────────────────────────
+    match /questions/{questionId} {
+      // D2: Anyone authenticated can read
+      allow read: if isAuthenticated();
+      // B5: Admin-only modification
+      allow write: if isAdmin();
+    }
+
+    // ── Global System Configuration ─────────────────────────────────────
     match /system/{docId} {
+      // H5: Ensure time travel (currentDay) and constants are readable by all.
+      allow read: if isAuthenticated();
+      // B3: Only Admins can manipulate the system clock or configurations.
+      allow write: if isAdmin();
+    }
+    
+    // ── Static Assets (F2) ──────────────────────────────────────────────
+    // Note: This applies to Firestore documents representing asset metadata, if any.
+    // If you are using Firebase Storage, you need storage.rules, not firestore.rules.
+    match /assets/{assetId} {
       allow read: if isAuthenticated();
       allow write: if isAdmin();
     }

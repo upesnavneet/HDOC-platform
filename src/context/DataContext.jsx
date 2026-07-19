@@ -8,6 +8,7 @@ import {
   subscribeToUserSubmissions,
   subscribeToDebuggingChallenges,
   subscribeToDebuggingSubmissions,
+  subscribeToUserDebuggingSubmissions,
   subscribeToSystemConfig,
 } from '../services/completionService';
 import { seedFirestoreIfEmpty } from '../utils/seedFirestore';
@@ -144,15 +145,29 @@ export function DataProvider({ children }) {
         )
       );
 
-      unsubs.push(
-        subscribeToDebuggingSubmissions(
-          (subs) => {
-            currentDebugSubs = subs;
-            updateDebugChallenges();
-          },
-          onSubError('DebuggingSubmissions')
-        )
-      );
+      if (currentUser && currentUser.isAdmin) {
+        unsubs.push(
+          subscribeToDebuggingSubmissions(
+            (subs) => {
+              currentDebugSubs = subs;
+              updateDebugChallenges();
+            },
+            onSubError('DebuggingSubmissions')
+          )
+        );
+      } else if (currentUser) {
+        const uid = currentUser.uid || currentUser.id;
+        unsubs.push(
+          subscribeToUserDebuggingSubmissions(
+            uid,
+            (subs) => {
+              currentDebugSubs = subs;
+              updateDebugChallenges();
+            },
+            onSubError('UserDebuggingSubmissions')
+          )
+        );
+      }
     } catch (error) {
       logError('Firestore subscription failed:', error);
       setDbError('Failed to load data. Please try again later.');
