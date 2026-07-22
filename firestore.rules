@@ -63,7 +63,9 @@ service cloud.firestore {
       // Prevent tampering with graded fields (marks, gradedBy, gradedAt).
       allow create: if isAuthenticated()
         && request.auth.uid == request.resource.data.userId
-        && !request.resource.data.keys().hasAny(['marks', 'gradedBy', 'gradedAt']);
+        && (!('marks' in request.resource.data) || request.resource.data.marks == null)
+        && (!('gradedBy' in request.resource.data) || request.resource.data.gradedBy == '')
+        && (!('gradedAt' in request.resource.data) || request.resource.data.gradedAt == null || request.resource.data.gradedAt == '');
 
       allow update: if isAuthenticated()
         && request.auth.uid == resource.data.userId
@@ -90,7 +92,8 @@ service cloud.firestore {
       // F5/C4: Users submit their own work, without assigning grades.
       allow create: if isAuthenticated()
         && request.auth.uid == request.resource.data.userId
-        && !request.resource.data.keys().hasAny(['score', 'gradedAt']);
+        && (!('score' in request.resource.data) || request.resource.data.score == null)
+        && (!('gradedAt' in request.resource.data) || request.resource.data.gradedAt == null || request.resource.data.gradedAt == '');
 
       allow update: if isAuthenticated()
         && request.auth.uid == resource.data.userId
