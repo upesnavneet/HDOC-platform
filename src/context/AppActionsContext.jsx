@@ -114,14 +114,18 @@ export function AppActionsProvider({ children }) {
         await addOrUpdateSubmission(subId, subDetails);
         const updatedSubs = [...db.submissions.filter(s => s.id !== subId), { id: subId, ...subDetails }];
         const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay, db.debuggingChallenges);
-        await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
+        try {
+          await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
+        } catch (streakErr) {
+          // Ignore streak update error since it's restricted by firestore rules
+        }
         // B3: score sync removed — scores are coordinator-managed only
         return {
           success: true,
           status,
           message: `Solution for Day ${dayNum} (${type}) submitted successfully.`,
         };
-      } catch {
+      } catch (err) {
         return { success: false, message: 'Failed to submit solution.' };
       }
     },
@@ -187,9 +191,13 @@ export function AppActionsProvider({ children }) {
         await addOrUpdateSubmission(subId, subDetails);
         const updatedSubs = [...db.submissions.filter(s => s.id !== subId), { id: subId, ...subDetails }];
         const newStreak = computeCodingStreak(updatedSubs, myUid, db.currentDay, db.debuggingChallenges);
-        await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
+        try {
+          await updateUserProfile(myUid, { gitHubStreak: newStreak, leetCodeStreak: newStreak });
+        } catch (streakErr) {
+          // Ignore streak update error since it's restricted by firestore rules
+        }
         return { success: true, message: 'Commit submitted successfully.' };
-      } catch {
+      } catch (err) {
         return { success: false, message: 'Failed to submit commit.' };
       }
     },

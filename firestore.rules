@@ -12,6 +12,10 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function getCurrentDay() {
+      return get(/databases/$(database)/documents/system/config).data.currentDay;
+    }
+
     // B6/A1: admin = JWT Custom Claim OR isAdminAccount flag in the user document.
     // We check the stored document (resource.data) for the Firestore-side check,
     // so the request token alone can still grant admin via the JWT path.
@@ -41,7 +45,11 @@ service cloud.firestore {
              'isActive', 'completedDays', 'createdAt',
              // F1: HackerRank contest fields (optional at registration, set later by coordinator)
              'hackerRankId'
-           ]);
+           ])
+        && (!('gitHubStreak' in request.resource.data) || request.resource.data.gitHubStreak == 0)
+        && (!('leetCodeStreak' in request.resource.data) || request.resource.data.leetCodeStreak == 0)
+        && (!('totalCodingScore' in request.resource.data) || request.resource.data.totalCodingScore == 0)
+        && (!('totalDebuggingScore' in request.resource.data) || request.resource.data.totalDebuggingScore == 0);
 
       // B6/C2: Self-update: cannot touch privileged fields.
       // isAdminAccount is now explicitly blocked from self-modification.
@@ -63,6 +71,7 @@ service cloud.firestore {
       // Prevent tampering with graded fields (marks, gradedBy, gradedAt).
       allow create: if isAuthenticated()
         && request.auth.uid == request.resource.data.userId
+        && request.resource.data.day >= getCurrentDay()
         && (!('marks' in request.resource.data) || request.resource.data.marks == null)
         && (!('gradedBy' in request.resource.data) || request.resource.data.gradedBy == '')
         && (!('gradedAt' in request.resource.data) || request.resource.data.gradedAt == null || request.resource.data.gradedAt == '');
@@ -70,11 +79,13 @@ service cloud.firestore {
       allow update: if isAuthenticated()
         && request.auth.uid == resource.data.userId
         && request.auth.uid == request.resource.data.userId
+        && resource.data.day >= getCurrentDay()
+        && request.resource.data.day >= getCurrentDay()
         && !request.resource.data.diff(resource.data).affectedKeys()
             .hasAny(['marks', 'gradedBy', 'gradedAt']);
 
-      // C4: Admins have full access.
-      allow update, delete: if isAdmin();
+      // C4: Admins have full access, EXCEPT they cannot bypass the day restriction.
+      allow update, delete: if isAdmin() && resource.data.day >= getCurrentDay();
     }
 
     // ── Sunday Debugging (H1/A2) ────────────────────────────────────────
