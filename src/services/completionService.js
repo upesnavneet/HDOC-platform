@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-che
 import { db } from '../firebaseConfig';
 import {
   doc,

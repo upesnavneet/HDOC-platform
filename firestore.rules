@@ -56,7 +56,15 @@ service cloud.firestore {
       allow update: if isAuthenticated()
         && request.auth.uid == userId
         && !request.resource.data.diff(resource.data).affectedKeys()
-            .hasAny(['totalCodingScore', 'totalDebuggingScore', 'overallRank', 'isAdminAccount', 'isActive', 'gitHubStreak', 'leetCodeStreak']);
+            .hasAny(['totalCodingScore', 'totalDebuggingScore', 'overallRank', 'isAdminAccount', 'isActive'])
+        && (
+             !('gitHubStreak' in request.resource.data) || 
+             (request.resource.data.gitHubStreak <= (resource.data.gitHubStreak + 1) && request.resource.data.gitHubStreak <= getCurrentDay())
+           )
+        && (
+             !('leetCodeStreak' in request.resource.data) || 
+             (request.resource.data.leetCodeStreak <= (resource.data.leetCodeStreak + 1) && request.resource.data.leetCodeStreak <= getCurrentDay())
+           );
 
       // C2: Admins can update anything.
       allow update, delete: if isAdmin();
